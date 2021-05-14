@@ -1,0 +1,52 @@
+@use "../config/" as *;
+
+.container {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-template-areas:
+    "searchbar profile"
+    "chatlist chat";
+  max-height: 100vh;
+  max-width: 100vw;
+  align-items: stretch;
+  justify-content: stretch;
+  grid-template-rows: 10% 90%;
+  grid-template-columns: 25%;
+
+  .chatlist-container {
+    grid-area: chatlist;
+    display: flex;
+    flex-direction: column;
+    border-right: solid 1px $dark-border;
+  }
+
+  .chat-content-container {
+    grid-area: chat;
+    display: flex;
+    flex-direction: column;
+    padding-left: 0.5rem;
+  }
+
+  .profile-container {
+    grid-area: profile;
+  }
+}
+
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.chat-title {
+  position: relative;
+}
+
+.messages-container {
+  flex: 1 auto;
+  flex-direction: column-reverse;
+  max-height: 100%;
+  padding-top: 15rem;
+}

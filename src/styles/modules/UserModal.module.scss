@@ -1,0 +1,14 @@
+@use "../config/" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  max-width: 500;
+  max-height: 1000;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: $dark;
+  justify-content: center;
+  height: 40%;
+}

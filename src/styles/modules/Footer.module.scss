@@ -1,0 +1,41 @@
+@use "../config/" as *;
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem;
+  color: $dark-dark;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  border-top: solid 1px $dark-border;
+  padding: 3rem;
+}
+
+.quick-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+
+.column {
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  line-height: 2.5;
+}
+
+.column-title {
+  color: $white;
+}
+
+.column-link {
+  padding: 0.25rem;
+}

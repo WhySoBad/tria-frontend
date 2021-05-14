@@ -1,0 +1,6 @@
+@use "../config/" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
