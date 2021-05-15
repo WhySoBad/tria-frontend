@@ -19,6 +19,34 @@
     display: flex;
     flex-direction: column;
     border-right: solid 1px $dark-border;
+
+    .item {
+      display: grid;
+      padding: 0.5rem;
+      grid-template-areas: "avatar title" "avatar text";
+      width: 100%;
+      justify-content: flex-start;
+      align-items: inherit;
+      grid-template-columns: 50px;
+
+      &.selected {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .avatar {
+        grid-area: avatar;
+        background-color: $dark-light;
+        margin-right: 0.5rem;
+      }
+
+      .title {
+        display: flex;
+        justify-content: flex-start;
+      }
+      .description {
+        color: $white;
+      }
+    }
   }
 
   .chat-content-container {
@@ -33,15 +61,36 @@
   }
 }
 
-.chat-content {
+.content-container {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   height: 100%;
 }
 
-.chat-title {
-  position: relative;
+.title {
+  width: 100%;
+  display: flex;
+  .title-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .icon-container {
+    display: flex;
+    justify-self: flex-end;
+
+    .icon {
+      color: #a4aba6;
+      width: 1.5rem;
+      height: 1.5rem;
+      transition: all 0.2s ease;
+      &:hover {
+        color: #bdc2bf;
+      }
+    }
+  }
 }
 
 .messages-container {
@@ -49,4 +98,97 @@
   flex-direction: column-reverse;
   max-height: 100%;
   padding-top: 15rem;
+
+  .message-section {
+    display: grid;
+    grid-template-areas: "avatar message .";
+    grid-template-columns: 3.5rem auto 3.5rem;
+    padding: 0 0.5rem;
+    margin-right: 0.25rem;
+
+    .avatar {
+      grid-area: avatar;
+      margin-top: 0.5rem;
+      transition: all 0.2s;
+      &:hover {
+        cursor: pointer;
+      }
+      &:active {
+        transform: translateY(-2px);
+      }
+    }
+
+    .message {
+      grid-area: message;
+      justify-self: start;
+      display: grid;
+      grid-template-areas: "sender . ." "message message date";
+      padding: 0.25rem 0.75rem;
+      background-color: $lightest-dark;
+      border-radius: 5px;
+      margin: 0.2rem 0;
+      width: 100%;
+
+      .sender {
+        grid-area: sender;
+        margin-bottom: 0.25rem;
+        width: fit-content;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .text {
+        grid-area: message;
+      }
+      .date {
+        grid-area: date;
+        font-size: 14px;
+        text-align: right;
+      }
+    }
+  }
+
+  .member-log {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 14px;
+
+    .name {
+      margin-right: 1ch;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+  .date-log {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+}
+
+.input-container {
+  padding: 0.5rem;
+  margin-right: 3.75rem;
+  margin-left: 3.75rem;
+
+  .input-content {
+    width: 100%;
+  }
+  .input {
+    border-color: $white !important;
+  }
 }

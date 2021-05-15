@@ -1,14 +1,107 @@
 @use "../config/" as *;
 
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .container {
   display: flex;
   flex-direction: column;
   width: 40%;
   max-width: 500;
   max-height: 1000;
-  padding: 1rem;
   border-radius: 10px;
   background-color: $dark;
-  justify-content: center;
-  height: 40%;
+  color: $white;
+  height: 50%;
+}
+
+.head {
+  height: 30%;
+  background-color: $lighter-dark;
+  border-radius: 10px 10px 0px 0px;
+  padding: 3rem;
+  display: flex;
+  position: relative;
+
+  .avatar {
+    width: 7rem;
+    height: 7rem;
+    justify-self: center;
+    align-self: center;
+    box-shadow: 0 0 6px 0.01px $dark-border;
+    margin-left: 1rem;
+  }
+
+  .text-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 2rem;
+  }
+
+  .tag {
+    margin-top: -0.5rem;
+  }
+
+  .uuid {
+    position: absolute;
+    color: $dark-darker;
+    right: 0.5rem;
+    bottom: 0.25rem;
+    font-size: 14px;
+  }
+
+  .icon-container {
+    position: absolute;
+    top: 0rem;
+    right: 0rem;
+    padding: 0.25rem;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+
+    .back {
+      margin-right: auto;
+    }
+  }
+
+  .icon {
+    color: #a4aba6;
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: all 0.2s ease;
+    &:hover {
+      color: #bdc2bf;
+    }
+  }
+}
+
+.content {
+  height: 70%;
+  border-radius: 0px 0px 10px 10px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+
+  .no-shared {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $dark-darker;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .shared-chats {
+    display: grid;
+    overflow-y: auto;
+  }
 }

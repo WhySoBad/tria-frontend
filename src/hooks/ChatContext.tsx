@@ -21,7 +21,9 @@ export const ChatProvider: NextPage = ({ children }): JSX.Element => {
   const [chat, setChat] = useState<string>(defaultValue.selected);
   const [updated, setUpdate] = useState<number>();
 
-  const update: () => void = (): void => setUpdate(new Date().getTime());
+  const update: () => void = (): void => {
+    setUpdate(new Date().getTime());
+  };
 
   return (
     <ChatContext.Provider

@@ -1,36 +1,12 @@
 import { Avatar, ButtonBase, makeStyles } from "@material-ui/core";
 import { Chat, Group, Message, PrivateChat } from "client";
 import React from "react";
+import style from "../../styles/modules/Chat.module.scss";
 import cn from "classnames";
 import { useClient } from "../../hooks/ClientContext";
 import { useChat } from "../../hooks/ChatContext";
 
-const useStyles = makeStyles((theme) => ({
-  chatlistItem: {
-    display: "grid",
-    padding: "0.5rem 0.5rem",
-    gridTemplateAreas: '"avatar title" "avatar text"',
-    width: "100%",
-    justifyContent: "flex-start",
-    alignItem: "inherit",
-    gridTemplateColumns: "50px",
-  },
-  avatar: {
-    gridArea: "avatar",
-    backgroundColor: "#1ca330",
-    marginRight: "0.5rem",
-  },
-  title: {
-    display: "flex",
-    justifyContent: "flex-start",
-  },
-  description: {
-    color: "#fff",
-  },
-  selected: {
-    backgroundColor: "rgba(255,255,255,0.1)",
-  },
-}));
+const useStyles = makeStyles((theme) => ({}));
 
 const ChatList: React.FC = (): JSX.Element => {
   const { client } = useClient();
@@ -65,12 +41,12 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ uuid }): JSX.Element => {
   const avatarSrc: string = chat instanceof PrivateChat ? chat.participant.user.avatarURL : "";
 
   return (
-    <ButtonBase className={cn(classes.chatlistItem, selected === uuid && classes.selected)} onClick={() => setSelected(uuid)}>
-      <Avatar className={classes.avatar} src={avatarSrc}>
+    <ButtonBase className={cn(style["item"], selected === uuid && style["selected"])} onClick={() => setSelected(uuid)}>
+      <Avatar className={style["avatar"]} src={avatarSrc}>
         {chat.uuid.substr(0, 1)}
       </Avatar>
-      <h6 children={name} className={classes.title} />
-      <div children={chat.uuid} className={classes.description} />
+      <h6 children={name} className={style["title"]} />
+      <div children={chat.uuid} className={style["description"]} />
     </ButtonBase>
   );
 };

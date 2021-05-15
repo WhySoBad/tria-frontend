@@ -2,94 +2,17 @@ import { Avatar, makeStyles } from "@material-ui/core";
 import { Chat, ChatSocketEvent, getUserPreview, Member, Message, UserPreview } from "client";
 import { MemberLog } from "client/dist/src/chat/classes/MemberLog.class";
 import { SHA256 } from "crypto-js";
-import { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG } from "node:constants";
 import React, { useEffect, useRef, useState } from "react";
+import style from "../../styles/modules/Chat.module.scss";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
 import UserModal from "../Modal/UserModal";
 
-const useStyles = makeStyles((theme) => ({
-  messageSection: {
-    display: "grid",
-    gridTemplateAreas: '"own message member"',
-    gridTemplateColumns: "3.5rem auto 3.5rem",
-
-    padding: "0 0.5rem",
-    marginRight: "0.25rem",
-  },
-  message: {
-    gridArea: "message",
-    justifySelf: "start",
-    display: "grid",
-    gridTemplateAreas: '"sender . ." "message message date" ',
-    padding: "0.25rem 0.75rem",
-    backgroundColor: "#2c3039",
-    borderRadius: "5px",
-    margin: "0.2rem 0",
-    width: "100%",
-  },
-  sender: {
-    gridArea: "sender",
-    marginBottom: "0.25rem",
-    width: "fit-content",
-
-    "&:hover": {
-      cursor: "pointer",
-    },
-  },
-  avatar: {
-    gridArea: "own",
-    marginTop: "0.5rem",
-    transition: "all 0.2s",
-    "&:hover": {
-      cursor: "pointer",
-    },
-    "&:active": {
-      transform: "translateY(-2px)",
-    },
-  },
-
-  text: {
-    gridArea: "message",
-  },
-  sendDate: {
-    gridArea: "date",
-    fontSize: "14px",
-    textAlign: "right",
-  },
-  memberLog: {
-    display: "flex",
-    width: "100%",
-    justifyContent: "center",
-    alignContent: "center",
-    padding: "0.25rem 0.75rem",
-    margin: "1rem 0",
-    borderRadius: "5px",
-    fontWeight: "bold",
-    fontSize: "14px",
-  },
-  memberName: {
-    marginRight: "1ch",
-    "&:hover": {
-      cursor: "pointer",
-    },
-  },
-  date: {
-    display: "flex",
-    width: "100%",
-    justifyContent: "center",
-    alignContent: "center",
-    padding: "0.25rem 0.75rem",
-    margin: "1rem 0",
-    borderRadius: "5px",
-    fontWeight: "bold",
-    fontSize: "14px",
-  },
-}));
+const useStyles = makeStyles((theme) => ({}));
 
 const Messages: React.FC = (): JSX.Element => {
   const { client } = useClient();
-  const { selected, update } = useChat();
+  const { selected } = useChat();
   const classes = useStyles();
 
   const chat: Chat | undefined = client?.user.chats.get(selected);
@@ -115,12 +38,12 @@ const Messages: React.FC = (): JSX.Element => {
           <div key={message instanceof Message ? message.uuid : message.user}>
             {!sameDate && <DateContainer date={date} />}
             {message instanceof MemberLog && <MemberLogContainer message={message} />}
-            {message instanceof Message && <div className={classes.messageSection} children={<MessageContainer message={message} withName={!sameSender || !sameDate} />} />}
+            {message instanceof Message && <div className={style["message-section"]} children={<MessageContainer message={message} withName={!sameSender || !sameDate} />} />}
           </div>
         );
       })}
 
-      <BottomAnchor scrollTo={true} />
+      <BottomAnchor />
     </>
   );
 };
@@ -128,9 +51,10 @@ const Messages: React.FC = (): JSX.Element => {
 interface MessageProps {
   message: Message;
   withName?: boolean;
+  last?: boolean;
 }
 
-const MessageContainer: React.FC<MessageProps> = ({ message, withName = false }): JSX.Element => {
+const MessageContainer: React.FC<MessageProps> = ({ message, withName = false, last = false }): JSX.Element => {
   const { client } = useClient();
   const [open, setOpen] = useState<boolean>(false);
   const classes = useStyles();
@@ -139,26 +63,28 @@ const MessageContainer: React.FC<MessageProps> = ({ message, withName = false })
   const sender: Member = chat.members.get(message.sender);
   const own: boolean = message.sender === client.user.uuid;
 
-  const uuidHash: string = SHA256(sender.user.uuid).toString();
+  const uuidHex: string = SHA256(sender.user.uuid).toString().substr(0, 6);
 
   return (
     <>
-      {withName && <Avatar children={sender.user.name.substr(0, 1)} className={classes.avatar} style={{ backgroundColor: `#${uuidHash.substr(0, 6)}` }} onClick={() => setOpen(true)} />}
-      <div className={classes.message} style={{ boxShadow: `0 0 2px 0.5px #${uuidHash.substr(0, 6)}` }}>
-        {withName && <h6 className={classes.sender} children={sender.user.name} onClick={() => setOpen(true)} />}
-        <div className={classes.text} children={message.text} />
-        <code className={classes.sendDate} children={message.createdAt.toLocaleTimeString().substr(0, 5)} />
+      {withName && <Avatar children={sender.user.name.substr(0, 1)} className={style["avatar"]} style={{ backgroundColor: `#${uuidHex}` }} onClick={() => setOpen(true)} />}
+      <div className={style["message"]} style={{ boxShadow: `0 0 2px 0.5px #${uuidHex}` }}>
+        {withName && <h6 className={style["sender"]} children={sender.user.name} onClick={() => setOpen(true)} />}
+        <div className={style["text"]} children={message.text} />
+        <code className={style["date"]} children={message.createdAt.toLocaleTimeString().substr(0, 5)} />
       </div>
       <UserModal user={sender.user} open={open} onClose={() => setOpen(false)} />
+      {last && <BottomAnchor />}
     </>
   );
 };
 
 interface MemberLogProps {
   message: MemberLog;
+  last?: boolean;
 }
 
-const MemberLogContainer: React.FC<MemberLogProps> = ({ message }): JSX.Element => {
+const MemberLogContainer: React.FC<MemberLogProps> = ({ message, last = false }): JSX.Element => {
   const classes = useStyles();
   const { client } = useClient();
   const [user, setUser] = useState<UserPreview>();
@@ -172,11 +98,12 @@ const MemberLogContainer: React.FC<MemberLogProps> = ({ message }): JSX.Element 
 
   return (
     <>
-      <code className={classes.memberLog}>
-        {user ? <code children={user.name} className={classes.memberName} onClick={() => setOpen(true)} /> : "Deleted Account"}
+      <code className={style["member-log"]}>
+        {user ? <code children={user.name} className={style["name"]} onClick={() => setOpen(true)} /> : "Deleted Account"}
         {message.joined ? " joined" : " left"}
       </code>
       <UserModal user={user || ({} as any)} open={open} onClose={() => setOpen(false)} />
+      {last && <BottomAnchor />}
     </>
   );
 };
@@ -186,11 +113,10 @@ interface DateProps {
 }
 
 const DateContainer: React.FC<DateProps> = ({ date }): JSX.Element => {
-  const classes = useStyles();
-  return <code className={classes.date} children={date.toLocaleDateString()} />;
+  return <code className={style["date-log"]} children={date.toLocaleDateString()} />;
 };
 
-const MessageLoader: React.FC = ({}): JSX.Element => {
+const MessageLoader: React.FC = (): JSX.Element => {
   const ref = useRef<HTMLInputElement>(null);
   const { client } = useClient();
   const { update, selected } = useChat();
@@ -210,16 +136,12 @@ const MessageLoader: React.FC = ({}): JSX.Element => {
     });
     observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [selected]);
 
   return <div ref={ref} />;
 };
 
-interface BottomAnchorProps {
-  scrollTo?: boolean;
-}
-
-const BottomAnchor: React.FC<BottomAnchorProps> = ({ scrollTo = false }): JSX.Element => {
+const BottomAnchor: React.FC = (): JSX.Element => {
   const ref = useRef<HTMLInputElement>(null);
   const [visible, setVisible] = useState<boolean>(false);
   const { client } = useClient();
@@ -229,13 +151,14 @@ const BottomAnchor: React.FC<BottomAnchorProps> = ({ scrollTo = false }): JSX.El
     if (message.sender === client.user.uuid || visible) ref?.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  client.on(ChatSocketEvent.MESSAGE, handleMessage);
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
       setVisible(entries[0].isIntersecting);
     });
 
     observer.observe(ref.current);
-    client.on(ChatSocketEvent.MESSAGE, handleMessage);
 
     return () => {
       observer.disconnect();
@@ -246,10 +169,6 @@ const BottomAnchor: React.FC<BottomAnchorProps> = ({ scrollTo = false }): JSX.El
   useEffect(() => {
     ref?.current?.scrollIntoView();
   }, [selected]);
-
-  useEffect(() => {
-    if (scrollTo) ref?.current?.scrollIntoView();
-  }, [scrollTo]);
 
   return <div ref={ref} />;
 };

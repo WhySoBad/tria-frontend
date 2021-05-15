@@ -1,10 +1,12 @@
 import { ChatSocketEvent } from "client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
+import Scrollbars from "react-custom-scrollbars-2";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Chat.module.scss";
 import ChatInput from "./ChatInput";
 import ChatList from "./ChatList";
+import ChatTitle from "./ChatTitle";
 import Messages from "./Messages";
 
 interface ChatProps {}
@@ -22,9 +24,7 @@ const Chat: React.FC<ChatProps> = ({}): JSX.Element => {
   );
 };
 
-interface ChatContentProps {}
-
-const ChatContent: React.FC<ChatContentProps> = ({}): JSX.Element => {
+const ChatContent: React.FC = ({}): JSX.Element => {
   const { client } = useClient();
   const { selected, update } = useChat();
 
@@ -58,12 +58,11 @@ const ChatContent: React.FC<ChatContentProps> = ({}): JSX.Element => {
   return (
     <>
       <title children={selected || "Home"} />
-      <div className={style["chat-title"]}>
-        <h3 children={selected} />
-      </div>
-      <section className={style["chat-content"]}>
+      <div className={style["title"]} children={<ChatTitle />} />
+      <Scrollbars className={style["content-container"]} autoHide>*
         <div className={style["messages-container"]} ref={ref} children={<Messages />} />
-      </section>
+      </Scrollbars>
+
       <ChatInput />
     </>
   );

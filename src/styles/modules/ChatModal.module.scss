@@ -1,0 +1,204 @@
+@use "../config/" as *;
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  max-width: 500;
+  max-height: 1000;
+  border-radius: 10px;
+  background-color: $dark;
+  color: $white;
+  height: 50%;
+}
+
+.head {
+  background-color: $lighter-dark;
+  border-radius: 10px 10px 0px 0px;
+  padding: 3rem;
+  display: flex;
+  position: relative;
+  height: 30%;
+
+  .avatar {
+    width: 7rem;
+    height: 7rem;
+    justify-self: center;
+    align-self: center;
+    box-shadow: 0 0 6px 0.01px $dark-border;
+    margin-left: 1rem;
+  }
+
+  .text-container {
+    flex: 1 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 2rem;
+  }
+
+  .name {
+    display: inline-flex;
+    align-items: center;
+    .icon {
+      margin-left: 1ch;
+      color: #bdc2bf;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  .tag {
+    margin-top: -0.5rem;
+  }
+
+  .uuid {
+    position: absolute;
+    color: $dark-darker;
+    right: 0.5rem;
+    bottom: 0.25rem;
+    font-size: 14px;
+  }
+
+  .icon-container {
+    position: absolute;
+    top: 0rem;
+    right: 0rem;
+    padding: 0.25rem;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+
+    .back {
+      margin-right: auto;
+    }
+  }
+}
+
+.content {
+  border-radius: 0px 0px 10px 10px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  height: 70%;
+
+  .no-shared {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $dark-darker;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .members {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    margin: 0 5%;
+
+    .heading {
+      color: $dark-darker;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      padding: 0.5rem 0;
+      display: flex;
+      justify-content: flex-end;
+
+      .border {
+        position: absolute;
+        z-index: -1;
+        top: calc(50% - 0.5px);
+        content: "";
+        width: 100%;
+        border: solid 1px $dark-border;
+      }
+
+      .title {
+        padding: 0 0.5rem;
+        position: relative;
+        background: $dark;
+        right: 5%;
+        z-index: 2;
+      }
+    }
+
+    .item-container {
+      width: 100%;
+      position: relative;
+      transition: all 0.2s;
+      border-radius: 5px;
+
+      &:hover {
+        .icon-container {
+          opacity: 1;
+        }
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .icon-container {
+        position: absolute;
+        display: inline-flex;
+        height: 100%;
+        right: 0;
+        top: 0;
+        align-items: center;
+        opacity: 0;
+      }
+    }
+
+    .item {
+      display: grid;
+      padding: 0.25rem;
+      grid-template-areas: "avatar title" "avatar text";
+      width: 100%;
+      justify-content: flex-start;
+      align-items: inherit;
+      grid-template-columns: 50px;
+      cursor: pointer;
+
+      .avatar {
+        grid-area: avatar;
+        background-color: $dark-light;
+        margin-right: 0.5rem;
+        align-self: center;
+      }
+
+      .title {
+        display: flex;
+        justify-content: flex-start;
+        width: fit-content;
+      }
+
+      .description {
+        color: $white;
+      }
+    }
+  }
+}
+
+.icon {
+  color: #a4aba6;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: all 0.2s ease;
+  &:hover {
+    color: #bdc2bf;
+  }
+}
