@@ -1,0 +1,195 @@
+@use "../config/" as *;
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  max-width: 500;
+  max-height: 1000;
+  border-radius: 10px;
+  background-color: $dark;
+  color: $white;
+  height: 50%;
+}
+
+.head {
+  height: 30%;
+  min-height: 200px;
+  border-radius: 10px 10px 0px 0px;
+  padding: 3rem;
+  display: flex;
+  position: relative;
+  word-break: break-all;
+
+  .background {
+    position: absolute;
+    border-radius: 10px 10px 0px 0px;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+
+    &::before {
+      content: "";
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.3);
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  .avatar {
+    height: 7rem;
+    width: 7rem;
+    justify-self: center;
+    align-self: center;
+  }
+
+  .text-container {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 2rem;
+  }
+
+  .name {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    .icon {
+      margin-top: 0.35ch;
+      align-self: flex-start;
+      margin-left: 1ch;
+      color: #bdc2bf;
+    }
+  }
+
+  .tag {
+    margin-top: 0rem;
+  }
+
+  .uuid {
+    position: absolute;
+    color: $dark-darker;
+    right: 0.5rem;
+    bottom: 0.25rem;
+    font-size: 14px;
+  }
+
+  .icon-container {
+    position: absolute;
+    top: 0rem;
+    right: 0rem;
+    padding: 0.25rem;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+
+    .back {
+      margin-right: auto;
+    }
+  }
+
+  .icon {
+    color: #a4aba6;
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: all 0.2s ease;
+    &:hover {
+      color: #bdc2bf;
+    }
+  }
+}
+
+.content {
+  height: 70%;
+  border-radius: 0px 0px 10px 10px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+}
+
+@include large {
+  .container {
+    width: 60%;
+  }
+
+  .head {
+    padding: 2.75rem;
+
+    .name {
+      font-size: 1.8rem;
+    }
+  }
+}
+
+@include wide {
+  .container {
+    width: 65%;
+    height: 55%;
+  }
+
+  .head {
+    padding: 2.5rem;
+
+    .name {
+      font-size: 1.7rem;
+    }
+  }
+}
+
+@include small {
+  .container {
+    width: 70%;
+    height: 60%;
+  }
+
+  .head {
+    padding: 2.5rem;
+
+    .name {
+      font-size: 1.6rem;
+    }
+  }
+}
+
+@include smaller {
+  .container {
+    width: 75%;
+    height: 65%;
+  }
+
+  .head {
+    padding: 2.5rem;
+
+    .name {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+@include smallest {
+  .container {
+    width: 80%;
+    height: 70%;
+  }
+
+  .head {
+    padding: 2.5rem;
+
+    .name {
+      font-size: 1.4rem;
+    }
+  }
+}

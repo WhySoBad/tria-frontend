@@ -1,5 +1,9 @@
 @use "../config/" as *;
 
+.scroll-thumb {
+  background-color: $dark-border;
+}
+
 .container {
   display: grid;
   height: 100vh;
@@ -28,6 +32,7 @@
       justify-content: flex-start;
       align-items: inherit;
       grid-template-columns: 50px;
+      overflow: hidden;
 
       &.selected {
         background-color: rgba(255, 255, 255, 0.1);
@@ -42,9 +47,24 @@
       .title {
         display: flex;
         justify-content: flex-start;
+        white-space: nowrap;
       }
       .description {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        margin-top: -0.25rem;
         color: $white;
+        font-size: 14px;
+        white-space: nowrap;
+
+        .sender {
+          padding-right: 0.5ch;
+        }
+
+        .text {
+          color: $dark-light;
+        }
       }
     }
   }
@@ -54,6 +74,7 @@
     display: flex;
     flex-direction: column;
     padding-left: 0.5rem;
+    overflow: hidden;
   }
 
   .profile-container {
@@ -96,8 +117,8 @@
 .messages-container {
   flex: 1 auto;
   flex-direction: column-reverse;
-  max-height: 100%;
   padding-top: 15rem;
+  overflow: hidden;
 
   .message-section {
     display: grid;

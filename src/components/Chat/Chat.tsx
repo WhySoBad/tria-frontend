@@ -59,7 +59,12 @@ const ChatContent: React.FC = ({}): JSX.Element => {
     <>
       <title children={selected || "Home"} />
       <div className={style["title"]} children={<ChatTitle />} />
-      <Scrollbars className={style["content-container"]} autoHide>*
+      <Scrollbars
+        className={style["content-container"]}
+        autoHide
+        renderView={(props) => <div {...props} style={{ ...props.style, overflowX: "hidden" }} />}
+        renderThumbVertical={(props) => <div {...props} className={style["scroll-thumb"]} />}
+      >
         <div className={style["messages-container"]} ref={ref} children={<Messages />} />
       </Scrollbars>
 

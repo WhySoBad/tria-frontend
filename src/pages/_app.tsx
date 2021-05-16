@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { AuthProvider } from "../hooks/AuthContext";
 import { ChatProvider } from "../hooks/ChatContext";
 import { ClientProvider } from "../hooks/ClientContext";
+import { ModalProvider } from "../hooks/ModalContext";
 import "../styles/main.scss";
 
 const WrapPage: NextPage<AppProps> = ({ Component, pageProps }: AppProps): JSX.Element => {
@@ -15,9 +16,11 @@ const WrapPage: NextPage<AppProps> = ({ Component, pageProps }: AppProps): JSX.E
   return (
     <AuthProvider>
       <ClientProvider>
-        <ChatProvider>
-          <Component {...pageProps} />
-        </ChatProvider>
+        <ModalProvider>
+          <ChatProvider>
+            <Component {...pageProps} />
+          </ChatProvider>
+        </ModalProvider>
       </ClientProvider>
     </AuthProvider>
   );

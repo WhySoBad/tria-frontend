@@ -1,12 +1,12 @@
 import { Avatar, makeStyles } from "@material-ui/core";
-import { Chat, ChatSocketEvent, getUserPreview, Member, Message, UserPreview } from "client";
+import { Chat, ChatSocketEvent, getUserPreview, Member, Message, User, UserPreview } from "client";
 import { MemberLog } from "client/dist/src/chat/classes/MemberLog.class";
 import { SHA256 } from "crypto-js";
 import React, { useEffect, useRef, useState } from "react";
 import style from "../../styles/modules/Chat.module.scss";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
-import UserModal from "../Modal/UserModal";
+import { useModal } from "../../hooks/ModalContext";
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -56,7 +56,7 @@ interface MessageProps {
 
 const MessageContainer: React.FC<MessageProps> = ({ message, withName = false, last = false }): JSX.Element => {
   const { client } = useClient();
-  const [open, setOpen] = useState<boolean>(false);
+  const { openMember } = useModal();
   const classes = useStyles();
   const chat: Chat | undefined = client.user.chats.get(message.chat);
 
@@ -67,13 +67,12 @@ const MessageContainer: React.FC<MessageProps> = ({ message, withName = false, l
 
   return (
     <>
-      {withName && <Avatar children={sender.user.name.substr(0, 1)} className={style["avatar"]} style={{ backgroundColor: `#${uuidHex}` }} onClick={() => setOpen(true)} />}
+      {withName && <Avatar children={sender.user.name.substr(0, 1)} className={style["avatar"]} style={{ backgroundColor: `#${uuidHex}` }} onClick={() => openMember(sender)} />}
       <div className={style["message"]} style={{ boxShadow: `0 0 2px 0.5px #${uuidHex}` }}>
-        {withName && <h6 className={style["sender"]} children={sender.user.name} onClick={() => setOpen(true)} />}
+        {withName && <h6 className={style["sender"]} children={sender.user.name} onClick={() => openMember(sender)} />}
         <div className={style["text"]} children={message.text} />
         <code className={style["date"]} children={message.createdAt.toLocaleTimeString().substr(0, 5)} />
       </div>
-      <UserModal user={sender.user} open={open} onClose={() => setOpen(false)} />
       {last && <BottomAnchor />}
     </>
   );
@@ -87,22 +86,23 @@ interface MemberLogProps {
 const MemberLogContainer: React.FC<MemberLogProps> = ({ message, last = false }): JSX.Element => {
   const classes = useStyles();
   const { client } = useClient();
-  const [user, setUser] = useState<UserPreview>();
-  const [open, setOpen] = useState<boolean>(false);
+  const { openUser } = useModal();
+  const [user, setUser] = useState<UserPreview>(null);
+  const [fetched, setFetched] = useState<boolean>(false);
 
   useEffect(() => {
     getUserPreview(message.user)
       .then(setUser)
-      .catch(() => client.error("Failed Fetching Account"));
+      .catch(() => client.error("Failed fetching account"))
+      .finally(() => setFetched(true));
   }, []);
 
   return (
     <>
-      <code className={style["member-log"]}>
-        {user ? <code children={user.name} className={style["name"]} onClick={() => setOpen(true)} /> : "Deleted Account"}
+      <code className={style["member-log"]} style={{ opacity: fetched ? 1 : 0 }}>
+        {user ? <code children={user.name} className={style["name"]} onClick={() => openUser(new User(user as any))} /> : "Deleted Account"}
         {message.joined ? " joined" : " left"}
       </code>
-      <UserModal user={user || ({} as any)} open={open} onClose={() => setOpen(false)} />
       {last && <BottomAnchor />}
     </>
   );
