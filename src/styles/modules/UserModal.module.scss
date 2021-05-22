@@ -17,3 +17,95 @@
   display: grid;
   overflow-y: auto;
 }
+
+.tabs {
+  padding: 1rem 5%;
+  padding-bottom: 0;
+  display: flex;
+  margin-bottom: 1rem;
+
+  .tab {
+    color: $dark-light;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 0.5rem 0;
+    margin: 0 1rem;
+    border-bottom: solid 2px transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+
+    &:first-child {
+      margin-left: 0;
+      margin-right: 1rem;
+    }
+
+    &:last-child {
+      margin-right: 0;
+      margin-left: 1rem;
+    }
+
+    &.selected {
+      color: $white;
+      border-bottom: solid 2px $white !important;
+    }
+
+    &:hover {
+      border-bottom: solid 2px $dark-light;
+    }
+  }
+}
+
+.content {
+  padding: 0 5%;
+  flex: 1 auto;
+  display: flex;
+  flex-direction: column;
+
+  .item-container {
+    width: calc(100% - 17px);
+    position: relative;
+    transition: all 0.2s;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .item {
+    display: grid;
+    padding: 0.25rem;
+    padding-left: 0.5rem;
+    grid-template-areas: "avatar title" "avatar text";
+    width: 100%;
+    justify-content: flex-start;
+    align-items: inherit;
+    grid-template-columns: 50px;
+    cursor: pointer;
+
+    .avatar {
+      grid-area: avatar;
+      background-color: $dark-light;
+      margin-right: 0.5rem;
+      align-self: center;
+    }
+
+    .name {
+      display: inline-flex;
+      width: fit-content;
+
+      .icon {
+        align-self: flex-start;
+        margin-left: 1ch;
+        color: #bdc2bf;
+        width: 1.3rem;
+        height: 1.3rem;
+      }
+    }
+
+    .description {
+      margin-top: -0.25ch;
+    }
+  }
+}

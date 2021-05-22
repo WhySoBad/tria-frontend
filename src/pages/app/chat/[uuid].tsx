@@ -1,6 +1,5 @@
-import { ChatPreview, getChatPreview } from "client";
 import { NextPage, NextPageContext } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import Chat from "../../../components/Chat/Chat";
 
 interface Props {
@@ -11,7 +10,7 @@ const ChatPage: NextPage<Props> = ({ chat }): JSX.Element => {
   return (
     <>
       <title children={`Chat | ${chat}`} />
-      <Chat />
+      <Chat uuid={chat} />
     </>
   );
 };

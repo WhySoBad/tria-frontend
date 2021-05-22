@@ -4,8 +4,9 @@ import React from "react";
 import style from "../../styles/modules/Chat.module.scss";
 import cn from "classnames";
 import { useClient } from "../../hooks/ClientContext";
-import { useChat } from "../../hooks/ChatContext";
-import Scrollbars from "react-custom-scrollbars-2";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import Scrollbar from "../Scrollbar/Scrollbar";
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -13,11 +14,7 @@ const ChatList: React.FC = (): JSX.Element => {
   const { client } = useClient();
 
   return (
-    <Scrollbars
-      autoHide
-      renderView={(props) => <div {...props} style={{ ...props.style, overflowX: "hidden" }} />}
-      renderThumbVertical={(props) => <div {...props} className={style["scroll-thumb"]} />}
-    >
+    <Scrollbar>
       {client?.user.chats
         .values()
         .sort((a, b) => {
@@ -28,7 +25,7 @@ const ChatList: React.FC = (): JSX.Element => {
         .map((chat: Chat) => (
           <ChatContainer key={chat.uuid} uuid={chat.uuid} />
         ))}
-    </Scrollbars>
+    </Scrollbar>
   );
 };
 
@@ -38,7 +35,9 @@ interface ChatContainerProps {
 
 const ChatContainer: React.FC<ChatContainerProps> = ({ uuid }): JSX.Element => {
   const { client } = useClient();
-  const { selected, setSelected } = useChat();
+
+  const router = useRouter();
+  const selected: string = router.query.uuid as string;
 
   const classes = useStyles();
 
@@ -49,16 +48,16 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ uuid }): JSX.Element => {
   const lastSender: Member | undefined = chat.members.get(lastMessage?.sender);
 
   return (
-    <ButtonBase className={cn(style["item"], selected === uuid && style["selected"])} onClick={() => setSelected(uuid)}>
-      <Avatar className={style["avatar"]} src={avatarSrc}>
-        {chat.uuid.substr(0, 1)}
-      </Avatar>
-      <h6 children={name} className={style["title"]} />
-      <div className={style["description"]}>
-        {lastSender && <code children={lastSender.user.name + ":"} className={style["sender"]} />}
-        <code children={lastMessage?.text || "Chat created"} className={style["text"]} />
-      </div>
-    </ButtonBase>
+    <Link href={`/app/chat/${uuid}`}>
+      <ButtonBase disableRipple className={cn(style["item"], selected === uuid && style["selected"])}>
+        <Avatar className={style["avatar"]} src={avatarSrc} style={{ backgroundColor: chat.color }} alt={name} />
+        <h6 children={name} className={style["title"]} />
+        <div className={style["description"]}>
+          {lastSender && <code children={lastSender.user.name + ":"} className={style["sender"]} />}
+          <code children={lastMessage?.text || "Chat created"} className={style["text"]} />
+        </div>
+      </ButtonBase>
+    </Link>
   );
 };
 

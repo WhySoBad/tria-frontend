@@ -67,8 +67,8 @@ const MessageContainer: React.FC<MessageProps> = ({ message, withName = false, l
 
   return (
     <>
-      {withName && <Avatar children={sender.user.name.substr(0, 1)} className={style["avatar"]} style={{ backgroundColor: `#${uuidHex}` }} onClick={() => openMember(sender)} />}
-      <div className={style["message"]} style={{ boxShadow: `0 0 2px 0.5px #${uuidHex}` }}>
+      {withName && <Avatar alt={sender.user.name} className={style["avatar"]} style={{ backgroundColor: sender.user.color }} onClick={() => openMember(sender)} />}
+      <div className={style["message"]} style={{ boxShadow: `0 0 2px 0.5px ${sender.user.color}` }}>
         {withName && <h6 className={style["sender"]} children={sender.user.name} onClick={() => openMember(sender)} />}
         <div className={style["text"]} children={message.text} />
         <code className={style["date"]} children={message.createdAt.toLocaleTimeString().substr(0, 5)} />

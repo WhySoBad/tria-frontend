@@ -16,11 +16,11 @@
   background-color: $dark;
   color: $white;
   height: 50%;
+  min-height: 670px;
 }
 
 .head {
   height: 30%;
-  min-height: 200px;
   border-radius: 10px 10px 0px 0px;
   padding: 3rem;
   display: flex;

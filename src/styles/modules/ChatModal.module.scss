@@ -22,12 +22,17 @@
   text-transform: uppercase;
 }
 
+.content {
+  padding: 1rem 0rem;
+  margin: 0 5%;
+  height: 100%;
+}
+
 .members {
-  padding-top: 1rem;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  margin: 0 5%;
+  width: calc(100% - 17px);
 
   .heading {
     color: $dark-darker;
@@ -86,6 +91,7 @@
   .item {
     display: grid;
     padding: 0.25rem;
+    padding-left: 0.5rem;
     grid-template-areas: "avatar title" "avatar text";
     width: 100%;
     justify-content: flex-start;
@@ -107,7 +113,7 @@
     }
 
     .description {
-      color: $white;
+      margin-top: -0.25ch;
     }
   }
 }
