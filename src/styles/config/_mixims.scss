@@ -1,3 +1,7 @@
+@use "./colors" as *;
+
+//Media query mixins
+
 @mixin smallest {
   @media screen and (max-width: 400px) {
     @content;
@@ -31,5 +35,24 @@
 @mixin larger {
   @media (min-width: 1600px) {
     @content;
+  }
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin transition {
+  transition: all 0.5s;
+}
+
+@mixin icon {
+  color: $icon;
+  width: 1.5rem;
+  height: 1.5rem;
+
+  &:hover {
+    color: $icon-hover;
   }
 }

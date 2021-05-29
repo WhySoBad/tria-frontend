@@ -84,7 +84,6 @@ interface MemberLogProps {
 }
 
 const MemberLogContainer: React.FC<MemberLogProps> = ({ message, last = false }): JSX.Element => {
-  const classes = useStyles();
   const { client } = useClient();
   const { openUser } = useModal();
   const [user, setUser] = useState<UserPreview>(null);
@@ -92,9 +91,11 @@ const MemberLogContainer: React.FC<MemberLogProps> = ({ message, last = false })
 
   useEffect(() => {
     getUserPreview(message.user)
-      .then(setUser)
-      .catch(() => client.error("Failed fetching account"))
-      .finally(() => setFetched(true));
+      .then((user: UserPreview) => {
+        setUser(user);
+        setFetched(true);
+      })
+      .catch(() => client.error("Failed fetching account"));
   }, []);
 
   return (

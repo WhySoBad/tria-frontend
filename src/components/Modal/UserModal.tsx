@@ -37,7 +37,7 @@ const UserModal: React.FC<UserModalProps> = ({ withBack = false, onClose, user }
     if (privateChat) {
       if (selected === privateChat.uuid) close();
       else {
-        router.push(`/app/chat/${privateChat.uuid}`);
+        router.push(`/chat/${privateChat.uuid}`);
         close();
       }
     }
@@ -113,7 +113,7 @@ const SharedChats: React.FC<SharedChatsProps> = ({ user }): JSX.Element => {
             const description: string = chat instanceof Group ? chat.description : chat instanceof PrivateChat ? chat.participant.user.description : "";
             return (
               <div className={style["item-container"]} key={chat.uuid} onClick={close}>
-                <Link href={`/app/chat/${chat.uuid}`}>
+                <Link href={`/chat/${chat.uuid}`}>
                   <div className={style["item"]}>
                     <Avatar className={style["avatar"]} style={{ backgroundColor: chat.color }} alt={chat.uuid} children={chat.uuid.substr(0, 1)} />
                     <div className={style["name"]}>

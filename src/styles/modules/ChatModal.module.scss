@@ -6,6 +6,7 @@
   .icon {
     align-self: flex-start;
     margin-left: 1ch;
+    color: $white !important;
   }
 }
 
@@ -67,7 +68,7 @@
   .item-container {
     width: 100%;
     position: relative;
-    transition: all 0.2s;
+    //transition: all 0.2s;
     border-radius: 5px;
 
     &:hover {
@@ -119,7 +120,5 @@
 }
 
 .icon {
-  color: #bdc2bf;
-  width: 1.5rem;
-  height: 1.5rem;
+  @include icon;
 }

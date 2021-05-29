@@ -12,7 +12,7 @@
   width: 40%;
   max-width: 500;
   max-height: 1000;
-  border-radius: 10px;
+  //border-radius: 10px;
   background-color: $dark;
   color: $white;
   height: 50%;
@@ -21,7 +21,7 @@
 
 .head {
   height: 30%;
-  border-radius: 10px 10px 0px 0px;
+  //border-radius: 10px 10px 0px 0px;
   padding: 3rem;
   display: flex;
   position: relative;
@@ -29,7 +29,7 @@
 
   .background {
     position: absolute;
-    border-radius: 10px 10px 0px 0px;
+    //border-radius: 10px 10px 0px 0px;
     top: 0;
     left: 0;
     height: 100%;
@@ -70,7 +70,7 @@
       margin-top: 0.35ch;
       align-self: flex-start;
       margin-left: 1ch;
-      color: #bdc2bf;
+      color: $icon;
     }
   }
 
@@ -102,19 +102,13 @@
   }
 
   .icon {
-    color: #a4aba6;
-    width: 1.5rem;
-    height: 1.5rem;
-    transition: all 0.2s ease;
-    &:hover {
-      color: #bdc2bf;
-    }
+    @include icon;
   }
 }
 
 .content {
   height: 70%;
-  border-radius: 0px 0px 10px 10px;
+  //border-radius: 0px 0px 10px 10px;
   display: flex;
   position: relative;
   flex-direction: column;

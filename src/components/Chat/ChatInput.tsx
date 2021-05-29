@@ -40,19 +40,23 @@ const ChatInput: React.FC = (): JSX.Element => {
         variant={"outlined"}
         className={cn(style["input-content"], classes.root)}
         inputProps={{ className: style["input"] }}
+        placeholder={"Say hello"}
         onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
           setText(event.target.value);
         }}
         onKeyPress={(event: React.KeyboardEvent<HTMLDivElement>) => {
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
+            console.log(Boolean(text));
             if (Boolean(text)) {
               chat
                 .sendMessage(text)
-                .then(update)
+                .then(() => {
+                  setText("");
+                  update();
+                })
                 .catch((err) => client.error(err));
             }
-            setText("");
           }
         }}
       />

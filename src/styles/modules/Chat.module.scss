@@ -9,20 +9,90 @@
   height: 100vh;
   width: 100vw;
   grid-template-areas:
-    "searchbar profile"
-    "chatlist chat";
+    "burger profile"
+    "list chat";
   max-height: 100vh;
   max-width: 100vw;
   align-items: stretch;
   justify-content: stretch;
-  grid-template-rows: 10% 90%;
-  grid-template-columns: 25%;
+  grid-template-rows: max-content auto;
+  grid-template-columns: max-content auto;
 
   .chatlist-container {
-    grid-area: chatlist;
+    grid-area: list;
     display: flex;
     flex-direction: column;
     border-right: solid 1px $dark-border;
+    width: calc(15rem + 17px);
+
+    .section {
+      position: relative;
+      padding: 0.5rem 0;
+      @include flex-column;
+      width: calc(100% - 17px);
+
+      &::after {
+        position: absolute;
+        content: "";
+        left: 0;
+        bottom: 0;
+        width: 95%;
+        border-bottom: solid 2px $dark-border;
+      }
+
+      &:last-child {
+        &::after {
+          content: none;
+        }
+      }
+
+      .title {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: $dark-light;
+        padding: 0.5rem 1.5rem;
+      }
+
+      .burger-item {
+        padding: 0.5rem 1.5rem;
+        display: grid;
+        grid-template-areas: "icon text";
+        grid-template-columns: 20% auto;
+        gap: 0.5rem;
+
+        &[aria-selected="true"] {
+          background-color: #383838;
+        }
+
+        &:hover {
+          background-color: #383838;
+        }
+
+        .burger-icon {
+          grid-area: icon;
+          width: fit-content;
+          height: fit-content;
+          align-self: center;
+          color: $icon;
+          height: 2rem;
+          width: 2rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .burger-text {
+          grid-area: text;
+          font-weight: normal;
+          letter-spacing: 0.1px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          align-self: center;
+        }
+      }
+    }
 
     .item {
       display: grid;
@@ -54,6 +124,8 @@
         display: flex;
         justify-content: flex-start;
         white-space: nowrap;
+        padding: 0;
+        color: $white;
       }
       .description {
         width: 100%;
@@ -82,10 +154,6 @@
     padding-left: 0.5rem;
     overflow: hidden;
   }
-
-  .profile-container {
-    grid-area: profile;
-  }
 }
 
 .content-container {
@@ -107,16 +175,6 @@
   .icon-container {
     display: flex;
     justify-self: flex-end;
-
-    .icon {
-      color: #a4aba6;
-      width: 1.5rem;
-      height: 1.5rem;
-      transition: all 0.2s ease;
-      &:hover {
-        color: #bdc2bf;
-      }
-    }
   }
 }
 
@@ -208,9 +266,9 @@
 }
 
 .input-container {
-  padding: 0.5rem;
-  margin-right: 3.75rem;
-  margin-left: 3.75rem;
+  padding: 0.5rem 0;
+  margin-right: 4.25rem;
+  margin-left: 4rem;
 
   .input-content {
     width: 100%;
@@ -218,4 +276,26 @@
   .input {
     border-color: $white !important;
   }
+}
+
+.burger {
+  grid-area: burger;
+  display: flex;
+  align-items: center;
+  padding: calc(1.5rem - 12px);
+
+  .icon {
+    color: $white !important;
+  }
+}
+
+.profile {
+  grid-area: profile;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.icon {
+  @include icon;
 }

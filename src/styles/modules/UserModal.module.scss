@@ -97,10 +97,9 @@
 
       .icon {
         align-self: flex-start;
-        margin-left: 1ch;
-        color: #bdc2bf;
-        width: 1.3rem;
-        height: 1.3rem;
+        margin-left: 0.5ch;
+        @include icon;
+        transform: scale(0.75);
       }
     }
 
