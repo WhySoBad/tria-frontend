@@ -1,16 +1,24 @@
 import { NextPage, NextPageContext } from "next";
 import React, { useEffect } from "react";
 import Chat from "../../components/Chat/Chat";
+import Layout from "../../components/Layout/Layout";
+import { useChat } from "../../hooks/ChatContext";
 
 interface Props {
   chat?: string;
 }
 
 const ChatPage: NextPage<Props> = ({ chat }): JSX.Element => {
+  const { setSelected } = useChat();
+
+  useEffect(() => {
+    setSelected(chat);
+  }, [chat]);
+
   return (
     <>
       <title children={`Chat | ${chat}`} />
-      <Chat />
+      <Layout children={<Chat />} />
     </>
   );
 };

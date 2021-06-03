@@ -1,0 +1,44 @@
+@use "../config/" as *;
+
+.scroll-thumb {
+  background-color: $dark-border;
+}
+
+.container {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-template-areas:
+    "burger-menu profile-menu"
+    "burger content";
+  max-height: 100vh;
+  max-width: 100vw;
+  align-items: stretch;
+  justify-content: stretch;
+  grid-template-rows: max-content auto;
+  grid-template-columns: max-content auto;
+
+  .burger-container {
+    grid-area: burger;
+    display: flex;
+    flex-direction: column;
+    border-right: solid 1px $dark-border;
+    width: calc(15rem + 17px);
+  }
+
+  .content-container {
+    grid-area: content;
+    display: flex;
+    flex-direction: column;
+    padding-left: 0.5rem;
+    overflow: hidden;
+  }
+
+  .burger-menu-container {
+    grid-area: burger-menu;
+  }
+
+  .profile-menu-container {
+    grid-area: profile-menu;
+  }
+}

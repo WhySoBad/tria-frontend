@@ -2,11 +2,13 @@ import { Avatar, makeStyles } from "@material-ui/core";
 import { Chat, ChatSocketEvent, getUserPreview, Member, Message, User, UserPreview } from "client";
 import { MemberLog } from "client/dist/src/chat/classes/MemberLog.class";
 import { SHA256 } from "crypto-js";
-import React, { useEffect, useRef, useState } from "react";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import style from "../../styles/modules/Chat.module.scss";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
 import { useModal } from "../../hooks/ModalContext";
+import Scrollbar from "../Scrollbar/Scrollbar";
+import Scrollbars from "react-custom-scrollbars-2";
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -14,6 +16,7 @@ const Messages: React.FC = (): JSX.Element => {
   const { client } = useClient();
   const { selected } = useChat();
   const classes = useStyles();
+  const ref = useRef<Scrollbars>(null);
 
   const chat: Chat | undefined = client?.user.chats.get(selected);
   if (!chat) return <></>;
@@ -25,26 +28,25 @@ const Messages: React.FC = (): JSX.Element => {
   });
 
   return (
-    <>
-      {chat && <MessageLoader />}
-
+    <Scrollbar reference={ref}>
+      {chat && <MessageLoader reference={ref} />}
       {messages.map((message: Message | MemberLog, index: number, array: Array<Message | MemberLog>) => {
         const previous: false | Message | MemberLog = index !== 0 && array[index - 1];
         const previousDate: false | Date = previous && (previous instanceof Message ? previous.createdAt : previous.timestamp);
         const date: Date = message instanceof Message ? message.createdAt : message.timestamp;
         const sameDate: boolean = previousDate && previousDate.getDate() === date.getDate();
         const sameSender: boolean = previous instanceof Message && message instanceof Message && previous.sender === message.sender;
+        const key: string = message instanceof Message ? message.uuid : message.user;
         return (
-          <div key={message instanceof Message ? message.uuid : message.user}>
+          <div id={key} key={key}>
             {!sameDate && <DateContainer date={date} />}
             {message instanceof MemberLog && <MemberLogContainer message={message} />}
             {message instanceof Message && <div className={style["message-section"]} children={<MessageContainer message={message} withName={!sameSender || !sameDate} />} />}
           </div>
         );
       })}
-
       <BottomAnchor />
-    </>
+    </Scrollbar>
   );
 };
 
@@ -90,12 +92,18 @@ const MemberLogContainer: React.FC<MemberLogProps> = ({ message, last = false })
   const [fetched, setFetched] = useState<boolean>(false);
 
   useEffect(() => {
+    let mounted = true;
     getUserPreview(message.user)
       .then((user: UserPreview) => {
-        setUser(user);
-        setFetched(true);
+        if (mounted) {
+          setUser(user);
+          setFetched(true);
+        }
       })
       .catch(() => client.error("Failed fetching account"));
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -117,8 +125,12 @@ const DateContainer: React.FC<DateProps> = ({ date }): JSX.Element => {
   return <code className={style["date-log"]} children={date.toLocaleDateString()} />;
 };
 
-const MessageLoader: React.FC = (): JSX.Element => {
-  const ref = useRef<HTMLInputElement>(null);
+interface MessageLoaderProps {
+  reference: MutableRefObject<Scrollbars>;
+}
+
+const MessageLoader: React.FC<MessageLoaderProps> = ({ reference }): JSX.Element => {
+  const loaderRef = useRef<HTMLInputElement>(null);
   const { client } = useClient();
   const { update, selected } = useChat();
   const chat: Chat | undefined = client?.user.chats.get(selected);
@@ -130,16 +142,20 @@ const MessageLoader: React.FC = (): JSX.Element => {
         if (oldest && !chat.lastFetched) {
           chat
             .fetchMessages(oldest.createdAt.getTime(), 25)
-            .then(update)
+            .then(() => {
+              const start: number = reference.current.getScrollHeight();
+              update();
+              reference.current.scrollTop(reference.current.getScrollHeight() - start);
+            })
             .catch((err) => console.error(err));
         }
       }
     });
-    observer.observe(ref.current);
+    observer.observe(loaderRef.current);
     return () => observer.disconnect();
   }, [selected]);
 
-  return <div ref={ref} />;
+  return <div style={{ paddingTop: "15rem" }} ref={loaderRef} />;
 };
 
 const BottomAnchor: React.FC = (): JSX.Element => {

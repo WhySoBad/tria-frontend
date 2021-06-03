@@ -1,39 +1,13 @@
 import { ChatSocketEvent } from "client";
-import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Chat.module.scss";
-import Scrollbar from "../Scrollbar/Scrollbar";
-import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
-import ChatList from "./ChatList";
 import ChatTitle from "./ChatTitle";
 import Messages from "./Messages";
 
-interface ChatProps {}
-
-const Chat: React.FC<ChatProps> = ({}): JSX.Element => {
-  const { client } = useClient();
-  const { selected, setSelected } = useChat();
-
-  const router = useRouter();
-  const uuid: string = router.query?.uuid as string;
-
-  useEffect(() => {
-    selected !== uuid && setSelected(uuid);
-  }, [uuid]);
-
-  return (
-    <main className={style["container"]}>
-      <section className={style["chatlist-container"]} children={<ChatList />} />
-      <section className={style["chat-content-container"]} children={<ChatContent />} />
-      <ChatHeader />
-    </main>
-  );
-};
-
-const ChatContent: React.FC = ({}): JSX.Element => {
+const Chat: React.FC = (): JSX.Element => {
   const { client } = useClient();
   const { selected, update } = useChat();
   const [hasListeners, setListeners] = useState<boolean>(false);
@@ -81,10 +55,7 @@ const ChatContent: React.FC = ({}): JSX.Element => {
   return (
     <>
       <div className={style["title"]} children={<ChatTitle />} />
-      <Scrollbar>
-        <div className={style["messages-container"]} ref={ref} children={<Messages />} />
-      </Scrollbar>
-
+      <div className={style["messages-container"]} ref={ref} children={<Messages />} />
       <ChatInput />
     </>
   );

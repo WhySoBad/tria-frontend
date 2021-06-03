@@ -1,0 +1,144 @@
+@use "../config/" as *;
+
+.section {
+  position: relative;
+  padding: 0.5rem 0;
+  @include flex-column;
+  width: calc(100% - 17px);
+  &:not(:first-child, :last-child) {
+    flex: 1;
+  }
+
+  &::after {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    width: 95%;
+    border-bottom: solid 2px $dark-border;
+  }
+
+  &:last-child {
+    &::after {
+      content: none;
+    }
+  }
+
+  .title {
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: $dark-light;
+    padding: 0.5rem 1.5rem;
+  }
+
+  .burger-item {
+    padding: 0.5rem 1.5rem;
+    display: grid;
+    grid-template-areas: "icon text";
+    grid-template-columns: 20% auto;
+    gap: 0.5rem;
+
+    &[aria-selected="true"] {
+      background-color: #383838;
+    }
+
+    &:hover {
+      background-color: #383838;
+    }
+
+    .burger-icon {
+      grid-area: icon;
+      width: fit-content;
+      height: fit-content;
+      align-self: center;
+      color: $icon;
+      height: 2rem;
+      width: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .burger-text {
+      grid-area: text;
+      font-weight: normal;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      align-self: center;
+    }
+  }
+}
+
+.item {
+  display: grid;
+  padding: 0.5rem;
+  grid-template-areas: "avatar title" "avatar text";
+  width: calc(100% - 17px);
+  justify-content: flex-start;
+  align-items: inherit;
+  grid-template-columns: 50px;
+  overflow: hidden;
+
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  &.selected {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .avatar {
+    grid-area: avatar;
+    background-color: $dark-light;
+    margin-right: 0.5rem;
+  }
+
+  .title {
+    display: flex;
+    justify-content: flex-start;
+    white-space: nowrap;
+    padding: 0;
+    color: $white;
+  }
+  .description {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: -0.25rem;
+    color: $white;
+    font-size: 14px;
+    white-space: nowrap;
+
+    .sender {
+      padding-right: 0.5ch;
+    }
+
+    .text {
+      color: $dark-light;
+    }
+  }
+}
+
+.badge {
+  border: solid 1px $dark-border;
+
+  background-color: rgb(28, 29, 28);
+
+  transform: scale(1.5) translate(50%, 50%) !important;
+}
+
+[data-online="true"] {
+  .badge {
+    background-color: rgb(48, 179, 48);
+  }
+}
+
+[data-group="true"] {
+  .badge {
+    display: none;
+  }
+}

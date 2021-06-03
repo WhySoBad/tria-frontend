@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 interface ChatContext {
@@ -18,7 +19,8 @@ const defaultValue: ChatContext = {
 export const ChatContext = React.createContext<ChatContext>(defaultValue);
 
 export const ChatProvider: NextPage = ({ children }): JSX.Element => {
-  const [chat, setChat] = useState<string>(defaultValue.selected);
+  const router = useRouter();
+  const [chat, setChat] = useState<string>(router.query.uuid as string);
   const [updated, setUpdate] = useState<number>();
 
   const update: () => void = (): void => {

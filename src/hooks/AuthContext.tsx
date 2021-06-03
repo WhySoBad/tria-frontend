@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Credentials, loginUser, validateToken } from 'client';
-import { useCookies } from 'react-cookie';
-import { NextPage } from 'next';
+import React, { useEffect, useState } from "react";
+import { Credentials, loginUser, validateToken } from "client";
+import { useCookies } from "react-cookie";
+import { NextPage } from "next";
 
 interface AuthContext {
   login: (credentials: Credentials) => Promise<string>;
@@ -25,14 +25,13 @@ export const AuthProvider: NextPage = ({ children }): JSX.Element => {
   const [token, setToken] = useState<string>(tokenCookie);
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
 
-  useEffect(() => setToken(tokenCookie), []);
-
   useEffect(() => {
-    if (token)
-      setCookie('token', token, {
+    if (token) {
+      setCookie("token", token, {
         expires: new Date(new Date().getTime() + 100 * 86400000),
-        path: '/',
+        path: "/",
       });
+    }
   }, [token]);
 
   const login = (credentials: Credentials): Promise<string> => {
@@ -75,7 +74,7 @@ export const useAuth = () => {
   const context = React.useContext(AuthContext);
 
   if (context === undefined) {
-    throw new Error('useAuth must be used within a AuthProvider');
+    throw new Error("useAuth must be used within a AuthProvider");
   }
   return context;
 };
