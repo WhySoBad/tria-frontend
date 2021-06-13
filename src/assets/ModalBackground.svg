@@ -1,0 +1,51 @@
+<svg  data-name="modalbackground" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 651 201">
+  <defs>
+    <style>
+      .polygon {
+        stroke: none;
+        stroke-miterlimit: 0;
+        fill: none;
+      }
+
+      #one {
+        fill: rgba(0,0,0,0.3);
+      }
+
+      #two {
+        fill: rgba(0,0,0,0.5);
+      }
+
+      #three {
+        fill: rgba(0,0,0,0.4);
+      }
+
+      #four {
+        fill: rgba(0,0,0,0.45);
+      }
+
+      #five {
+        fill: rgba(0,0,0,0.5);
+      }
+
+      #six {
+        fill: rgba(0,0,0,0.55);
+      }
+
+      #seven {
+        fill: rgba(0,0,0,0.4);
+      }
+
+      #eight {
+        fill: rgba(0,0,0,0.45);
+      }
+    </style>
+  </defs>
+  <polygon class="polygon" id="one" points="0 59 231 201 0 201 0 59"/>
+  <polygon class="polygon" id="two" points="0 0 0 59 174 166 285.5 0 0 0"/>
+  <polygon class="polygon" id="three" points="231 201 382.45 201 258 41 174 166 231 201"/>
+  <polygon class="polygon" id="four" points="285.5 0 258 41 283.75 74.5 455 0 285.5 0"/>
+  <polygon class="polygon" id="five" points="434 9 283.75 74.5 306.99 104.5 524.07 174 621 73 434.78 9"/>
+  <polyline class="polygon" id="six" points="434 9 651 83.65 651 0 455 0"/>
+  <polygon class="polygon" id="seven" points="651 83.65 651 201 498.3 201 621 73 651 83.65"/>
+  <polyline class="polygon" id="eight" points="382.45 201 498.3 201 524.07 174 306.99 104.5"/>
+</svg>

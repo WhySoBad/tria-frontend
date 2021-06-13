@@ -11,3 +11,5 @@ const ProfilePage: NextPage = (): JSX.Element => {
     </>
   );
 };
+
+export default ProfilePage;

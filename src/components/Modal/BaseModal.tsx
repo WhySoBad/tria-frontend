@@ -36,8 +36,8 @@ export const ModalHead: React.FC<ModalHeadProps> = ({ name, tag, uuid, children,
       {({ data, loading, error }) => {
         const color = error ? hex : loading ? "" : data[0];
         return (
-          <div className={style["head"]}>
-            <div className={style["background"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,1) 100%)` }} />
+          <div className={style["head"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
+            <div className={style["background"]} />
             <Avatar variant={"rounded"} className={style["avatar"]} alt={name} src={avatar} style={{ backgroundColor: color }} />
             <div className={style["text-container"]}>
               <div className={style["name"]}>

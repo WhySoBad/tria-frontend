@@ -12,7 +12,6 @@
   width: 40%;
   max-width: 500;
   max-height: 1000;
-  //border-radius: 10px;
   background-color: $dark;
   color: $white;
   height: 50%;
@@ -21,15 +20,15 @@
 
 .head {
   height: 30%;
-  //border-radius: 10px 10px 0px 0px;
   padding: 3rem;
   display: flex;
   position: relative;
   word-break: break-all;
 
   .background {
+    background-image: url("../../assets/ModalBackground.svg");
+    background-size: cover;
     position: absolute;
-    //border-radius: 10px 10px 0px 0px;
     top: 0;
     left: 0;
     height: 100%;
@@ -70,7 +69,7 @@
       margin-top: 0.35ch;
       align-self: flex-start;
       margin-left: 1ch;
-      color: $icon;
+      color: $icon-hover !important;
     }
   }
 
@@ -108,7 +107,6 @@
 
 .content {
   height: 70%;
-  //border-radius: 0px 0px 10px 10px;
   display: flex;
   position: relative;
   flex-direction: column;

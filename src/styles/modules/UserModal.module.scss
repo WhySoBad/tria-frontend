@@ -100,6 +100,7 @@
         margin-left: 0.5ch;
         @include icon;
         transform: scale(0.75);
+        color: $icon-hover !important;
       }
     }
 
