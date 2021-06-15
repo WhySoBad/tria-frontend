@@ -65,12 +65,10 @@ const MessageContainer: React.FC<MessageProps> = ({ message, withName = false, l
   const sender: Member = chat.members.get(message.sender);
   const own: boolean = message.sender === client.user.uuid;
 
-  const uuidHex: string = SHA256(sender.user.uuid).toString().substr(0, 6);
-
   return (
     <>
       {withName && <Avatar alt={sender.user.name} className={style["avatar"]} style={{ backgroundColor: sender.user.color }} onClick={() => openMember(sender)} />}
-      <div className={style["message"]} style={{ boxShadow: `0 0 2px 0.5px ${sender.user.color}` }}>
+      <div className={style["message"]} /* style={{ boxShadow: `0 0 2px 0.5px ${sender.user.color}` }} */>
         {withName && <h6 className={style["sender"]} children={sender.user.name} onClick={() => openMember(sender)} />}
         <div className={style["text"]} children={message.text} />
         <code className={style["date"]} children={message.createdAt.toLocaleTimeString().substr(0, 5)} />

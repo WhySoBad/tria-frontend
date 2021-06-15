@@ -4,7 +4,7 @@ import React from "react";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Burger.module.scss";
 import Scrollbar from "../Scrollbar/Scrollbar";
-import { Home as HomeIcon, Explore as ExploreIcon, AddBox as AddIcon } from "@material-ui/icons";
+import { Home as HomeIcon, Search as ExploreIcon, AddBox as AddIcon } from "@material-ui/icons";
 import Link from "next/link";
 import { Avatar, Badge } from "@material-ui/core";
 
@@ -22,13 +22,16 @@ const Burger: React.FC = (): JSX.Element => {
     }),
   ];
 
+  const sameRoute = (route: string): boolean => route.toLowerCase() === router.pathname.toLowerCase();
+
   return (
     <Scrollbar>
       <Section title={"Profile"}>
-        <Item href={"/app"} icon={<HomeIcon />} text={"Home"} selected={router.pathname === "/app"} />
+        <ProfileItem />
+        <Item href={"/profile"} icon={<HomeIcon />} text={"Profile"} selected={sameRoute("/profile")} />
       </Section>
       <Section>
-        <Item href={"/app"} icon={<HomeIcon />} text={"Home"} selected={router.pathname === "/app"} />
+        <Item href={"/app"} icon={<HomeIcon />} text={"Home"} selected={sameRoute("/app")} />
       </Section>
       <Section title={"Chats"}>
         {sortedChats.map((chat: Chat) => {
@@ -36,9 +39,9 @@ const Burger: React.FC = (): JSX.Element => {
         })}
       </Section>
       <Section>
-        <Item href={"/chat/explore"} icon={<ExploreIcon />} text={"Find chats"} selected={router.pathname === "/chat/explore"} />
-        <Item href={"/user/explore"} icon={<ExploreIcon />} text={"Find user"} selected={router.pathname === "/user/explore"} />
-        <Item href={"/app"} icon={<AddIcon />} text={"Create chat"} />
+        <Item href={"/chat/explore"} icon={<ExploreIcon />} text={"Find chats"} selected={sameRoute("/chat/explore")} />
+        <Item href={"/user/explore"} icon={<ExploreIcon />} text={"Find user"} selected={sameRoute("/user/explore")} />
+        <Item href={"/chat/create"} icon={<AddIcon />} text={"Create chat"} selected={sameRoute("/chat/create")} />
       </Section>
     </Scrollbar>
   );
@@ -110,6 +113,13 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat }): JSX.Element => {
       </div>
     </Link>
   );
+};
+
+interface ProfileProps {}
+
+const ProfileItem: React.FC<ProfileProps> = (): JSX.Element => {
+  const { client } = useClient();
+  return <div className={style["profile-container"]} style={{ backgroundColor: `${client.user.color}` }}></div>;
 };
 
 const getChatName: (chat: Chat) => string = (chat: Chat): string => {

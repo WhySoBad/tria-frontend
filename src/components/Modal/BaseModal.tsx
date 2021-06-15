@@ -3,7 +3,9 @@ import React from "react";
 import style from "../../styles/modules/Modal.module.scss";
 import { Group as GroupIcon } from "@material-ui/icons";
 import Scrollbar from "../Scrollbar/Scrollbar";
-import Color, { useColor, Palette } from "color-thief-react";
+import { usePalette } from "color-thief-react";
+import { useState } from "react";
+import { useEffect } from "react";
 
 export interface ModalProps {
   open?: boolean;
@@ -15,7 +17,9 @@ export const ModalContainer: React.FC<ModalProps> = ({ open = false, withBack = 
   return (
     <Modal open={open} onClose={onClose} className={style["modal"]} closeAfterTransition BackdropComponent={Backdrop} BackdropProps={{ timeout: 500, invisible: withBack }}>
       <Fade in={open}>
-        <section className={style["container"]} children={children} />
+        <section className={style["container"]} onClick={onClose}>
+          <div className={style["content-container"]} children={children} onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event.stopPropagation()} />
+        </section>
       </Fade>
     </Modal>
   );
@@ -31,29 +35,30 @@ export interface ModalHeadProps {
 }
 
 export const ModalHead: React.FC<ModalHeadProps> = ({ name, tag, uuid, children, group = false, avatar, hex }): JSX.Element => {
+  const [color, setColor] = useState<string>();
+
+  const { data, loading, error } = usePalette(avatar, 1, "hex", { quality: 15, crossOrigin: "anonymus" });
+
+  useEffect(() => {
+    setColor(error ? hex : data);
+  }, [loading, error]);
+
   return (
-    <Palette colorCount={2} src={avatar} format={"hex"} crossOrigin={"anonymus"}>
-      {({ data, loading, error }) => {
-        const color = error ? hex : loading ? "" : data[0];
-        return (
-          <div className={style["head"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
-            <div className={style["background"]} />
-            <Avatar variant={"rounded"} className={style["avatar"]} alt={name} src={avatar} style={{ backgroundColor: color }} />
-            <div className={style["text-container"]}>
-              <div className={style["name"]}>
-                <h3 children={name} />
-                {group && <GroupIcon className={style["icon"]} />}
-              </div>
-              <div className={style["tag"]}>
-                <code children={`${tag}`} />
-              </div>
-            </div>
-            <code children={uuid} className={style["uuid"]} />
-            <div className={style["icon-container"]}>{children}</div>
-          </div>
-        );
-      }}
-    </Palette>
+    <div className={style["head"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
+      <div className={style["background"]} />
+      <Avatar variant={"rounded"} className={style["avatar"]} alt={name} src={avatar} style={{ backgroundColor: color }} />
+      <div className={style["text-container"]}>
+        <div className={style["name"]}>
+          <h3 children={name} />
+          {group && <GroupIcon className={style["icon"]} />}
+        </div>
+        <div className={style["tag"]}>
+          <code children={`${tag}`} />
+        </div>
+      </div>
+      <code children={uuid} className={style["uuid"]} />
+      <div className={style["icon-container"]}>{children}</div>
+    </div>
   );
 };
 
