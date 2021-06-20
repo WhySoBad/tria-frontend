@@ -39,6 +39,8 @@ const Chat: React.FC = (): JSX.Element => {
     client.on(ChatSocketEvent.GROUP_CREATE, update);
     client.on(ChatSocketEvent.PRIVATE_CREATE, update);
     client.on(ChatSocketEvent.CHAT_EDIT, update);
+    client.on(ChatSocketEvent.MEMBER_ONLINE, update);
+    client.on(ChatSocketEvent.MEMBER_OFFLINE, update);
   };
 
   const removeListeners = (): void => {
@@ -50,6 +52,8 @@ const Chat: React.FC = (): JSX.Element => {
     client.off(ChatSocketEvent.GROUP_CREATE, update);
     client.off(ChatSocketEvent.PRIVATE_CREATE, update);
     client.off(ChatSocketEvent.CHAT_EDIT, update);
+    client.off(ChatSocketEvent.MEMBER_ONLINE, update);
+    client.off(ChatSocketEvent.MEMBER_OFFLINE, update);
   };
 
   return (

@@ -13,9 +13,7 @@ interface ChatModalProps extends ModalProps {
   chat: Chat;
 }
 
-const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat, withBack }) => {
-  const { client } = useClient();
-
+const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat }) => {
   const name: string = chat instanceof Group ? chat.name : chat instanceof PrivateChat ? chat.participant.user.name : "";
   const tag: string = chat instanceof Group ? chat.tag : chat instanceof PrivateChat ? chat.participant.user.tag : "";
 
@@ -31,6 +29,55 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat, withBack }) => {
     <>
       <ModalHead hex={chat?.color} avatar={chat instanceof PrivateChat ? chat.participant.user.avatarURL : ""} name={name} tag={tag} uuid={chat?.uuid} group={chat instanceof Group}>
         {canEdit && <IconButton children={<SettingsIcon className={modalStyle["icon"]} />} />}
+        <IconButton children={<MoreIcon className={modalStyle["icon"]} />} onClick={openMore} />
+        <IconButton children={<CloseIcon className={modalStyle["icon"]} />} onClick={onClose} />
+      </ModalHead>
+      <ModalContent noScrollbar>
+        {chat instanceof PrivateChat && <div className={style["no-shared"]} children={"No shared chats"} />}
+        {chat instanceof Group && (
+          <div className={style["content"]}>
+            <Scrollbar>
+              <div className={style["members"]}>
+                <RoleBorder title={"owner"} />
+                {owner.map((owner: Owner) => (
+                  <ChatMember chat={chat} member={owner} key={owner.user.uuid} />
+                ))}
+                {admins.length !== 0 && (
+                  <>
+                    <RoleBorder title={"admin"} />
+                    {admins.map((admin: Admin) => (
+                      <ChatMember chat={chat} member={admin} key={admin.user.uuid} />
+                    ))}
+                  </>
+                )}
+                <RoleBorder title={"member"} />
+                {members.map((member: Member) => (
+                  <ChatMember chat={chat} member={member} key={member.user.uuid} />
+                ))}
+              </div>
+            </Scrollbar>
+          </div>
+        )}
+      </ModalContent>
+    </>
+  );
+};
+
+interface GroupModalProps extends ModalProps {
+  chat: Group;
+}
+
+const GroupModal: React.FC<GroupModalProps> = ({ chat, onClose, withBack }): JSX.Element => {
+  const openMore = () => {};
+
+  const owner: Array<Owner> = chat?.members.values().filter((member: Member) => member instanceof Owner);
+  const admins: Array<Admin> = chat?.members.values().filter((member: Member) => member instanceof Admin) as any;
+  const members: Array<Member> = chat?.members.values().filter((member: Member) => !(member instanceof Owner) && !(member instanceof Admin));
+
+  return (
+    <>
+      <ModalHead hex={chat?.color} avatar={chat instanceof PrivateChat ? chat.participant.user.avatarURL : ""} name={chat.name} tag={chat.tag} uuid={chat?.uuid} group={chat instanceof Group}>
+        {chat.canEditGroup && <IconButton children={<SettingsIcon className={modalStyle["icon"]} />} />}
         <IconButton children={<MoreIcon className={modalStyle["icon"]} />} onClick={openMore} />
         <IconButton children={<CloseIcon className={modalStyle["icon"]} />} onClick={onClose} />
       </ModalHead>
@@ -81,7 +128,7 @@ const RoleBorder: React.FC<RoleBorderProps> = ({ title }): JSX.Element => {
 };
 
 interface ChatMemberProps {
-  chat: Chat;
+  chat: Group;
   member: Member;
 }
 
@@ -89,9 +136,7 @@ const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element =>
   const { client } = useClient();
   const { openMember, openChat } = useModal();
 
-  const canEdit: boolean = (chat instanceof Group ? chat?.canEditMembers : true) && !(member instanceof Owner) && member.user.uuid !== client.user.uuid;
-  const canBan: boolean = chat instanceof Group ? chat?.canBan : false;
-  const canKick: boolean = chat instanceof Group ? chat?.canKick : false;
+  const withMore: boolean = !(member instanceof Owner) && member.user.uuid !== client.user.uuid && (chat?.canBan || chat?.canEditMembers || chat?.canKick);
 
   const openMore = () => {};
 
@@ -104,7 +149,7 @@ const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element =>
         <h6 children={member.user.name} className={style["title"]} />
         <div children={member.user.description} className={style["description"]} />
       </div>
-      <div className={style["icon-container"]}>{(canEdit || canBan || canKick) && <IconButton children={<MoreIcon className={style["icon"]} />} onClick={openMore} />}</div>
+      <div className={style["icon-container"]}>{withMore && <IconButton children={<MoreIcon className={style["icon"]} />} onClick={openMore} />}</div>
     </div>
   );
 };

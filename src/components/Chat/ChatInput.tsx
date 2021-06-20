@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import style from "../../styles/modules/Chat.module.scss";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
+import { useRef } from "react";
+import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
   root: {

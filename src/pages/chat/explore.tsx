@@ -7,7 +7,7 @@ const ExplorePage: NextPage = (): JSX.Element => {
   return (
     <>
       <title>Explore Chat</title>
-      <Layout children={<Explore />} />
+      <Layout children={<Explore type={"CHAT"} />} />
     </>
   );
 };

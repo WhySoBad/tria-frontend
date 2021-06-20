@@ -40,11 +40,19 @@
     gap: 0.5rem;
 
     &[aria-selected="true"] {
-      background-color: #383838;
+      background-color: rgba(255, 255, 255, 0.1) !important;
+
+      .burger-text {
+        color: $white !important;
+      }
+
+      .burger-icon {
+        color: $white !important;
+      }
     }
 
     &:hover {
-      background-color: #383838;
+      background-color: rgba(255, 255, 255, 0.05);
     }
 
     .burger-icon {
@@ -67,6 +75,8 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       align-self: center;
+      color: $gray-text;
+      font-weight: bold;
     }
   }
 }

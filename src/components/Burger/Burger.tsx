@@ -1,5 +1,6 @@
 import { Chat, Group, PrivateChat } from "client";
 import { useRouter } from "next/router";
+import cn from "classnames";
 import React from "react";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Burger.module.scss";
@@ -70,7 +71,7 @@ interface ItemProps {
 const Item: React.FC<ItemProps> = ({ href, icon, text, selected = false }): JSX.Element => {
   return (
     <Link href={href}>
-      <div className={style["burger-item"]} aria-selected={selected}>
+      <div className={cn(style["burger-item"], selected && style["selected"])} aria-selected={selected}>
         <div className={style["burger-icon"]} children={icon} />
         <div className={style["burger-text"]} children={text} />
       </div>
@@ -92,7 +93,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat }): JSX.Element => {
 
   return (
     <Link href={href}>
-      <div className={style["burger-item"]} aria-selected={chat.uuid === selected}>
+      <div className={cn(style["burger-item"], selected && style["selected"])} aria-selected={chat.uuid === selected}>
         <div className={style["burger-icon"]}>
           <Badge
             overlap="circle"

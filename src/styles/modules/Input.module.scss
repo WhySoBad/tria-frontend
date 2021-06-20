@@ -5,7 +5,7 @@
   justify-content: center;
   align-items: center;
   background-color: transparent;
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: "IBM Plex Sans", sans-serif;
   color: $white;
   border-radius: 4px;
   padding: 0.75rem 1rem;
@@ -21,7 +21,7 @@
     border-color: $dark-error;
   }
 
-  &[data-error='true'] {
+  &[data-error="true"] {
     border-color: $dark-error;
     &:hover {
       border-color: $dark-error-hover;
@@ -29,5 +29,27 @@
     &:focus {
       border-color: $dark-error-focus;
     }
+  }
+}
+
+.searchbar-container {
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  min-width: 300px;
+  max-width: 500px;
+  width: 100%;
+  background-color: $darker;
+  border-radius: 5px;
+  border: solid 1px $dark-border;
+
+  .searchbar {
+    margin-left: 0.5rem;
+    flex: 1;
+    color: $gray-text;
+  }
+
+  .icon {
+    color: $gray-text;
   }
 }

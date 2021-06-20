@@ -24,13 +24,13 @@
     flex-direction: column;
     border-right: solid 1px $dark-border;
     width: calc(15rem + 17px);
+    background-color: $dark;
   }
 
   .content-container {
     grid-area: content;
     display: flex;
     flex-direction: column;
-    padding-left: 0.5rem;
     overflow: hidden;
   }
 
