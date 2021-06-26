@@ -2,19 +2,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&display=swap");
 
 .container {
+  position: relative;
   height: 100%;
   width: calc(100%);
   @include flex-column;
   .content-container {
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    padding: 2rem 1rem;
+
+    &[data-view="grid"] {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+      gap: 1.5rem;
+    }
+
+    &[data-view="list"] {
+      @include flex-column;
+    }
   }
 }
 
 .title-container {
-  position: static;
   display: flex;
   padding: 1rem 0.75rem;
   min-height: 100px;
@@ -27,7 +34,7 @@
   .title-content {
     position: relative;
     width: 100%;
-    display: flex;
+    @include flex-column;
     justify-content: center;
     align-items: center;
 
@@ -49,20 +56,56 @@
   }
 }
 
-.item {
-  &:hover {
-    transition: all 0.1s;
-    transform: translateY(-0.25rem);
+.icons {
+  position: absolute;
+  top: 1rem;
+  right: 0.75rem;
+}
+
+.collapsed-title-container {
+  position: absolute;
+  width: calc(100%);
+  padding: 1rem 0.75rem;
+  display: flex;
+  border-bottom: solid 3px $dark-border;
+  background-color: $lighter-dark;
+  transition: all 0.2s;
+  align-items: center;
+
+  .collapsed-title {
+    width: calc(100% / 3);
+    transition: all 0.2s;
+  }
+
+  .collapsed-searchbar {
+    width: calc(100% / 3);
+    transition: all 0.2s;
+  }
+
+  .icon-container {
+    width: calc(100% / 3);
+    transition: all 0.2s;
   }
 }
 
-.item-container {
+.icon-container {
+  color: $white;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.grid-item {
   @include flex-column;
   background-color: $dark;
   color: $white;
   cursor: pointer;
+  &:hover {
+    transition: all 0.1s;
+    transform: translateY(-0.25rem);
+  }
 
-  .head {
+  .content {
     border-radius: 5px;
     height: 125px;
     padding: 2rem;
@@ -112,7 +155,7 @@
       align-items: center;
       line-height: 1;
       .icon {
-        margin-top: 0.35ch;
+        justify-self: center;
         align-self: flex-start;
         margin-left: 1ch;
         color: $icon-hover !important;
@@ -136,19 +179,55 @@
       font-size: 12px;
     }
   }
+}
 
-  .content {
-    @include flex-column;
-    position: relative;
-    height: 100px;
+.list-item {
+  width: 100%;
+  position: relative;
+  border-radius: 5px;
+  display: grid;
+  padding: 0.25rem;
+  padding-left: 0.5rem;
+  grid-template-areas: "avatar title" "avatar text";
+  justify-content: flex-start;
+  align-items: inherit;
+  grid-template-columns: 50px;
+  cursor: pointer;
+  margin-bottom: 0.25rem;
 
-    .member-container {
-      display: flex;
-      justify-content: space-between;
-    }
+  &:last-child {
+    margin-bottom: 0;
+  }
 
-    .text {
-      color: $dark-border;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .avatar {
+    grid-area: avatar;
+    background-color: $dark-light;
+    margin-right: 0.5rem;
+    align-self: center;
+  }
+
+  .title {
+    display: flex;
+    justify-content: flex-start;
+    width: fit-content;
+    .icon {
+      transform: scale(0.75);
+      justify-self: center;
+      align-self: flex-start;
+      margin-left: 0.5ch;
+      color: $icon-hover !important;
     }
   }
+
+  .description {
+    margin-top: -0.25ch;
+  }
+}
+
+.icon {
+  color: $icon;
 }

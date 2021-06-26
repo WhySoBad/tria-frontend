@@ -68,14 +68,18 @@
   .item-container {
     width: 100%;
     position: relative;
-    //transition: all 0.2s;
     border-radius: 5px;
+    margin-bottom: 0.25rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
 
     &:hover {
       .icon-container {
         opacity: 1;
       }
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, 0.05);
     }
 
     .icon-container {

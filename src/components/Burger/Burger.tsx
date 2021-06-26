@@ -9,9 +9,12 @@ import { Home as HomeIcon, Search as ExploreIcon, AddBox as AddIcon } from "@mat
 import Link from "next/link";
 import { Avatar, Badge } from "@material-ui/core";
 
-const Burger: React.FC = (): JSX.Element => {
+interface BurgerProps {
+  onClick?: () => void;
+}
+
+const Burger: React.FC<BurgerProps> = ({ onClick }): JSX.Element => {
   const { client } = useClient();
-  const router = useRouter();
 
   if (!client) return <></>;
 
@@ -23,26 +26,23 @@ const Burger: React.FC = (): JSX.Element => {
     }),
   ];
 
-  const sameRoute = (route: string): boolean => route.toLowerCase() === router.pathname.toLowerCase();
-
   return (
     <Scrollbar>
-      <Section title={"Profile"}>
+      <Section onClick={onClick} title={"Profile"}>
         <ProfileItem />
-        <Item href={"/profile"} icon={<HomeIcon />} text={"Profile"} selected={sameRoute("/profile")} />
+        <Item href={"/profile"} icon={<HomeIcon />} text={"Profile"} />
       </Section>
-      <Section>
-        <Item href={"/app"} icon={<HomeIcon />} text={"Home"} selected={sameRoute("/app")} />
+      <Section onClick={onClick}>
+        <Item href={"/app"} icon={<HomeIcon />} text={"Home"} />
       </Section>
-      <Section title={"Chats"}>
+      <Section onClick={onClick} title={"Chats"}>
         {sortedChats.map((chat: Chat) => {
           return <ChatItem chat={chat} key={chat.uuid} />;
         })}
       </Section>
-      <Section>
-        <Item href={"/chat/explore"} icon={<ExploreIcon />} text={"Find chats"} selected={sameRoute("/chat/explore")} />
-        <Item href={"/user/explore"} icon={<ExploreIcon />} text={"Find user"} selected={sameRoute("/user/explore")} />
-        <Item href={"/chat/create"} icon={<AddIcon />} text={"Create chat"} selected={sameRoute("/chat/create")} />
+      <Section onClick={onClick}>
+        <Item href={"/explore"} icon={<ExploreIcon />} text={"Explore"} />
+        <Item href={"/chat/create"} icon={<AddIcon />} text={"Create chat"} />
       </Section>
     </Scrollbar>
   );
@@ -50,13 +50,14 @@ const Burger: React.FC = (): JSX.Element => {
 
 interface SectionProps {
   title?: string;
+  onClick?: () => void;
 }
 
-const Section: React.FC<SectionProps> = ({ title, children }): JSX.Element => {
+const Section: React.FC<SectionProps> = ({ onClick, title, children }): JSX.Element => {
   return (
     <section className={style["section"]}>
       {title && <h3 children={title} className={style["title"]} />}
-      {children}
+      <div onClick={onClick}> {children} </div>
     </section>
   );
 };
@@ -65,10 +66,11 @@ interface ItemProps {
   icon: JSX.Element;
   text: string;
   href: string;
-  selected?: boolean;
 }
 
-const Item: React.FC<ItemProps> = ({ href, icon, text, selected = false }): JSX.Element => {
+const Item: React.FC<ItemProps> = ({ href, icon, text }): JSX.Element => {
+  const router = useRouter();
+  const selected: boolean = href.toLowerCase() === router.pathname.toLowerCase();
   return (
     <Link href={href}>
       <div className={cn(style["burger-item"], selected && style["selected"])} aria-selected={selected}>

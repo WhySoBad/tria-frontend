@@ -49,7 +49,12 @@
     color: $gray-text;
   }
 
+  .iconbutton {
+    padding: 0;
+  }
+
   .icon {
     color: $gray-text;
+    margin: 0 0.25rem;
   }
 }

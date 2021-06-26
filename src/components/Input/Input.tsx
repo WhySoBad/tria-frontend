@@ -1,7 +1,7 @@
 import React from "react";
 import style from "../../styles/modules/Input.module.scss";
-import { InputBase, InputBaseProps, InputAdornment } from "@material-ui/core";
-import { Search as SearchIcon } from "@material-ui/icons";
+import { InputBase, InputBaseProps, InputAdornment, IconButton } from "@material-ui/core";
+import { Search as SearchIcon, Tune as TuneIcon } from "@material-ui/icons";
 
 type InputTypes =
   | "button"
@@ -49,12 +49,25 @@ const Input: React.FC<Props> = ({ className, error, onKeyPress, onEnter, ...rest
   );
 };
 
-interface SearchbarProps extends InputBaseProps {}
+interface SearchbarProps extends InputBaseProps {
+  onTuneOpen?: () => void;
+}
 
-export const Searchbar: React.FC<SearchbarProps> = ({ ...props }): JSX.Element => {
+export const Searchbar: React.FC<SearchbarProps> = ({ onTuneOpen, ...props }): JSX.Element => {
   return (
     <div className={style["searchbar-container"]}>
-      <InputBase className={style["searchbar"]} spellCheck={false} {...props} endAdornment={<InputAdornment position={"end"} children={<SearchIcon className={style["icon"]} />} />} />
+      <InputBase
+        className={style["searchbar"]}
+        spellCheck={false}
+        {...props}
+        endAdornment={
+          <InputAdornment position={"end"}>
+            <IconButton disableRipple onClick={onTuneOpen} classes={{root: style["iconbutton"]}}>
+              <TuneIcon className={style["icon"]} />
+            </IconButton>
+          </InputAdornment>
+        }
+      />
     </div>
   );
 };
