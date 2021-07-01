@@ -15,6 +15,7 @@
   padding: 2rem 0;
 
   .content-container {
+    border-radius: 5px;
     @include flex-column;
     align-self: center;
     max-height: calc(min(550px, 100%));
@@ -25,6 +26,7 @@
 }
 
 .head {
+  border-radius: 5px 5px 0px 0px;
   height: 200px;
   padding: 3rem;
   display: flex;
@@ -138,10 +140,12 @@
     top: 0;
     left: 0;
     width: 100% !important;
+    border-radius: 0 !important;
   }
 
   .head {
     height: 250px !important;
+    border-radius: 0 !important;
   }
 }
 
@@ -153,9 +157,11 @@
     top: 0;
     left: 0;
     width: 100% !important;
+    border-radius: 0 !important;
   }
 
   .head {
     height: 250px !important;
+    border-radius: 0 !important;
   }
 }

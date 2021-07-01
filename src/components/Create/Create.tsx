@@ -1,15 +1,17 @@
 import React from "react";
-import style from "../../styles/modules/Profile.module.scss";
+import style from "../../styles/modules/Create.module.scss";
 
-const Profile: React.FC = (): JSX.Element => {
+interface CreateProps {}
+
+const Create: React.FC<CreateProps> = (): JSX.Element => {
   return (
     <main className={style["container"]}>
       <section className={style["title-container"]}>
-        <h3 className={style["title"]} children={"Profile"} />
+        <h3 className={style["title"]} children={"Create Group"} />
       </section>
       <section className={style["content-container"]}></section>
     </main>
   );
 };
 
-export default Profile;
+export default Create;

@@ -1,12 +1,13 @@
 import { NextPage } from "next";
 import React from "react";
-import Layout from "../../components/Layout/Layout";
+import Create from "../components/Create/Create";
+import Layout from "../components/Layout/Layout";
 
 const CreatePage: NextPage = (): JSX.Element => {
   return (
     <>
-      <title>Create Chat</title>
-      <Layout></Layout>
+      <title>Create</title>
+      <Layout children={<Create />} />
     </>
   );
 };

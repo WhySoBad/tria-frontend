@@ -1,6 +1,6 @@
 import { Avatar, IconButton } from "@material-ui/core";
 import { Admin, Chat, Group, Member, Owner, PrivateChat } from "client";
-import React from "react";
+import React, { useState } from "react";
 import style from "../../styles/modules/ChatModal.module.scss";
 import modalStyle from "../../styles/modules/Modal.module.scss";
 import { useClient } from "../../hooks/ClientContext";
@@ -8,6 +8,9 @@ import { MoreVert as MoreIcon, Close as CloseIcon, Settings as SettingsIcon, Gro
 import { ModalContent, ModalHead, ModalProps } from "./BaseModal";
 import { useModal } from "../../hooks/ModalContext";
 import Scrollbar from "../Scrollbar/Scrollbar";
+import Menu, { MenuItem, NestedMenu } from "../Menu/Menu";
+import { useRef } from "react";
+import { useEffect } from "react";
 
 interface ChatModalProps extends ModalProps {
   chat: Chat;
@@ -135,13 +138,29 @@ interface ChatMemberProps {
 const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element => {
   const { client } = useClient();
   const { openMember, openChat } = useModal();
+  const menuRef = useRef<SVGSVGElement>(null);
+  const editRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [editOpen, setEditOpen] = useState<boolean>(false);
 
   const withMore: boolean = !(member instanceof Owner) && member.user.uuid !== client.user.uuid && (chat?.canBan || chat?.canEditMembers || chat?.canKick);
 
-  const openMore = () => {};
+  useEffect(() => {
+    !menuOpen && setEditOpen(false);
+  }, [menuOpen]);
+
+  const openMore = () => {
+    setMenuOpen(true);
+  };
+
+  const handleBan = () => {};
+
+  const handleKick = () => {};
+
+  const handleEdit = () => {};
 
   return (
-    <div className={style["item-container"]}>
+    <div className={style["item-container"]} data-open={menuOpen}>
       <div className={style["item"]} onClick={() => openMember(member, { withBack: true, onClose: () => openChat(chat) })}>
         <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: member.user.color }}>
           {member.user.uuid.substr(0, 1)}
@@ -149,7 +168,37 @@ const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element =>
         <h6 children={member.user.name} className={style["title"]} />
         <div children={member.user.description} className={style["description"]} />
       </div>
-      <div className={style["icon-container"]}>{withMore && <IconButton children={<MoreIcon className={style["icon"]} />} onClick={openMore} />}</div>
+      <div className={style["icon-container"]}>{withMore && <IconButton children={<MoreIcon ref={menuRef} className={style["icon"]} />} onClick={openMore} />}</div>
+      <Menu anchorEl={menuRef.current} open={menuOpen} onClose={() => setMenuOpen(false)}>
+        {chat.canKick && (
+          <MenuItem onClick={handleKick} onClose={setMenuOpen}>
+            Kick member
+          </MenuItem>
+        )}
+        {chat.canBan && (
+          <MenuItem onClick={handleBan} onClose={setMenuOpen}>
+            Ban member
+          </MenuItem>
+        )}
+        {chat.canEditMembers && (
+          <MenuItem
+            ref={editRef}
+            onClick={handleEdit}
+            onClose={setMenuOpen}
+            nested={{
+              open: false,
+              children: (
+                <>
+                  <MenuItem children={"Test1"} />
+                  <MenuItem children={"Test2"} />
+                </>
+              ),
+            }}
+          >
+            Edit Member
+          </MenuItem>
+        )}
+      </Menu>
     </div>
   );
 };

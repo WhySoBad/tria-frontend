@@ -1,4 +1,4 @@
-import { Avatar, makeStyles } from "@material-ui/core";
+import { Avatar, makeStyles, CircularProgress } from "@material-ui/core";
 import { Chat, ChatSocketEvent, getUserPreview, Member, Message, User, UserPreview } from "client";
 import { MemberLog } from "client/dist/src/chat/classes/MemberLog.class";
 import { SHA256 } from "crypto-js";
@@ -107,7 +107,7 @@ const MemberLogContainer: React.FC<MemberLogProps> = ({ message, last = false })
   return (
     <>
       <code className={style["member-log"]} style={{ opacity: fetched ? 1 : 0 }}>
-        {user ? <code children={user.name} className={style["name"]} onClick={() => openUser(new User(user as any))} /> : "Deleted Account"}
+        {user ? <code children={user.name} className={style["name"]} onClick={() => openUser(user)} /> : "Deleted Account"}
         {message.joined ? " joined" : " left"}
       </code>
       {last && <BottomAnchor />}
@@ -153,7 +153,11 @@ const MessageLoader: React.FC<MessageLoaderProps> = ({ reference }): JSX.Element
     return () => observer.disconnect();
   }, [selected]);
 
-  return <div style={{ paddingTop: "15rem" }} ref={loaderRef} />;
+  return (
+    <div className={style["message-loader"]} ref={loaderRef}>
+      {!chat.lastFetched && <CircularProgress classes={{ root: style["loader"] }} />}
+    </div>
+  );
 };
 
 const BottomAnchor: React.FC = (): JSX.Element => {

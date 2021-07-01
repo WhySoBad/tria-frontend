@@ -7,6 +7,7 @@
   width: calc(100%);
   @include flex-column;
   .content-container {
+    margin-right: 17px;
     padding: 2rem 1rem;
 
     &[data-view="grid"] {
@@ -22,6 +23,7 @@
 }
 
 .title-container {
+  margin-right: 17px;
   display: flex;
   padding: 1rem 0.75rem;
   min-height: 100px;
@@ -60,9 +62,12 @@
   position: absolute;
   top: 1rem;
   right: 0.75rem;
+  margin-right: 17px;
 }
 
 .collapsed-title-container {
+  opacity: 0;
+  z-index: -10;
   position: absolute;
   width: calc(100%);
   padding: 1rem 0.75rem;
@@ -73,11 +78,13 @@
   align-items: center;
 
   .collapsed-title {
+    opacity: 0;
     width: calc(100% / 3);
     transition: all 0.2s;
   }
 
   .collapsed-searchbar {
+    opacity: 0;
     width: calc(100% / 3);
     transition: all 0.2s;
   }

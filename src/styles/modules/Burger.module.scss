@@ -5,8 +5,9 @@
   padding: 0.5rem 0;
   @include flex-column;
   width: calc(100% - 17px);
-  &:not(:first-child, :last-child) {
-    flex: 1;
+
+  &:last-child {
+    margin-bottom: 17px;
   }
 
   &::after {
@@ -33,11 +34,14 @@
   }
 
   .burger-item {
+    border-radius: 5px;
+    margin: 0.1rem 0.5rem;
     padding: 0.5rem 1.5rem;
     display: grid;
     grid-template-areas: "icon text";
     grid-template-columns: 20% auto;
     gap: 0.5rem;
+    cursor: pointer;
 
     &[aria-selected="true"] {
       background-color: rgba(255, 255, 255, 0.1) !important;
@@ -48,6 +52,14 @@
 
       .burger-icon {
         color: $white !important;
+      }
+
+      .icon {
+        color: $white !important;
+
+        &:hover {
+          color: $white !important;
+        }
       }
     }
 
@@ -68,7 +80,25 @@
       align-items: center;
     }
 
+    .burger-text-container {
+      display: flex;
+      overflow: hidden;
+      align-items: center;
+
+      .icon {
+        margin-left: 0.5ch;
+        @include icon;
+        transform: scale(0.75);
+        color: $gray-text;
+
+        &:hover {
+          color: $gray-text;
+        }
+      }
+    }
+
     .burger-text {
+      user-select: none;
       grid-area: text;
       font-weight: normal;
       overflow: hidden;

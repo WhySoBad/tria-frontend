@@ -62,7 +62,7 @@ export const Searchbar: React.FC<SearchbarProps> = ({ onTuneOpen, ...props }): J
         {...props}
         endAdornment={
           <InputAdornment position={"end"}>
-            <IconButton disableRipple onClick={onTuneOpen} classes={{root: style["iconbutton"]}}>
+            <IconButton disableRipple onClick={onTuneOpen} classes={{ root: style["iconbutton"] }}>
               <TuneIcon className={style["icon"]} />
             </IconButton>
           </InputAdornment>

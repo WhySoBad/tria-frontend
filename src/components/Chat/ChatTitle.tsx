@@ -21,6 +21,7 @@ const ChatTitle: React.FC = (): JSX.Element => {
 
   return (
     <>
+      <title children={name} />
       <div className={style["title-container"]} onClick={() => openChat(chat)}>
         <h3 children={name} />
       </div>

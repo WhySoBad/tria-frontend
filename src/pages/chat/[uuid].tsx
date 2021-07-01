@@ -17,7 +17,6 @@ const ChatPage: NextPage<Props> = ({ chat }): JSX.Element => {
 
   return (
     <>
-      <title children={`Chat | ${chat}`} />
       <Layout children={<Chat />} />
     </>
   );

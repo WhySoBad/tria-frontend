@@ -1,4 +1,4 @@
-import { Avatar, IconButton, makeStyles } from "@material-ui/core";
+import { Avatar, IconButton } from "@material-ui/core";
 import { Chat, User, UserPreview, Group, PrivateChat } from "client";
 import React, { useState } from "react";
 import cn from "classnames";
@@ -12,8 +12,8 @@ import Scrollbar from "../Scrollbar/Scrollbar";
 import Link from "next/link";
 import { useModal } from "../../hooks/ModalContext";
 import { Group as GroupIcon, Edit as EditIcon, ChevronLeft as BackIcon, Close as CloseIcon, AddBox as AddChatIcon, Chat as ChatIcon, MoreVert as MoreIcon } from "@material-ui/icons";
-
-const useStyles = makeStyles((theme) => ({}));
+import { useRef } from "react";
+import Menu, { MenuItem } from "../Menu/Menu";
 
 interface UserModalProps extends ModalProps {
   user: User | UserPreview;
@@ -25,6 +25,8 @@ const UserModal: React.FC<UserModalProps> = ({ withBack = false, onClose, user }
   const { close } = useModal();
   const [tab, setTab] = useState<number>(0);
   const router = useRouter();
+  const moreRef = useRef<SVGSVGElement>(null);
+  const [moreOpen, setMoreOpen] = useState<boolean>(false);
 
   if (!client || !user) return <></>;
 
@@ -55,7 +57,9 @@ const UserModal: React.FC<UserModalProps> = ({ withBack = false, onClose, user }
       .catch(client.error);
   };
 
-  const openMore = () => {};
+  const openMore = () => {
+    setMoreOpen(true);
+  };
 
   const openEdit = () => {};
 
@@ -66,7 +70,7 @@ const UserModal: React.FC<UserModalProps> = ({ withBack = false, onClose, user }
         {privateChat && !own && <IconButton children={<ChatIcon className={modalStyle["icon"]} />} onClick={openChat} />}
         {!privateChat && !own && <IconButton children={<AddChatIcon className={modalStyle["icon"]} />} onClick={createChat} />}
         {own && <IconButton children={<EditIcon className={modalStyle["icon"]} />} onClick={openEdit} />}
-        <IconButton children={<MoreIcon className={modalStyle["icon"]} />} onClick={openMore} />
+        <IconButton children={<MoreIcon ref={moreRef} className={modalStyle["icon"]} />} onClick={openMore} />
         {!withBack && <IconButton children={<CloseIcon className={modalStyle["icon"]} />} onClick={onClose} />}
       </ModalHead>
       <ModalContent noScrollbar>
@@ -85,6 +89,11 @@ const UserModal: React.FC<UserModalProps> = ({ withBack = false, onClose, user }
           <Scrollbar>{tab === 1 && <SharedChats user={user} />}</Scrollbar>
         </section>
       </ModalContent>
+      <Menu open={moreOpen} onClose={() => setMoreOpen(false)} anchorEl={moreRef.current}>
+        <MenuItem>Test</MenuItem>
+        <MenuItem>Test</MenuItem>
+        <MenuItem>Test</MenuItem>
+      </Menu>
     </>
   );
 };

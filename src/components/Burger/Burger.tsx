@@ -5,7 +5,7 @@ import React from "react";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Burger.module.scss";
 import Scrollbar from "../Scrollbar/Scrollbar";
-import { Home as HomeIcon, Search as ExploreIcon, AddBox as AddIcon } from "@material-ui/icons";
+import { Home as HomeIcon, Search as ExploreIcon, AddBox as AddIcon, Person as ProfileIcon, ExitToApp as LogoutIcon, Group as GroupIcon } from "@material-ui/icons";
 import Link from "next/link";
 import { Avatar, Badge } from "@material-ui/core";
 
@@ -28,21 +28,19 @@ const Burger: React.FC<BurgerProps> = ({ onClick }): JSX.Element => {
 
   return (
     <Scrollbar>
-      <Section onClick={onClick} title={"Profile"}>
-        <ProfileItem />
-        <Item href={"/profile"} icon={<HomeIcon />} text={"Profile"} />
-      </Section>
       <Section onClick={onClick}>
         <Item href={"/app"} icon={<HomeIcon />} text={"Home"} />
+        <Item href={"/profile"} icon={<ProfileIcon />} text={"Profile"} />
       </Section>
-      <Section onClick={onClick} title={"Chats"}>
+      <Section onClick={onClick}>
         {sortedChats.map((chat: Chat) => {
           return <ChatItem chat={chat} key={chat.uuid} />;
         })}
       </Section>
       <Section onClick={onClick}>
         <Item href={"/explore"} icon={<ExploreIcon />} text={"Explore"} />
-        <Item href={"/chat/create"} icon={<AddIcon />} text={"Create chat"} />
+        <Item href={"/create"} icon={<AddIcon />} text={"Create"} />
+        <Item href={"/"} icon={<LogoutIcon />} text={"Logout"} />
       </Section>
     </Scrollbar>
   );
@@ -66,14 +64,15 @@ interface ItemProps {
   icon: JSX.Element;
   text: string;
   href: string;
+  onClick?: () => void;
 }
 
-const Item: React.FC<ItemProps> = ({ href, icon, text }): JSX.Element => {
+const Item: React.FC<ItemProps> = ({ href, icon, text, onClick }): JSX.Element => {
   const router = useRouter();
   const selected: boolean = href.toLowerCase() === router.pathname.toLowerCase();
   return (
     <Link href={href}>
-      <div className={cn(style["burger-item"], selected && style["selected"])} aria-selected={selected}>
+      <div onClick={onClick} className={cn(style["burger-item"], selected && style["selected"])} aria-selected={selected}>
         <div className={style["burger-icon"]} children={icon} />
         <div className={style["burger-text"]} children={text} />
       </div>
@@ -112,17 +111,13 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat }): JSX.Element => {
             <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: chat.color, width: "2rem", height: "2rem" }} alt={name} />
           </Badge>
         </div>
-        <h6 className={style["burger-text"]} children={name} />
+        <div className={style["burger-text-container"]}>
+          <h6 className={style["burger-text"]} children={name} />
+          {chat instanceof Group && <GroupIcon className={style["icon"]} />}
+        </div>
       </div>
     </Link>
   );
-};
-
-interface ProfileProps {}
-
-const ProfileItem: React.FC<ProfileProps> = (): JSX.Element => {
-  const { client } = useClient();
-  return <div className={style["profile-container"]} style={{ backgroundColor: `${client.user.color}` }}></div>;
 };
 
 const getChatName: (chat: Chat) => string = (chat: Chat): string => {

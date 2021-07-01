@@ -62,6 +62,7 @@
       background: $dark;
       right: 5%;
       z-index: 2;
+      user-select: none;
     }
   }
 
@@ -70,6 +71,13 @@
     position: relative;
     border-radius: 5px;
     margin-bottom: 0.25rem;
+
+    &[data-open="true"] {
+      .icon-container {
+        opacity: 1;
+      }
+      background-color: rgba(255, 255, 255, 0.05);
+    }
 
     &:last-child {
       margin-bottom: 0;

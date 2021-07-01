@@ -1,0 +1,14 @@
+@use "../config/" as *;
+
+.container {
+  @include flex-column;
+}
+
+.title-container {
+  display: flex;
+  padding: 1rem 0.75rem;
+}
+
+.content-container {
+  display: flex;
+}
