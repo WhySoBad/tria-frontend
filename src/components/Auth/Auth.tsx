@@ -3,13 +3,14 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useClient } from "../../hooks/ClientContext";
 
-const Login: React.FC = (): JSX.Element => {
+const Auth: React.FC = (): JSX.Element => {
   const router = useRouter();
   const { client, fetchClient, isLoading } = useClient();
   const [url] = useState<string>(router.query.url as string);
 
   useEffect(() => {
-    if (url && typeof url === "string") router.push("/login", undefined, { shallow: true });
+    if (url && typeof url === "string") router.push("/auth", undefined, { shallow: true });
+    else if (client) router.push("/app");
     else router.push("/");
     if (!client && !isLoading) fetchClient().catch(() => router.push("/"));
   }, []);
@@ -21,4 +22,4 @@ const Login: React.FC = (): JSX.Element => {
   return <></>;
 };
 
-export default Login;
+export default Auth;

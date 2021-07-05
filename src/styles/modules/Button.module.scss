@@ -1,37 +1,15 @@
 @use "../config/" as *;
 
-.btn {
-  display: inline-flex;
-  font-weight: 600;
-  padding: 0.75em 2em;
-  min-height: 3em;
-  color: $white;
-  background-color: $secondary;
-  font-size: 14px;
-  text-transform: uppercase;
-  border-radius: 6px;
-  transition: all 0.2s;
+.button {
+  background-color: $secondary !important;
+  color: $white !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
   &:hover {
-    background-color: $secondary-hover;
+    background-color: $secondary-hover !important;
   }
-  &:disabled {
-    background-color: $secondary-disabled;
-    &:hover {
-      background-color: $secondary-disabled;
-      cursor: default;
-    }
-  }
-}
 
-.loading {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background-color: $secondary-disabled;
-  cursor: default;
-  &:hover {
-    background-color: $secondary-disabled;
-    cursor: default;
+  &:disabled {
+    background-color: $secondary-disabled !important;
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Client, validateToken } from "client";
 import { NextPage } from "next";
 import { useAuth } from "./AuthContext";

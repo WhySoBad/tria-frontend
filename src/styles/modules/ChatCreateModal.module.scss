@@ -1,0 +1,123 @@
+@use "../config/" as *;
+
+.stepper-head {
+  @include flex-column;
+  position: relative;
+  padding: 3rem 2rem 2rem 2rem;
+
+  .icon-container {
+    position: absolute;
+    top: 0rem;
+    right: 0rem;
+    padding: 0.25rem;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+  }
+}
+
+.stepper-content {
+  display: flex;
+  padding: 2rem;
+  padding-top: 0;
+
+  .form-container {
+    @include flex-column;
+    width: 100%;
+
+    .form-content {
+      display: grid;
+      gap: 0.75rem 1.5rem;
+      grid-template-areas: "name tag" "description description" "public members";
+      width: 100%;
+
+      .public {
+        grid-area: public;
+        color: $gray-text;
+        user-select: none;
+      }
+
+      .description {
+        grid-area: description;
+        width: 100%;
+      }
+
+      .name {
+        grid-area: name;
+      }
+
+      .tag {
+        grid-area: tag;
+      }
+
+      .members {
+        grid-area: members;
+      }
+    }
+
+    .submit {
+      margin-top: 2rem;
+      align-self: flex-end;
+    }
+  }
+
+  .select-container {
+    @include flex-column;
+    width: 100%;
+    height: 390px;
+
+    .item-container {
+      padding-top: 1rem;
+      @include flex-column;
+      height: 100%;
+
+      .item {
+        width: 100%;
+        position: relative;
+        border-radius: 5px;
+        display: grid;
+        padding: 0.25rem;
+        padding-left: 0.5rem;
+        grid-template-areas: "checkbox avatar title" "checkbox avatar text";
+        justify-content: flex-start;
+        align-items: inherit;
+        grid-template-columns: 50px;
+        cursor: pointer;
+        margin-bottom: 0.25rem;
+
+        &:last-child {
+          margin-bottom: 17px;
+        }
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .checkbox {
+          grid-area: checkbox;
+          padding-right: 0.5rem;
+        }
+
+        .avatar {
+          grid-area: avatar;
+          background-color: $dark-light;
+          margin-right: 0.5rem;
+          align-self: center;
+        }
+
+        .title {
+          grid-area: title;
+          display: flex;
+          justify-content: flex-start;
+          width: fit-content;
+        }
+
+        .description {
+          grid-area: text;
+          margin-top: -0.25ch;
+        }
+      }
+    }
+  }
+}

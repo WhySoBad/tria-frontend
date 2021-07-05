@@ -1,17 +1,15 @@
 import { Chat, ChatPreview, Member, User, UserPreview } from "client";
 import { NextPage } from "next";
 import React, { useState } from "react";
-import { ModalContainer, ModalProps } from "../components/Modal/BaseModal";
-import ChatModal from "../components/Modal/ChatModal";
-import ChatPreviewModal from "../components/Modal/ChatPreviewModal";
-import MemberModal from "../components/Modal/MemberModal";
-import UserModal from "../components/Modal/UserModal";
+import { ModalContainer, ModalProps } from "../components/Modal/Modal";
+import { ChatPreviewModal, ChatModal, MemberModal, UserModal, ChatCreateModal } from "../components/Modal/variants";
 
 interface ModalContext {
   openUser: (user: User | UserPreview, props?: ModalProps) => void;
   openChat: (chat: Chat, props?: ModalProps) => void;
   openMember: (member: Member, props?: ModalProps) => void;
   openChatPreview: (chat: ChatPreview, props?: ModalProps) => void;
+  openChatCreate: (props?: ModalProps) => void;
   close: () => void;
 }
 
@@ -20,6 +18,7 @@ const defaultValue: ModalContext = {
   openChat: () => {},
   openMember: () => {},
   openChatPreview: () => {},
+  openChatCreate: () => {},
   close: () => {},
 };
 
@@ -27,13 +26,12 @@ export const ModalContext = React.createContext<ModalContext>(defaultValue);
 
 export const ModalProvider: NextPage = ({ children }): JSX.Element => {
   const [open, setOpen] = useState<User | UserPreview | Chat | Member | ChatPreview>(null);
-  const [type, setType] = useState<"User" | "UserPreview" | "Chat" | "ChatPreview" | "Member">();
+  const [type, setType] = useState<"User" | "Chat" | "ChatPreview" | "Member" | "ChatCreate">();
   const [props, setProps] = useState<ModalProps>({});
   const [closed, setClosed] = useState<boolean>(true);
 
   const openUser = (user: User | UserPreview, props: ModalProps = {}) => {
-    if (user instanceof User) setType("User");
-    else setType("UserPreview");
+    setType("User");
     setOpen(user);
     setProps(props);
     setClosed(false);
@@ -59,6 +57,11 @@ export const ModalProvider: NextPage = ({ children }): JSX.Element => {
     setClosed(false);
   };
 
+  const openChatCreate = (props: ModalProps = {}) => {
+    setType("ChatCreate");
+    setClosed(false);
+  };
+
   const close = () => {
     setClosed(true);
   };
@@ -70,13 +73,14 @@ export const ModalProvider: NextPage = ({ children }): JSX.Element => {
         openChat: openChat,
         openMember: openMember,
         openChatPreview: openChatPreview,
+        openChatCreate: openChatCreate,
         close: close,
       }}
     >
       <ModalContainer open={!closed} onClose={close}>
         {type === "Chat" && open && (
           <ChatModal
-            chat={open instanceof Chat ? open : null}
+            chat={open as any}
             withBack={props.withBack}
             onClose={() => {
               if (props.onClose) props.onClose();
@@ -96,7 +100,7 @@ export const ModalProvider: NextPage = ({ children }): JSX.Element => {
         )}
         {type === "Member" && open && (
           <MemberModal
-            member={open instanceof Member ? open : null}
+            member={open as any}
             withBack={props.withBack}
             onClose={() => {
               if (props.onClose) props.onClose();
@@ -104,9 +108,18 @@ export const ModalProvider: NextPage = ({ children }): JSX.Element => {
             }}
           />
         )}
-        {(type === "User" || type === "UserPreview") && open && (
+        {type === "User" && open && (
           <UserModal
-            user={open ? (open as any) : null}
+            user={open as any}
+            withBack={props.withBack}
+            onClose={() => {
+              if (props.onClose) props.onClose();
+              else close();
+            }}
+          />
+        )}
+        {type === "ChatCreate" && (
+          <ChatCreateModal
             withBack={props.withBack}
             onClose={() => {
               if (props.onClose) props.onClose();

@@ -26,8 +26,8 @@ const ChatTitle: React.FC = (): JSX.Element => {
         <h3 children={name} />
       </div>
       <div className={style["icon-container"]}>
-        {canEdit && <IconButton children={<SettingsIcon className={style["icon"]} />} />}
-        <IconButton children={<MoreIcon className={style["icon"]} />} />
+        {canEdit && <IconButton className={style["iconbutton"]} children={<SettingsIcon className={style["icon"]} />} />}
+        <IconButton className={style["iconbutton"]} children={<MoreIcon className={style["icon"]} />} />
       </div>
     </>
   );

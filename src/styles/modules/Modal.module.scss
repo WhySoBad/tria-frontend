@@ -15,13 +15,13 @@
   padding: 2rem 0;
 
   .content-container {
-    border-radius: 5px;
+    width: calc(min(600px, 100%));
+    max-height: calc(min(550px, 100%));
     @include flex-column;
     align-self: center;
-    max-height: calc(min(550px, 100%));
+    border-radius: 5px;
     background-color: $dark;
     color: $white;
-    width: calc(min(600px, 100%));
   }
 }
 
@@ -102,15 +102,11 @@
     width: 100%;
     align-items: center;
     justify-content: flex-end;
-
-    .back {
-      margin-right: auto;
-    }
   }
+}
 
-  .icon {
-    @include icon;
-  }
+.back {
+  margin-right: auto !important;
 }
 
 .content {
@@ -118,6 +114,18 @@
   display: flex;
   position: relative;
   flex-direction: column;
+}
+
+.iconbutton {
+  &:hover {
+    .icon {
+      color: $icon-hover !important;
+    }
+  }
+}
+
+.icon {
+  @include icon;
 }
 
 @include large {

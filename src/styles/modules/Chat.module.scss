@@ -13,6 +13,14 @@
   .icon-container {
     display: flex;
     justify-self: flex-end;
+
+    .iconbutton {
+      &:hover {
+        .icon {
+          color: $icon-hover !important;
+        }
+      }
+    }
   }
 }
 

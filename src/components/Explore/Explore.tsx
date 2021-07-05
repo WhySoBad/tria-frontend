@@ -24,7 +24,7 @@ const Explore: React.FC = (): JSX.Element => {
 
   const handleChange = debounce((event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     client.search({ text: event.target.value, checkChat: true, checkUser: true, checkName: true, checkTag: true, checkUuid: false }).then(setResults).catch(client.error);
-  }, 100);
+  }, 250);
 
   useEffect(() => {
     let rendered: boolean = true;
@@ -71,6 +71,7 @@ const Explore: React.FC = (): JSX.Element => {
         <h3 className={style["collapsed-title"]} style={{ opacity: !containerVisible && 1 }} children={title} />
         <div className={style["collapsed-searchbar"]} style={{ opacity: !containerVisible && 1 }}>
           <Searchbar
+            placeholder={"Search user or chats"}
             value={text}
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
               setText(event.target.value);
@@ -98,6 +99,7 @@ const Explore: React.FC = (): JSX.Element => {
             <h5 className={style["subtitle"]} children={subtitle} />
             <div className={style["searchbar"]}>
               <Searchbar
+                placeholder={"Search user or chats"}
                 value={text}
                 onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
                   setText(event.target.value);
@@ -224,7 +226,7 @@ const IconContainer: React.FC<IconContainerProps> = ({ onChange, selected }): JS
 };
 
 /**
- * Simple function to make a debounced input
+ * Function to make a debounced input
  *
  * @param handler handler function
  *

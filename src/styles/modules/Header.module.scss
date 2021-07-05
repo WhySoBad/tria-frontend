@@ -16,16 +16,6 @@
   }
 }
 
-.button {
-  background-color: $secondary !important;
-  color: $white !important;
-  font-weight: bold !important;
-  font-size: 14px !important;
-  &:hover {
-    background-color: $secondary-hover !important;
-  }
-}
-
 .logo-container {
   color: $dark-lighter;
 }

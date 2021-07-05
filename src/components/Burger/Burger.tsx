@@ -8,6 +8,7 @@ import Scrollbar from "../Scrollbar/Scrollbar";
 import { Home as HomeIcon, Search as ExploreIcon, AddBox as AddIcon, Person as ProfileIcon, ExitToApp as LogoutIcon, Group as GroupIcon } from "@material-ui/icons";
 import Link from "next/link";
 import { Avatar, Badge } from "@material-ui/core";
+import { useModal } from "../../hooks/ModalContext";
 
 interface BurgerProps {
   onClick?: () => void;
@@ -15,6 +16,7 @@ interface BurgerProps {
 
 const Burger: React.FC<BurgerProps> = ({ onClick }): JSX.Element => {
   const { client } = useClient();
+  const { openChatCreate } = useModal();
 
   if (!client) return <></>;
 
@@ -39,7 +41,7 @@ const Burger: React.FC<BurgerProps> = ({ onClick }): JSX.Element => {
       </Section>
       <Section onClick={onClick}>
         <Item href={"/explore"} icon={<ExploreIcon />} text={"Explore"} />
-        <Item href={"/create"} icon={<AddIcon />} text={"Create"} />
+        <Item icon={<AddIcon />} text={"Create"} onClick={openChatCreate} />
         <Item href={"/"} icon={<LogoutIcon />} text={"Logout"} />
       </Section>
     </Scrollbar>
@@ -63,21 +65,23 @@ const Section: React.FC<SectionProps> = ({ onClick, title, children }): JSX.Elem
 interface ItemProps {
   icon: JSX.Element;
   text: string;
-  href: string;
+  href?: string;
   onClick?: () => void;
 }
 
 const Item: React.FC<ItemProps> = ({ href, icon, text, onClick }): JSX.Element => {
   const router = useRouter();
-  const selected: boolean = href.toLowerCase() === router.pathname.toLowerCase();
-  return (
-    <Link href={href}>
-      <div onClick={onClick} className={cn(style["burger-item"], selected && style["selected"])} aria-selected={selected}>
-        <div className={style["burger-icon"]} children={icon} />
-        <div className={style["burger-text"]} children={text} />
-      </div>
-    </Link>
+  const selected: boolean = href?.toLowerCase() === router.pathname.toLowerCase();
+
+  const content: JSX.Element = (
+    <div onClick={onClick} className={cn(style["burger-item"], selected && style["selected"])} aria-selected={selected}>
+      <div className={style["burger-icon"]} children={icon} />
+      <div className={style["burger-text"]} children={text} />
+    </div>
   );
+
+  if (!Boolean(href)) return content;
+  else return <Link href={href} children={content} />;
 };
 
 interface ChatItemProps {

@@ -1,18 +1,18 @@
-import React, { FC, useState } from 'react';
-import style from '../../../styles/modules/Sections.module.scss';
-import cn from 'classnames';
-import Input from '../../Input/Input';
-import Button from '../../Button/Button';
-import { registerUser } from 'client';
-import { useAuth } from '../../../hooks/AuthContext';
-import Router from 'next/router';
+import React, { FC, useState } from "react";
+import style from "../../../styles/modules/Sections.module.scss";
+import cn from "classnames";
+import Input from "../../Input/Input";
+import Button from "../../Button/Button";
+import { registerUser } from "client";
+import { useAuth } from "../../../hooks/AuthContext";
+import Router from "next/router";
 
 const Authentication: FC = (): JSX.Element => {
   return (
-    <section id={'auth'} className={style['auth-container']}>
-      <div className={cn(style['auth-stripe'], style['top'])} />
-      <div className={cn(style['auth-stripe'], style['bottom'])} />
-      <div className={style['auth-content']}>
+    <section id={"auth"} className={style["auth-container"]}>
+      <div className={cn(style["auth-stripe"], style["top"])} />
+      <div className={cn(style["auth-stripe"], style["bottom"])} />
+      <div className={style["auth-content"]}>
         <Register />
         <Login />
       </div>
@@ -35,28 +35,11 @@ const Register: FC = (): JSX.Element => {
   };
 
   return (
-    <div className={cn(style['auth-child'], style['auth-register'])}>
+    <div className={cn(style["auth-child"], style["auth-register"])}>
       <h3>Register</h3>
-      <Input
-        error={hasError}
-        className={style['auth-input']}
-        type={'text'}
-        placeholder={'Username'}
-        onBlur={({ target: { value } }) => setUsername(value)}
-      />
-      <Input
-        error={hasError}
-        className={style['auth-input']}
-        type={'password'}
-        placeholder={'Password'}
-        onBlur={({ target: { value } }) => setPassword(value)}
-      />
-      <Button
-        text={'Register'}
-        loading={isLoading}
-        disabled={disabled}
-        onClick={handleRegister}
-      />
+      <Input error={hasError} className={style["auth-input"]} type={"text"} placeholder={"Username"} onBlur={({ target: { value } }) => setUsername(value)} />
+      <Input error={hasError} className={style["auth-input"]} type={"password"} placeholder={"Password"} onBlur={({ target: { value } }) => setPassword(value)} />
+      <Button children={"Register"} disabled={disabled} onClick={handleRegister} />
     </div>
   );
 };
@@ -73,7 +56,7 @@ const Login: FC = (): JSX.Element => {
   const handleLogin: () => void = (): void => {
     setLoading(true);
     login({ username: username, password: password })
-      .then(() => Router.push('/app'))
+      .then(() => Router.push("/app"))
       .catch(() => {
         setError(true);
         setLoading(false);
@@ -81,30 +64,25 @@ const Login: FC = (): JSX.Element => {
   };
 
   return (
-    <div className={cn(style['auth-child'], style['auth-login'])}>
+    <div className={cn(style["auth-child"], style["auth-login"])}>
       <h3>Login</h3>
       <Input
         error={hasError}
-        className={style['auth-input']}
-        type={'text'}
-        placeholder={'Username'}
+        className={style["auth-input"]}
+        type={"text"}
+        placeholder={"Username"}
         onChange={({ target: { value } }) => setUsername(value)}
-        onEnter={() => !disabled && handleLogin()}
+        onKeyDown={(event) => event.key === "Enter" && !disabled && handleLogin()}
       />
       <Input
         error={hasError}
-        className={style['auth-input']}
-        type={'password'}
-        placeholder={'Password'}
+        className={style["auth-input"]}
+        type={"password"}
+        placeholder={"Password"}
         onChange={({ target: { value } }) => setPassword(value)}
-        onEnter={() => !disabled && handleLogin()}
+        onKeyDown={(event) => event.key === "Enter" && !disabled && handleLogin()}
       />
-      <Button
-        text={'Login'}
-        disabled={disabled}
-        loading={isLoading}
-        onClick={handleLogin}
-      />
+      <Button children={"Login"} disabled={disabled} onClick={handleLogin} />
     </div>
   );
 };

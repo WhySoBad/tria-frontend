@@ -18,7 +18,7 @@ const Layout: React.FC = ({ children }): JSX.Element => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!client) router.push({ pathname: "/login", query: `url=${router.asPath}` });
+    if (!client) router.push({ pathname: "/auth", query: `url=${router.asPath}` });
   }, []);
 
   useEffect(() => {

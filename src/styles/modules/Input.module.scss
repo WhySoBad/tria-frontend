@@ -1,34 +1,45 @@
 @use "../config/" as *;
 
-.base-input {
+.input {
   display: inline-flex;
   justify-content: center;
   align-items: center;
   background-color: transparent;
   font-family: "IBM Plex Sans", sans-serif;
-  color: $white;
+  color: $white !important;
   border-radius: 4px;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   border: solid 2px $dark-dark;
   transition: all 0.2s;
   &:hover {
     border-color: $dark-light;
   }
-  &:focus {
-    border-color: $dark-lighter;
-  }
+
+  &.error,
   &:invalid {
+    border-color: $dark-error-hover;
     border-color: $dark-error;
+    border-color: $dark-error-focus;
   }
 
-  &[data-error="true"] {
-    border-color: $dark-error;
-    &:hover {
-      border-color: $dark-error-hover;
-    }
-    &:focus {
-      border-color: $dark-error-focus;
-    }
+  &.disabled {
+    border-color: $dark-dark;
+  }
+
+  &.focus {
+    border-color: $dark-lighter;
+  }
+}
+
+.checkbox {
+  color: $dark-dark !important;
+
+  &:hover {
+    background-color: rgba($dark-dark, 0.05) !important;
+  }
+
+  &.secondary {
+    color: $dark-dark !important;
   }
 }
 
@@ -37,7 +48,6 @@
   display: flex;
   align-items: center;
   min-width: 300px;
-  max-width: 500px;
   width: 100%;
   background-color: $darker;
   border-radius: 5px;

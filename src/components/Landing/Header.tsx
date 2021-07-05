@@ -3,7 +3,6 @@ import cn from "classnames";
 import style from "../../styles/modules/Header.module.scss";
 import Button from "../Button/Button";
 import { useAuth } from "../../hooks/AuthContext";
-import { Button as Btn } from "@material-ui/core";
 import Link from "next/link";
 
 const Header = (): JSX.Element => {
@@ -23,11 +22,11 @@ const Header = (): JSX.Element => {
       <div className={cn(style["child"], style["logo-container"])} children={<h3 children={"Name"} />} />
       <div className={cn(style["child"], style["navigation-container"])}></div>
       <div className={cn(style["child"])}>
-        {canLogin !== null && !canLogin && <Button text={"Authentication"} to={"#auth"} />}
+        {canLogin !== null && !canLogin && <Button children={"Authentication"} href={"#auth"} />}
         {/*  {canLogin !== null && canLogin && <Button text={"To App"} to={"/app"} />} */}
         {canLogin !== null && canLogin && (
-          <Link href={{ pathname: "/login", query: "url=/app" }}>
-            <Btn children={"To App"} disableElevation variant={"contained"} size={"large"} classes={{ root: style["button"] }} />
+          <Link href={"/app"}>
+            <Button children={"To App"} />
           </Link>
         )}
       </div>
