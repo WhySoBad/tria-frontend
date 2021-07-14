@@ -10,7 +10,7 @@ const Auth: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     if (url && typeof url === "string") router.push("/auth", undefined, { shallow: true });
-    else if (client) router.push("/app");
+    else if (client || (!client && !isLoading && !url)) router.push("/app");
     else router.push("/");
     if (!client && !isLoading) fetchClient().catch(() => router.push("/"));
   }, []);

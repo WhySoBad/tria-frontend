@@ -28,14 +28,18 @@
 
     .form-content {
       display: grid;
-      gap: 0.75rem 1.5rem;
+      gap: 0.75rem 0.75rem;
       grid-template-areas: "name tag" "description description" "public members";
       width: 100%;
 
       .public {
         grid-area: public;
+      }
+
+      .label {
         color: $gray-text;
         user-select: none;
+        font-weight: bold;
       }
 
       .description {
@@ -53,6 +57,15 @@
 
       .members {
         grid-area: members;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .link {
+          color: $gray-text;
+          font-weight: bold;
+          cursor: pointer;
+        }
       }
     }
 

@@ -1,14 +1,17 @@
 @use "../config/" as *;
 
-.title {
+.title-container {
   width: 100%;
   display: flex;
   padding: 1rem 0.75rem;
-  .title-container {
+  .title {
     width: 100%;
     display: flex;
     justify-content: space-between;
     cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .icon-container {
     display: flex;
@@ -28,95 +31,143 @@
   flex: 1 auto;
   flex-direction: column-reverse;
   overflow: hidden;
+}
 
-  .message-section {
-    display: grid;
-    grid-template-areas: "avatar message .";
-    grid-template-columns: 3.5rem auto 3.5rem;
-    padding: 0 0.5rem;
-    margin: 0 0.25rem;
+.group-container {
+  margin: 0.25rem 0;
+  display: grid;
+  grid-template-areas: "left content right";
+  grid-template-columns: 72px calc(100% - 144px) 72px;
 
-    .avatar {
-      grid-area: avatar;
-      margin-top: 0.5rem;
-      transition: all 0.2s;
-      &:hover {
-        cursor: pointer;
-      }
-      &:active {
-        transform: translateY(-2px);
-      }
+  .avatar-container {
+    margin: 0.25rem 1rem;
+    cursor: pointer;
+    height: fit-content;
+
+    &[data-banned="true"] {
+      cursor: default;
     }
 
-    .message {
-      grid-area: message;
-      justify-self: start;
-      display: grid;
-      grid-template-areas: "sender . ." "message message date";
-      padding: 0.25rem 0.75rem;
-      background-color: $lightest-dark;
-      border-radius: 5px;
-      margin: 0.2rem 0;
-      width: 100%;
+    &[data-self="true"] {
+      grid-area: right;
+    }
 
-      .sender {
-        grid-area: sender;
-        margin-bottom: 0.25rem;
-        width: fit-content;
-        &:hover {
-          cursor: pointer;
-        }
-      }
-
-      .text {
-        grid-area: message;
-      }
-      .date {
-        grid-area: date;
-        font-size: 14px;
-        text-align: right;
-      }
+    &[data-self="false"] {
+      grid-area: left;
     }
   }
 
-  .member-log {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    margin: 1rem 0;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 14px;
+  .content-container {
+    grid-area: content;
+    @include flex-column;
+  }
+}
+
+.date-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  margin: 1rem 0;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.log-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  margin: 1rem 0;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+
+  .log {
+    margin-right: 1ch;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.loader-container {
+  display: flex;
+  min-height: 15vh;
+  justify-content: center;
+  align-items: center;
+
+  .loader {
+    height: 30vh;
+    color: $white;
+  }
+}
+
+.message-container {
+  margin: 0.15rem 0;
+  display: grid;
+
+  &[data-self="true"] {
+    grid-template-areas: ". message";
+    grid-template-columns: 40% 60%;
+    justify-items: flex-end;
+  }
+
+  &[data-self="false"] {
+    grid-template-areas: "message .";
+    grid-template-columns: 60% 40%;
+    justify-items: flex-start;
+  }
+
+  .message {
+    grid-area: message;
+    padding: 0.75rem;
+    background: $lightest-dark;
+    border-radius: 10px;
+    display: grid;
+    grid-template-areas: "name ." "text text";
+    width: fit-content;
+    position: relative;
 
     .name {
-      margin-right: 1ch;
-      &:hover {
-        cursor: pointer;
+      grid-area: name;
+      margin-top: -0.25rem;
+      cursor: pointer;
+      user-select: none;
+
+      &[data-banned="true"] {
+        cursor: default;
       }
     }
-  }
-  .date-log {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    margin: 1rem 0;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 14px;
-  }
 
-  .message-loader {
-    display: flex;
-    height: 15vh;
-    justify-content: center;
-    align-items: center;
+    .text {
+      grid-area: text;
+      width: fit-content;
 
-    .loader {
-      color: $white;
+      .date {
+        user-select: none;
+        visibility: hidden;
+        margin-bottom: -0.25rem;
+        float: right;
+        font-weight: bold;
+        font-size: 12px;
+        padding-left: 1rem;
+        color: $gray-text;
+
+        .inner {
+          user-select: none;
+          visibility: visible;
+          position: absolute;
+          bottom: 0.5rem;
+          right: 0.5rem;
+          float: right;
+          font-weight: bold;
+          font-size: 12px;
+        }
+      }
     }
   }
 }
@@ -151,6 +202,420 @@
   align-items: center;
 }
 
+.chat-settings-container {
+  display: flex;
+  display: grid;
+  grid-template-areas: "settings settings" "member member" "banned banned";
+  grid-template-rows: min-content 400px 400px;
+  padding: 0 0.75rem;
+  padding-bottom: 1rem;
+  gap: 1rem;
+  margin-right: 17px;
+
+  .settings-container {
+    grid-area: settings;
+    border-radius: 10px;
+    padding: 1rem;
+    border: solid 2px $dark-border;
+    display: grid;
+    grid-template-areas: "title ." "avatar form";
+    grid-template-columns: min-content auto;
+    gap: 1rem 2rem;
+
+    .title {
+      grid-area: title;
+      margin-top: -0.25rem;
+    }
+
+    .button-container {
+      grid-area: buttons;
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+
+      .button {
+        white-space: nowrap;
+        padding: 0 0.25rem;
+      }
+    }
+
+    .avatar-container {
+      grid-area: avatar;
+      display: grid;
+      grid-template-areas: "avatar" "avatar" "delete";
+      width: fit-content;
+
+      .avatar {
+        grid-area: avatar;
+        width: 8rem;
+        height: 8rem;
+        cursor: pointer;
+        position: relative;
+        &[aria-disabled="true"] {
+          cursor: default;
+        }
+        &[aria-disabled="false"] {
+          &::after {
+            content: "Upload avatar";
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: $white;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: rgba($color: #000000, $alpha: 0.5);
+            transition: all 0.25s;
+          }
+        }
+
+        &:hover {
+          &::after {
+            opacity: 1;
+          }
+        }
+      }
+
+      .delete {
+        display: flex;
+        justify-content: center;
+        grid-area: delete;
+        padding-top: 0.1rem;
+        font-size: 14px;
+      }
+    }
+
+    .form-container {
+      grid-area: form;
+
+      .form {
+        display: grid;
+        grid-template-areas: "name name description" "tag public description" ". . buttons";
+        gap: 0.5rem;
+
+        .name {
+          grid-area: name;
+        }
+
+        .tag {
+          grid-area: tag;
+        }
+
+        .description {
+          grid-area: description;
+        }
+
+        .public {
+          justify-self: center;
+          grid-area: public;
+          padding: 0 0.5rem;
+        }
+      }
+    }
+  }
+
+  .label {
+    color: $gray-text;
+    font-weight: bold;
+  }
+
+  .member-container {
+    grid-area: member;
+    border-radius: 10px;
+    padding: 1rem;
+    border: solid 2px $dark-border;
+    display: grid;
+    grid-template-areas: "title" "searchbar" "list";
+    grid-template-rows: min-content min-content auto;
+    gap: 1rem 2rem;
+    max-height: 400px;
+
+    .title {
+      grid-area: title;
+      margin-top: -0.25rem;
+    }
+
+    .searchbar {
+      grid-area: searchbar;
+      width: 100%;
+    }
+
+    .list-container {
+      grid-area: list;
+      @include flex-column;
+
+      .item-container {
+        width: calc(100% - 17px);
+        position: relative;
+        border-radius: 5px;
+        margin-bottom: 0.25rem;
+
+        &[data-open="true"] {
+          .icon-container {
+            opacity: 1;
+          }
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        &:last-child {
+          margin-bottom: 17px;
+        }
+
+        &:hover {
+          .icon-container {
+            opacity: 1;
+          }
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .icon-container {
+          position: absolute;
+          display: inline-flex;
+          right: 0;
+          top: 0;
+          align-items: center;
+          opacity: 0;
+        }
+      }
+
+      .item {
+        display: grid;
+        padding: 0.25rem;
+        padding-left: 0.5rem;
+        grid-template-areas: "avatar title" "avatar text" "options options";
+        width: 100%;
+        justify-content: flex-start;
+        align-items: inherit;
+        grid-template-columns: 50px calc(100% - 50px);
+        cursor: pointer;
+
+        .avatar {
+          grid-area: avatar;
+          background-color: $dark-light;
+          margin-right: 0.5rem;
+          align-self: center;
+        }
+
+        .title {
+          display: flex;
+          justify-content: flex-start;
+          width: fit-content;
+        }
+
+        .description {
+          grid-area: text;
+          margin-top: -0.25ch;
+        }
+
+        .options-container {
+          cursor: default;
+          padding: 1rem;
+          grid-area: options;
+          display: grid;
+          grid-template-areas: "form form";
+
+          &[data-collapsed="true"] {
+            display: none;
+          }
+
+          .form-container {
+            grid-area: form;
+
+            .form {
+              display: grid;
+              grid-template-areas: "role permission" "buttons buttons";
+              gap: 1rem;
+
+              .role-container {
+                grid-area: role;
+              }
+
+              .permission-container {
+                grid-area: permission;
+
+                &[data-visible="false"] {
+                  opacity: 0;
+                }
+              }
+            }
+          }
+
+          .button-container {
+            grid-area: buttons;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+
+            .button {
+              padding: 0 0.25rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .banned-container {
+    grid-area: banned;
+    border-radius: 10px;
+    padding: 1rem;
+    border: solid 2px $dark-border;
+    display: grid;
+    grid-template-areas: "title" "searchbar" "list";
+    grid-template-rows: min-content min-content auto;
+    gap: 1rem 2rem;
+    max-height: 400px;
+    margin-bottom: 17px;
+
+    .title {
+      grid-area: title;
+      margin-top: -0.25rem;
+    }
+
+    .searchbar {
+      grid-area: searchbar;
+      width: 100%;
+    }
+
+    .list-container {
+      grid-area: list;
+      @include flex-column;
+
+      .item-container {
+        width: calc(100% - 17px);
+        position: relative;
+        border-radius: 5px;
+        margin-bottom: 0.25rem;
+
+        &[data-open="true"] {
+          .icon-container {
+            opacity: 1;
+          }
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        &:last-child {
+          margin-bottom: 17px;
+        }
+
+        &:hover {
+          .icon-container {
+            opacity: 1;
+          }
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .icon-container {
+          position: absolute;
+          display: inline-flex;
+          right: 0;
+          top: 0;
+          align-items: center;
+          opacity: 0;
+        }
+      }
+
+      .item {
+        display: grid;
+        padding: 0.25rem;
+        padding-left: 0.5rem;
+        grid-template-areas: "avatar title" "avatar text" "options options";
+        width: 100%;
+        justify-content: flex-start;
+        align-items: inherit;
+        grid-template-columns: 50px calc(100% - 50px);
+        cursor: pointer;
+
+        .avatar {
+          grid-area: avatar;
+          background-color: $dark-light;
+          margin-right: 0.5rem;
+          align-self: center;
+        }
+
+        .title {
+          display: flex;
+          justify-content: flex-start;
+          width: fit-content;
+        }
+
+        .description {
+          grid-area: text;
+          margin-top: -0.25ch;
+        }
+
+        .options-container {
+          cursor: default;
+          padding: 1rem;
+          grid-area: options;
+
+          &[data-collapsed="true"] {
+            display: none;
+          }
+
+          .button {
+            display: flex;
+            justify-content: flex-end;
+            padding: 0.25rem;
+          }
+        }
+      }
+    }
+  }
+}
+
 .icon {
   @include icon;
+}
+
+@include small {
+  .settings-container {
+    grid-template-areas: "title ." "avatar avatar" "form form" !important;
+  }
+}
+
+@include smaller {
+  .settings-container {
+    grid-template-areas: "title ." "avatar avatar" "form form" !important;
+
+    .form {
+      grid-template-areas: "name name" "tag public" "description description" "buttons buttons" !important;
+    }
+  }
+
+  .options-container {
+    .form {
+      grid-template-areas: "role" "permission" "buttons" !important;
+    }
+
+    .button-container {
+      flex-direction: column;
+
+      .button {
+        padding: 0.25rem 0 !important;
+      }
+    }
+  }
+}
+
+@include smallest {
+  .settings-container {
+    grid-template-areas: "title ." "avatar avatar" "form form" !important;
+
+    .form {
+      grid-template-areas: "name name" "tag public" "description description" "buttons buttons" !important;
+    }
+  }
+
+  .options-container {
+    .form {
+      grid-template-areas: "role" "permission" "buttons" !important;
+    }
+  }
 }

@@ -64,6 +64,7 @@ export const ModalProvider: NextPage = ({ children }): JSX.Element => {
 
   const close = () => {
     setClosed(true);
+    setOpen(null);
   };
 
   return (

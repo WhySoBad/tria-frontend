@@ -5,8 +5,6 @@ import React, { useState } from "react";
 import style from "../../styles/modules/Chat.module.scss";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
-import { useRef } from "react";
-import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,7 +47,6 @@ const ChatInput: React.FC = (): JSX.Element => {
         onKeyPress={(event: React.KeyboardEvent<HTMLDivElement>) => {
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
-            console.log(Boolean(text));
             if (Boolean(text)) {
               chat
                 .sendMessage(text)

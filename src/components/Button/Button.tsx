@@ -7,8 +7,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ ...rest }: ButtonPr
   return <MuiButton disableElevation disableRipple ref={ref} variant={"contained"} size={"large"} classes={{ root: style["button"] }} {...rest} />;
 });
 
-export const TextButton = forwardRef<HTMLButtonElement, ButtonProps>(({ ...rest }: ButtonProps, ref): JSX.Element => {
-  return <Button variant={"text"} ref={ref} {...rest} />;
+export const TextButton = forwardRef<HTMLButtonElement, ButtonProps>(({ disabled, ...rest }: ButtonProps, ref): JSX.Element => {
+  return <span className={style["text-button"]} aria-disabled={disabled} children={<span ref={ref} {...rest} />} />;
 });
 
 export default Button;

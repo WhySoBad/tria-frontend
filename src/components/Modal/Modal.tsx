@@ -38,17 +38,18 @@ interface BaseModalProps extends ModalProps {
 export const BaseModal: React.FC<BaseModalProps> = ({ onClose, withBack, name, tag, uuid, children, group = false, avatar, hex, icons = [] }): JSX.Element => {
   const [color, setColor] = useState<string>();
 
-  const { data, loading, error } = usePalette(avatar, 1, "hex", { quality: 15, crossOrigin: "anonymus" });
+  const { data, loading, error } = usePalette(avatar, 2, "hex", { quality: 15, crossOrigin: "anonymous" });
 
   useEffect(() => {
-    setColor(error ? hex : data);
+    if (error) setColor(hex);
+    else setColor(Array.isArray(data) ? data[0] : data);
   }, [loading, error]);
 
   return (
     <>
       <div className={style["head"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
         <div className={style["background"]} />
-        <Avatar variant={"rounded"} className={style["avatar"]} alt={name} src={avatar} style={{ backgroundColor: color }} />
+        <Avatar variant={"rounded"} className={style["avatar"]} src={avatar} style={{ backgroundColor: color }} />
         <div className={style["text-container"]}>
           <div className={style["name"]}>
             <h3 children={name} />

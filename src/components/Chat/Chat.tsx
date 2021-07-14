@@ -5,16 +5,19 @@ import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Chat.module.scss";
 import ChatInput from "./ChatInput";
 import ChatTitle from "./ChatTitle";
-import Messages from "./Messages";
+import Messages from "./ChatMessages";
+import ChatSettings from "./ChatSettings";
 
 const Chat: React.FC = (): JSX.Element => {
   const { client } = useClient();
   const { selected, update } = useChat();
   const [hasListeners, setListeners] = useState<boolean>(false);
+  const [view, setView] = useState<"CHAT" | "SETTINGS">("CHAT");
 
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    setView("CHAT");
     if (!ref.current) return;
     ref.current.scrollTo({ top: 0 });
   }, [selected]);
@@ -58,9 +61,14 @@ const Chat: React.FC = (): JSX.Element => {
 
   return (
     <>
-      <div className={style["title"]} children={<ChatTitle />} />
-      <div className={style["messages-container"]} ref={ref} children={<Messages />} />
-      <ChatInput />
+      <div className={style["title-container"]} children={<ChatTitle view={view} onSettingsOpen={() => setView(view === "CHAT" ? "SETTINGS" : "CHAT")} />} />
+      {view === "CHAT" && (
+        <>
+          <div className={style["messages-container"]} ref={ref} children={<Messages />} />
+          <ChatInput />
+        </>
+      )}
+      {view === "SETTINGS" && <ChatSettings />}
     </>
   );
 };

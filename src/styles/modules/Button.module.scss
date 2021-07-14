@@ -13,3 +13,13 @@
     background-color: $secondary-disabled !important;
   }
 }
+
+.text-button {
+  color: $gray-text;
+  font-weight: bold;
+  cursor: pointer;
+
+  &[aria-disabled="true"] {
+    cursor: default;
+  }
+}

@@ -107,10 +107,6 @@
   background-color: $dark;
   color: $white;
   cursor: pointer;
-  &:hover {
-    transition: all 0.1s;
-    transform: translateY(-0.25rem);
-  }
 
   .content {
     border-radius: 5px;

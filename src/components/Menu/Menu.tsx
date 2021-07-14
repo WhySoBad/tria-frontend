@@ -30,9 +30,10 @@ interface MenuItemProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTM
   autoClose?: boolean;
   onClose?: (open: false) => void;
   nested?: NestedMenuProps;
+  critical?: boolean;
 }
 
-export const MenuItem: React.FC<MenuItemProps> = forwardRef(({ children, autoClose = true, onClick, onClose, nested, onMouseOver, ...props }, ref): JSX.Element => {
+export const MenuItem: React.FC<MenuItemProps> = forwardRef(({ children, critical = false, autoClose = true, onClick, onClose, nested, onMouseOver, ...props }, ref): JSX.Element => {
   const [nestedOpen, setNestedOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLDivElement>(null);
 
@@ -41,9 +42,10 @@ export const MenuItem: React.FC<MenuItemProps> = forwardRef(({ children, autoClo
       <div
         ref={anchorRef}
         className={style["item-container"]}
-        onClick={() => {
+        data-critical={critical}
+        onClick={(event) => {
           if (autoClose) onClose && onClose(false);
-          onClick && onClick;
+          onClick && onClick(event);
         }}
         onMouseOver={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           onMouseOver && onMouseOver(event);

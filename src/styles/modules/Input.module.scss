@@ -9,10 +9,11 @@
   color: $white !important;
   border-radius: 4px;
   padding: 0.5rem 1rem;
-  border: solid 2px $dark-dark;
+  border: solid 2px $dark-border;
   transition: all 0.2s;
+  align-items: unset !important;
   &:hover {
-    border-color: $dark-light;
+    border-color: $dark-dark;
   }
 
   &.error,
@@ -23,23 +24,39 @@
   }
 
   &.disabled {
-    border-color: $dark-dark;
+    border-color: $dark-border;
   }
 
   &.focus {
-    border-color: $dark-lighter;
+    border-color: $dark-light;
   }
 }
 
 .checkbox {
-  color: $dark-dark !important;
+  color: $dark-border !important;
+  transition: all 0.2s;
 
   &:hover {
-    background-color: rgba($dark-dark, 0.05) !important;
+    background-color: rgba($dark-border, 0.05) !important;
+  }
+
+  &.active {
+    transition: all 0.2s;
+    color: $dark-light !important;
+    &:hover {
+      color: $dark-light !important;
+    }
   }
 
   &.secondary {
-    color: $dark-dark !important;
+    transition: all 0.2s;
+    &:hover {
+      color: $dark-dark !important;
+    }
+  }
+
+  &.disabled {
+    border-color: $dark-border;
   }
 }
 
@@ -67,4 +84,56 @@
     color: $gray-text;
     margin: 0 0.25rem;
   }
+}
+
+.select {
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background-color: transparent !important;
+  font-family: "IBM Plex Sans", sans-serif !important;
+  color: $white !important;
+  border-radius: 4px !important;
+  padding: 0.5rem 1rem !important;
+  border: solid 2px $dark-border !important;
+  transition: all 0.2s !important;
+  align-items: unset !important;
+  &:hover {
+    border-color: $dark-dark !important;
+  }
+
+  &.disabled {
+    border-color: $dark-border !important;
+  }
+
+  &.focus {
+    border-color: $dark-light !important;
+  }
+}
+
+.select-icon {
+  color: $gray-text !important;
+}
+
+.menu-item {
+  cursor: pointer !important;
+  color: $white !important;
+  padding: 0.4rem 0.5rem !important;
+  margin: 0.1rem 0rem !important;
+  border-radius: 3px !important;
+  user-select: none !important;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: $white !important;
+  }
+}
+
+.menu-container {
+  background: $dark !important;
+  padding: 0rem !important;
+}
+
+.menu-list {
+  padding: 0.4rem 0.3rem !important;
 }

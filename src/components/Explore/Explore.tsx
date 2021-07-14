@@ -15,8 +15,6 @@ const Explore: React.FC = (): JSX.Element => {
   const scrollRef = useRef<Scrollbars>(null);
   const collapsedTitleRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [collapsedVisible, setCollapsedVisible] = useState<boolean>(true);
-  const [containerVisible, setContainerVisible] = useState<boolean>(true);
   const [text, setText] = useState<string>("");
   const [view, setView] = useState<"grid" | "list">();
   const [results, setResults] = useState<Array<ChatPreview | UserPreview>>([]);
@@ -28,10 +26,10 @@ const Explore: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     let rendered: boolean = true;
-    const collapsedObserver = new IntersectionObserver(([entry]) => rendered && setCollapsedVisible(entry.isIntersecting));
-    const containerObserver = new IntersectionObserver(([entry]) => rendered && setContainerVisible(entry.isIntersecting));
-    collapsedObserver.observe(collapsedTitleRef.current);
-    containerObserver.observe(containerRef.current);
+    const scrollHandler = () => {
+      if (window.pageYOffset > 200) return;
+    };
+    window.addEventListener("scroll", scrollHandler);
 
     if (window.innerWidth <= 900) setView("list");
     else setView("grid");
@@ -67,32 +65,7 @@ const Explore: React.FC = (): JSX.Element => {
 
   return (
     <main className={style["container"]}>
-      <section className={style["collapsed-title-container"]} ref={collapsedTitleRef} style={{ zIndex: !collapsedVisible && 10, opacity: !collapsedVisible && 1 }}>
-        <h3 className={style["collapsed-title"]} style={{ opacity: !containerVisible && 1 }} children={title} />
-        <div className={style["collapsed-searchbar"]} style={{ opacity: !containerVisible && 1 }}>
-          <Searchbar
-            placeholder={"Search user or chats"}
-            value={text}
-            onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-              setText(event.target.value);
-              handleChange(event);
-            }}
-          />
-        </div>
-        <IconContainer selected={view} onChange={setView} />
-      </section>
-
-      <Scrollbar
-        reference={scrollRef}
-        onScroll={() => {
-          const effHeight: number = containerRef.current.offsetHeight - collapsedTitleRef.current.offsetHeight;
-          if (scrollRef.current.getScrollTop() > effHeight && collapsedVisible) {
-            setCollapsedVisible(false);
-          } else if (scrollRef.current.getScrollTop() < effHeight && !collapsedVisible) {
-            setCollapsedVisible(true);
-          }
-        }}
-      >
+      <Scrollbar reference={scrollRef}>
         <section className={style["title-container"]} style={{ marginRight: scrollVisible && "0px" }} ref={containerRef}>
           <div className={style["title-content"]}>
             <h3 className={style["title"]} children={title} />

@@ -3,7 +3,7 @@ import style from "../../../styles/modules/ChatCreateModal.module.scss";
 import cn from "classnames";
 import { IconButton, FormControlLabel, Avatar } from "@material-ui/core";
 import { ModalProps } from "../Modal";
-import Button, { TextButton } from "../../Button/Button";
+import Button from "../../Button/Button";
 import { Close as CloseIcon, ChevronLeft as BackIcon } from "@material-ui/icons";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -17,7 +17,7 @@ interface ChatCreateModalProps extends ModalProps {}
 
 const ChatCreateModal: React.FC<ChatCreateModalProps> = ({ onClose, ...rest }): JSX.Element => {
   const [members, setMembers] = useState<Array<UserPreview>>([]);
-  const [selected, setSelected] = useState<"FORM" | "SELECT">("SELECT");
+  const [selected, setSelected] = useState<"FORM" | "SELECT">("FORM");
 
   return (
     <>
@@ -96,9 +96,11 @@ const Form: React.FC<FormProps> = ({ members, onClose, onSelect }): JSX.Element 
           name={"isPublic"}
           control={control}
           defaultValue={false}
-          render={({ field }) => <FormControlLabel label={"Public"} className={style["public"]} control={<Checkbox {...field} />} />}
+          render={({ field }) => <FormControlLabel label={"Public"} classes={{ root: style["public"], label: style["label"] }} control={<Checkbox {...field} />} />}
         />
-        <TextButton children={"Select members"} onClick={onSelect} />
+        <div className={style["members"]}>
+          <span className={style["link"]} onClick={onSelect} children={"Select members"} />
+        </div>
       </div>
       <div className={style["submit"]}>
         <Button disabled={!isValid && !isSubmitting} children={"Create"} type={"submit"} />

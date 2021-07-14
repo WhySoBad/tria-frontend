@@ -1,6 +1,6 @@
 import { Avatar, IconButton } from "@material-ui/core";
-import { Chat, User, UserPreview, Group, PrivateChat } from "client";
-import React, { useState } from "react";
+import { Chat, User, UserPreview, Group, PrivateChat, ChatSocketEvent } from "client";
+import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import { useChat } from "../../../hooks/ChatContext";
 import { useClient } from "../../../hooks/ClientContext";
@@ -14,6 +14,7 @@ import { useModal } from "../../../hooks/ModalContext";
 import { Group as GroupIcon, Person as ProfileIcon, AddBox as AddChatIcon, Chat as ChatIcon, MoreVert as MoreIcon } from "@material-ui/icons";
 import { useRef } from "react";
 import Menu, { MenuItem } from "../../Menu/Menu";
+import { UserSocketEvent } from "../../../../../client/dist/src/websocket/types/UserSocket.types";
 
 interface UserModalProps extends ModalProps {
   user: User | UserPreview;
@@ -28,6 +29,24 @@ const UserModal: React.FC<UserModalProps> = ({ onClose, user, ...rest }): JSX.El
   const icons: Array<JSX.Element> = [];
   const moreRef = useRef<SVGSVGElement>(null);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [, setUpdate] = useState<number>();
+
+  const handleUpdate = (userUuid: string) => userUuid === user.uuid && setUpdate(new Date().getTime());
+
+  useEffect(() => {
+    client.on(UserSocketEvent.USER_EDIT, handleUpdate);
+    client.on(UserSocketEvent.USER_DELETE, onClose);
+    client.on(ChatSocketEvent.PRIVATE_CREATE, () => setUpdate(new Date().getTime()));
+    client.on(ChatSocketEvent.GROUP_CREATE, () => setUpdate(new Date().getTime()));
+    client.on(ChatSocketEvent.CHAT_DELETE, () => setUpdate(new Date().getTime()));
+    return () => {
+      client.off(UserSocketEvent.USER_EDIT, handleUpdate);
+      client.off(UserSocketEvent.USER_DELETE, onClose);
+      client.off(ChatSocketEvent.PRIVATE_CREATE, () => setUpdate(new Date().getTime()));
+      client.off(ChatSocketEvent.GROUP_CREATE, () => setUpdate(new Date().getTime()));
+      client.off(ChatSocketEvent.CHAT_DELETE, () => setUpdate(new Date().getTime()));
+    };
+  }, []);
 
   if (!client || !user) return <></>;
 
@@ -53,7 +72,8 @@ const UserModal: React.FC<UserModalProps> = ({ onClose, user, ...rest }): JSX.El
         const privateChat: Chat | undefined = client.user.chats.values().find((chat) => {
           return chat instanceof PrivateChat && chat.participant.user.uuid === user.uuid;
         });
-        setSelected(privateChat.uuid);
+        router.push(`chat/${privateChat.uuid}`);
+        close();
       })
       .catch(client.error);
   };
@@ -119,7 +139,11 @@ const SharedChats: React.FC<SharedChatsProps> = ({ user }): JSX.Element => {
           <div className={style["item-container"]} key={chat.uuid} onClick={close}>
             <Link href={`/chat/${chat.uuid}`}>
               <div className={style["item"]}>
-                <Avatar className={style["avatar"]} style={{ backgroundColor: chat.color }} alt={chat.uuid} children={chat.uuid.substr(0, 1)} />
+                <Avatar
+                  className={style["avatar"]}
+                  src={chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : ""}
+                  style={{ backgroundColor: chat.color }}
+                />
                 <div className={style["name"]}>
                   <h6 children={name} />
                   {chat instanceof Group && <GroupIcon className={style["icon"]} />}

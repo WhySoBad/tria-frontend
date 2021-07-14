@@ -1,5 +1,4 @@
-import { useMediaQuery, Drawer, IconButton } from "@material-ui/core";
-import { Menu as MenuIcon } from "@material-ui/icons";
+import { useMediaQuery } from "@material-ui/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useRef } from "react";
@@ -7,13 +6,11 @@ import { useEffect } from "react";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Layout.module.scss";
 import Burger from "../Burger/Burger";
-import BurgerMenu from "../Burger/BurgerMenu";
 
 const Layout: React.FC = ({ children }): JSX.Element => {
   const matches = useMediaQuery("(min-width: 800px)");
   const ref = useRef<HTMLDivElement>(null);
-  const [drawer, setDrawer] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>();
   const { client } = useClient();
   const router = useRouter();
 
@@ -22,35 +19,22 @@ const Layout: React.FC = ({ children }): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    if (ref?.current?.clientWidth <= 800) {
-      setOpen(false);
-      setDrawer(true);
-    } else {
-      setOpen(false);
-      setDrawer(false);
-    }
-  }, [matches]);
+    if (ref?.current?.clientWidth <= 800) setOpen(false);
+    else setOpen(true);
+  }, [ref.current]);
 
   if (!client) return <></>;
 
   return (
-    <main className={style["container"]} ref={ref}>
-      {!drawer && <section className={style["burger-container"]} children={<Burger />} />}
-      {drawer && (
-        <>
-          <Drawer anchor={"left"} open={open} onClose={() => setOpen(false)}>
-            <section className={style["burger-container"]} children={<Burger onClick={() => setOpen(false)} />} />
-          </Drawer>
-          <section className={style["collapsed-burger-container"]}>
-            <div>
-              <IconButton disableRipple className={style["iconbutton"]} size={"medium"} onClick={() => setOpen(true)} children={<MenuIcon className={style["icon"]} />} />
-            </div>
-          </section>
-        </>
+    <main className={style["container"]} data-open={open} ref={ref}>
+      {typeof open !== "undefined" && (
+        <section
+          className={style["burger-container"]}
+          data-open={open}
+          children={<Burger open={open} onClick={() => ref?.current?.clientWidth <= 800 && open && setOpen(false)} onCollapse={() => setOpen(!open)} />}
+        />
       )}
-      <section className={style["content-container"]} children={children} />
-      <section className={style["burger-menu-container"]} children={<BurgerMenu />} />
-      <section className={style["profile-menu-container"]} />
+      <section className={style["content-container"]} children={children} data-overflow={open && !matches} />
     </main>
   );
 };

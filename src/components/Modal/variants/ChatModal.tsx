@@ -1,5 +1,5 @@
 import { Avatar, IconButton } from "@material-ui/core";
-import { Admin, Chat, Group, Member, Owner, PrivateChat } from "client";
+import { Admin, Chat, ChatSocketEvent, Group, Member, Owner, PrivateChat } from "client";
 import React, { useState } from "react";
 import style from "../../../styles/modules/ChatModal.module.scss";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
@@ -11,12 +11,35 @@ import Scrollbar from "../../Scrollbar/Scrollbar";
 import Menu, { MenuItem } from "../../Menu/Menu";
 import { useRef } from "react";
 import { useEffect } from "react";
+import { UserSocketEvent } from "../../../../../client/dist/src/websocket/types/UserSocket.types";
 
 interface ChatModalProps extends ModalProps {
   chat: Chat;
 }
 
 const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat, ...rest }) => {
+  const { client } = useClient();
+  const [, setUpdate] = useState<number>();
+
+  const handleUpdate = (chatUuid: string) => chatUuid === chat.uuid && setUpdate(new Date().getTime());
+
+  useEffect(() => {
+    client.on(ChatSocketEvent.CHAT_EDIT, handleUpdate);
+    client.on(ChatSocketEvent.MEMBER_JOIN, handleUpdate);
+    client.on(ChatSocketEvent.MEMBER_LEAVE, handleUpdate);
+    client.on(ChatSocketEvent.MEMBER_EDIT, handleUpdate);
+    client.on(UserSocketEvent.USER_EDIT, handleUpdate);
+    client.on(ChatSocketEvent.CHAT_DELETE, onClose);
+    return () => {
+      client.off(ChatSocketEvent.CHAT_EDIT, handleUpdate);
+      client.off(ChatSocketEvent.MEMBER_JOIN, handleUpdate);
+      client.off(ChatSocketEvent.MEMBER_LEAVE, handleUpdate);
+      client.off(ChatSocketEvent.MEMBER_EDIT, handleUpdate);
+      client.off(UserSocketEvent.USER_EDIT, handleUpdate);
+      client.off(ChatSocketEvent.CHAT_DELETE, onClose);
+    };
+  }, []);
+
   const icons: Array<JSX.Element> = [];
   const name: string = chat instanceof Group ? chat.name : chat instanceof PrivateChat ? chat.participant.user.name : "";
   const tag: string = chat instanceof Group ? chat.tag : chat instanceof PrivateChat ? chat.participant.user.tag : "";
