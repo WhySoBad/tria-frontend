@@ -49,7 +49,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({ onClose, withBack, name, t
     <>
       <div className={style["head"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
         <div className={style["background"]} />
-        <Avatar variant={"rounded"} className={style["avatar"]} src={avatar} style={{ backgroundColor: color }} />
+        <Avatar variant={"rounded"} className={style["avatar"]} src={avatar} style={{ backgroundColor: !avatar && color }} />
         <div className={style["text-container"]}>
           <div className={style["name"]}>
             <h3 children={name} />

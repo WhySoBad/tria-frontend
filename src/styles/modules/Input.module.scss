@@ -64,11 +64,14 @@
   padding: 2px 4px;
   display: flex;
   align-items: center;
-  min-width: 300px;
   width: 100%;
   background-color: $darker;
   border-radius: 5px;
   border: solid 1px $dark-border;
+
+  &[data-minwidth="true"] {
+    min-width: 300px;
+  }
 
   .searchbar {
     margin-left: 0.5rem;

@@ -1,0 +1,45 @@
+@use "../config/" as *;
+
+.container {
+  width: 100%;
+  display: grid;
+  grid-template-areas: "title" "form";
+  gap: 1rem;
+
+  .title {
+    grid-area: title;
+  }
+
+  .form-container {
+    grid-area: form;
+
+    .form {
+      display: grid;
+      grid-template-areas: "name tag" "description description" "locale ." "buttons buttons";
+      grid-gap: 1rem;
+
+      .name {
+        grid-area: name;
+      }
+
+      .tag {
+        grid-area: tag;
+      }
+
+      .description {
+        grid-area: description;
+      }
+
+      .locale {
+        grid-area: locale;
+      }
+
+      .button-container {
+        grid-area: buttons;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+  }
+}

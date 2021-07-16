@@ -1,64 +1,67 @@
-import { makeStyles, TextField } from "@material-ui/core";
+import { IconButton, InputBase, TextField } from "@material-ui/core";
 import cn from "classnames";
 import { Chat } from "client";
 import React, { useState } from "react";
 import style from "../../styles/modules/Chat.module.scss";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& .MuiInputBase-root": {
-      color: "#fff",
-    },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: "#fff",
-      },
-      "&:hover fieldset": {
-        borderColor: "green",
-      },
-    },
-  },
-}));
+import { Send as SendIcon } from "@material-ui/icons";
+import { useRef } from "react";
+import { useEffect } from "react";
 
 const ChatInput: React.FC = (): JSX.Element => {
-  const [text, setText] = useState<string>();
+  const [text, setText] = useState<string>("");
   const { client } = useClient();
-  const { selected, update } = useChat();
-  const classes = useStyles();
+  const { selected } = useChat();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.focus();
+  }, [selected, inputRef.current]);
 
   const chat: Chat | undefined = client?.user.chats.get(selected);
 
+  const isValid = (): boolean => {
+    if (!Boolean(text)) return false;
+    const replaced: string = text.replace("\n", "");
+    if (!Boolean(replaced)) return false;
+    return true;
+  };
+
   if (!chat) return <></>;
 
+  const handleSend = () => {
+    if (!isValid()) return;
+    chat
+      .sendMessage(text)
+      .then(() => setText(""))
+      .catch(client.error);
+  };
+
   return (
-    <div className={style["input-container"]}>
-      <TextField
-        value={text}
-        multiline
-        variant={"outlined"}
-        className={cn(style["input-content"], classes.root)}
-        inputProps={{ className: style["input"] }}
-        placeholder={"Say hello"}
-        onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-          setText(event.target.value);
-        }}
-        onKeyPress={(event: React.KeyboardEvent<HTMLDivElement>) => {
-          if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            if (Boolean(text)) {
-              chat
-                .sendMessage(text)
-                .then(() => {
-                  setText("");
-                  update();
-                })
-                .catch((err) => client.error(err));
+    <div className={style["chat-input-container"]}>
+      <div className={style["input-container"]}>
+        <InputBase
+          inputRef={inputRef}
+          rowsMax={4}
+          spellCheck={false}
+          fullWidth
+          value={text}
+          multiline
+          autoFocus
+          classes={{ root: style["input"], error: style["error"], disabled: style["disabled"], focused: style["focus"], inputMultiline: style["multiline"] }}
+          placeholder={"Type new message"}
+          onChange={({ target: { value } }) => setText(value)}
+          onKeyPress={(event: React.KeyboardEvent<HTMLDivElement>) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              handleSend();
             }
-          }
-        }}
-      />
+          }}
+          endAdornment={<IconButton disabled={!isValid()} onClick={handleSend} className={style["iconbutton"]} children={<SendIcon data-disabled={!isValid()} className={style["send"]} />} />}
+        />
+      </div>
+      <div className={style["send-container"]}></div>
     </div>
   );
 };

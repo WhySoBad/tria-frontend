@@ -135,15 +135,12 @@ const SharedChats: React.FC<SharedChatsProps> = ({ user }): JSX.Element => {
       {sharedChats.map((chat: Chat) => {
         const name: string = chat instanceof Group ? chat.name : chat instanceof PrivateChat ? chat.participant.user.name : "";
         const description: string = chat instanceof Group ? chat.description : chat instanceof PrivateChat ? chat.participant.user.description : "";
+        const src: string = chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : "";
         return (
           <div className={style["item-container"]} key={chat.uuid} onClick={close}>
             <Link href={`/chat/${chat.uuid}`}>
               <div className={style["item"]}>
-                <Avatar
-                  className={style["avatar"]}
-                  src={chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : ""}
-                  style={{ backgroundColor: chat.color }}
-                />
+                <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: !src && chat.color }} />
                 <div className={style["name"]}>
                   <h6 children={name} />
                   {chat instanceof Group && <GroupIcon className={style["icon"]} />}

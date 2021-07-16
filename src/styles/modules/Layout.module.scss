@@ -50,3 +50,31 @@
   height: 100%;
   transition: all 0.5s;
 }
+
+.form-layout-container {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+    width: 100%;
+    height: 100%;
+
+    .form-content {
+      display: flex;
+      background-color: $dark;
+      padding: 1rem;
+      border-radius: 5px;
+      max-width: 600px;
+      width: 100%;
+
+      &[data-small="true"] {
+        width: 400px;
+      }
+    }
+  }
+}

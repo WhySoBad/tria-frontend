@@ -12,6 +12,7 @@ import Menu, { MenuItem } from "../../Menu/Menu";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { UserSocketEvent } from "../../../../../client/dist/src/websocket/types/UserSocket.types";
+import { useRouter } from "next/router";
 
 interface ChatModalProps extends ModalProps {
   chat: Chat;
@@ -20,6 +21,7 @@ interface ChatModalProps extends ModalProps {
 const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat, ...rest }) => {
   const { client } = useClient();
   const [, setUpdate] = useState<number>();
+  const router = useRouter();
 
   const handleUpdate = (chatUuid: string) => chatUuid === chat.uuid && setUpdate(new Date().getTime());
 
@@ -44,11 +46,22 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat, ...rest }) => {
   const name: string = chat instanceof Group ? chat.name : chat instanceof PrivateChat ? chat.participant.user.name : "";
   const tag: string = chat instanceof Group ? chat.tag : chat instanceof PrivateChat ? chat.participant.user.tag : "";
 
-  const canEdit: boolean = chat instanceof Group && chat.canEditGroup;
+  const canEdit: boolean = chat.members.get(client.user.uuid) instanceof Owner || chat.members.get(client.user.uuid) instanceof Admin;
 
   const openMore = () => {};
 
-  if (canEdit) icons.push(<IconButton className={baseStyle["iconbutton"]} children={<SettingsIcon className={baseStyle["icon"]} />} />);
+  if (canEdit) {
+    icons.push(
+      <IconButton
+        className={baseStyle["iconbutton"]}
+        onClick={() => {
+          router.push(`/chat/${chat.uuid}/settings`);
+          onClose && onClose();
+        }}
+        children={<SettingsIcon className={baseStyle["icon"]} />}
+      />
+    );
+  }
   icons.push(<IconButton className={baseStyle["iconbutton"]} children={<MoreIcon className={baseStyle["icon"]} />} onClick={openMore} />);
 
   return (
@@ -70,7 +83,7 @@ const GroupContent: React.FC<GroupContentProps> = ({ group }): JSX.Element => {
 
   return (
     <div className={style["content"]}>
-      <Scrollbar>
+      <Scrollbar withPadding={false} withMargin={false}>
         <div className={style["members"]}>
           <RoleBorder title={"owner"} />
           {owner.map((owner: Owner) => (
@@ -84,10 +97,14 @@ const GroupContent: React.FC<GroupContentProps> = ({ group }): JSX.Element => {
               ))}
             </>
           )}
-          <RoleBorder title={"member"} />
-          {members.map((member: Member) => (
-            <ChatMember chat={group} member={member} key={member.user.uuid} />
-          ))}
+          {members.length !== 0 && (
+            <>
+              <RoleBorder title={"member"} />
+              {members.map((member: Member) => (
+                <ChatMember chat={group} member={member} key={member.user.uuid} />
+              ))}
+            </>
+          )}
         </div>
       </Scrollbar>
     </div>
@@ -141,7 +158,7 @@ const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element =>
   return (
     <div className={style["item-container"]} data-open={menuOpen}>
       <div className={style["item"]} onClick={() => openMember(member, { withBack: true, onClose: () => openChat(chat) })}>
-        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: member.user.color }} />
+        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: !member.user.avatarURL && member.user.color }} />
         <h6 children={member.user.name} className={style["title"]} />
         <div children={member.user.description} className={style["description"]} />
       </div>

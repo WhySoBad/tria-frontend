@@ -4,7 +4,6 @@
   position: relative;
   padding: 0.5rem 0;
   @include flex-column;
-  width: calc(100% - 17px);
 
   &:last-child {
     margin-bottom: 17px;

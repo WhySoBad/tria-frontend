@@ -56,7 +56,7 @@ const Burger: React.FC<BurgerProps> = ({ onClick, open, onCollapse }): JSX.Eleme
   ];
 
   return (
-    <Scrollbar>
+    <Scrollbar withPadding={false} withMargin={false}>
       <Section>
         <Item open={open} icon={<MenuIcon />} text={""} onClick={onCollapse} />
         <Item open={open} href={"/profile"} icon={<ProfileIcon />} text={"Profile"} onClick={onClick} />
@@ -121,13 +121,14 @@ interface ChatItemProps {
 }
 
 const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element => {
+  const { client } = useClient();
   const href: string = `/chat/${chat.uuid}`;
   const name: string = getChatName(chat);
   const src: string = chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : "";
 
   const router = useRouter();
   const selected: string = router.query.uuid as string;
-  const unread: number = chat.messages.values().filter(({ createdAt }) => createdAt.getTime() > chat.lastRead.getTime()).length;
+  const unread: number = chat.messages.values().filter(({ createdAt, sender }) => sender !== client.user.uuid && createdAt.getTime() > chat.lastRead.getTime()).length;
 
   return (
     <Link href={href}>
@@ -145,7 +146,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element
             data-online={chat instanceof PrivateChat && chat.participant.user.online}
             data-group={chat instanceof Group}
           >
-            <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: chat.color, width: "2rem", height: "2rem" }} alt={name} />
+            <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: !src && chat.color, width: "2rem", height: "2rem" }} />
           </Badge>
         </div>
         <div className={style["burger-text-container"]} data-open={open}>

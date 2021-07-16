@@ -1,5 +1,5 @@
 import { Avatar, CircularProgress } from "@material-ui/core";
-import { BannedMember, Chat, ChatSocketEvent, ChatType, getUserPreview, Member, Message, UserPreview, Group } from "client";
+import { BannedMember, Chat, ChatSocketEvent, ChatType, getUserPreview, Member, Message, UserPreview, Group, ClientEvent } from "client";
 import { MemberLog } from "client/dist/src/chat/classes/MemberLog.class";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import style from "../../styles/modules/Chat.module.scss";
@@ -8,6 +8,7 @@ import { useClient } from "../../hooks/ClientContext";
 import { useModal } from "../../hooks/ModalContext";
 import Scrollbar from "../Scrollbar/Scrollbar";
 import Scrollbars from "react-custom-scrollbars-2";
+import { debouncedPromise } from "../../util";
 
 const Messages: React.FC = (): JSX.Element => {
   const { client } = useClient();
@@ -15,12 +16,24 @@ const Messages: React.FC = (): JSX.Element => {
   const ref = useRef<Scrollbars>(null);
   const chat: Chat | undefined = client?.user.chats.get(selected);
   const [lastRead, setLastRead] = useState<Date>(chat?.lastRead);
+  const [reading, setReading] = useState<boolean>(false);
 
   useEffect(() => {
-    const hasMessages: boolean = chat && chat.messages.size !== 0;
-    const lastMessage: Message | undefined = hasMessages ? chat.messages.values()[chat.messages.size - 1] : undefined;
-    setLastRead(lastMessage && lastMessage.createdAt.getTime() !== chat.lastRead.getTime() ? chat.lastRead : null);
+    if (!chat) return;
+    const messages: Array<Message> = chat.messages.values().filter(({ createdAt, sender }) => {
+      return sender !== client.user.uuid && createdAt.getTime() > chat.lastRead.getTime();
+    });
+    setLastRead(messages.length > 0 ? chat.lastRead : null);
   }, [selected]);
+
+  const handleRead = debouncedPromise(async (timestamp: number, cb: () => void) => {
+    if (timestamp > chat.lastRead.getTime() && !reading) {
+      setReading(true);
+      await chat.readUntil(timestamp).catch(client.error);
+      cb();
+      setReading(false);
+    }
+  }, 250);
 
   if (!chat) return <></>;
 
@@ -39,21 +52,30 @@ const Messages: React.FC = (): JSX.Element => {
     const previous: Message | MemberLog | undefined = index > 0 ? arr[index - 1] : undefined;
     const previousDate: Date | undefined = previous ? (previous instanceof MemberLog ? previous.timestamp : previous.createdAt) : undefined;
     const date: Date = message instanceof MemberLog ? message.timestamp : message.createdAt;
-    if (lastRead && previousDate && previousDate.getTime() < lastRead?.getTime() && date.getTime() >= lastRead?.getTime()) dates.push(lastRead?.getTime());
-    if (previous instanceof MemberLog) dates.push(previous.timestamp.getTime());
+    if (lastRead && previousDate && previousDate.getTime() <= lastRead?.getTime() && date.getTime() > lastRead?.getTime()) dates.push(lastRead?.getTime());
+    else if (previous instanceof MemberLog) dates.push(previous.timestamp.getTime());
     else if (!previous || previous.sender !== message.sender) dates.push(message.createdAt.getTime());
     else if (previous.createdAt.toLocaleDateString() !== message.createdAt.toLocaleDateString()) dates.push(message.createdAt.getTime());
   });
 
   dates.forEach((timestamp: number, index: number, arr: Array<number>) => {
+    if (timestamp === lastRead?.getTime()) {
+      const existsTwice: boolean = arr.filter((value) => value === timestamp).length === 2;
+      if (existsTwice) {
+        const firstIndex: number = arr.indexOf(timestamp);
+        if (index === firstIndex) groups.push(timestamp);
+      } else groups.push(timestamp);
+    }
     const next: number | undefined = index === arr.length - 1 ? undefined : arr[index + 1];
+    const beforeLastRead: boolean = lastRead && next === lastRead.getTime();
     const messages: Array<Message> = sorted.filter((value) => value instanceof Message) as any;
     const group: Array<Message> = messages.filter((value: Message) => {
       const { createdAt } = value;
+      if (beforeLastRead && createdAt.getTime() === next) return true;
+      if (timestamp === lastRead?.getTime() && createdAt.getTime() === timestamp) return false;
       return createdAt.getTime() >= timestamp && (!next || createdAt.getTime() < next);
     }) as any;
-    if (group.length === 0 && timestamp === lastRead?.getTime()) groups.push(lastRead?.getTime());
-    else groups.push(group);
+    groups.push(group);
   });
 
   const messages: Array<Array<Message> | MemberLog | number> = [...groups, ...(chat?.memberLog.values() || [])].sort((a, b) => {
@@ -70,15 +92,13 @@ const Messages: React.FC = (): JSX.Element => {
         const previous: Array<Message> | MemberLog | undefined = index > 0 ? arr[index - 1] : undefined;
         const previousDate: Date | undefined = Array.isArray(previous) ? previous[0]?.createdAt : previous ? previous.timestamp : undefined;
         const date: Date | undefined = Array.isArray(value) ? value[0]?.createdAt : typeof value !== "number" ? value.timestamp : undefined;
-        const unread: boolean = date && date.getTime() > chat.lastRead.getTime();
-
         return (
           <React.Fragment key={index + key}>
             {index === 0 && chat.lastFetched && <code className={style["log-container"]} children={"Start of the chat"} />}
             {((date && previousDate && date.toLocaleDateString() !== previousDate.toLocaleDateString()) || index === 0) && <Date date={date} key={date.getTime()} />}
-            {value === lastRead?.getTime() && typeof value === "number" && lastRead && <code className={style["log-container"]} children={"New messages"} />}
+            {typeof value === "number" && lastRead && <code className={style["log-container"]} children={"New messages"} />}
             {value instanceof MemberLog && chat.type !== ChatType.PRIVATE && <Log log={value} key={key} />}
-            {Array.isArray(value) && <MessageGroup unread={unread} messages={value} key={key} />}
+            {Array.isArray(value) && <MessageGroup onRead={handleRead} messages={value} key={key} />}
           </React.Fragment>
         );
       })}
@@ -89,15 +109,13 @@ const Messages: React.FC = (): JSX.Element => {
 
 interface MessageGroupProps {
   messages: Array<Message>;
-  unread?: boolean;
+  onRead: (timestamp: number, cb: () => void) => void;
 }
 
-const MessageGroup: React.FC<MessageGroupProps> = ({ messages, unread = false }): JSX.Element => {
+const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead }): JSX.Element => {
   const { client } = useClient();
   const { openMember } = useModal();
-  const { update } = useChat();
   if (messages.length === 0) return <></>;
-  const groupRef = useRef<HTMLDivElement>(null);
   const message: Message = messages[0];
   const chat: Chat | undefined = client.user.chats.get(message.chat);
   const sender: Member | undefined | BannedMember = chat.members.get(message.sender) || (chat instanceof Group && chat.bannedMembers.get(message.sender));
@@ -109,57 +127,72 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ messages, unread = false })
     return `${hours < 10 ? "0" + hours : hours}:${minutes < 10 ? "0" + minutes : minutes} ${message.createdAt.getHours() > 12 ? "PM" : "AM"}`;
   };
 
+  const src: string | boolean = sender && (sender instanceof Member ? sender.user.avatarURL : sender.avatarURL);
+
+  return (
+    <section className={style["group-container"]}>
+      <div className={style["avatar-container"]} data-banned={!(sender instanceof Member)} data-self={isSelf}>
+        <Avatar
+          src={src}
+          className={style["avatar"]}
+          style={{ backgroundColor: !src && sender && (sender instanceof Member ? sender.user.color : sender.color) }}
+          onClick={() => sender instanceof Member && openMember(sender)}
+        />
+      </div>
+      <div className={style["content-container"]}>
+        {messages.map((message: Message, index: number) => {
+          return <MessageEl onRead={onRead} key={message.uuid} message={message} date={getDate(message)} first={index === 0} self={isSelf} sender={sender} read={message.createdAt <= chat.lastRead} />;
+        })}
+      </div>
+    </section>
+  );
+};
+
+interface MessageProps {
+  message: Message;
+  sender: Member | BannedMember | undefined;
+  self: boolean;
+  read: boolean;
+  first: boolean;
+  date: string;
+  onRead: (timestamp: number, cb: () => void) => void;
+}
+
+const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead, date, sender }): JSX.Element => {
+  const { openMember } = useModal();
+  const [isRead, setRead] = useState<boolean>(read);
+  const ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
-      if (entries[0].isIntersecting && unread) {
-        chat
-          .readUntil(messages[messages.length - 1].createdAt)
-          .then(update)
-          .catch(client.error);
-      }
+      if (entries[0].isIntersecting && !isRead) onRead(message.createdAt.getTime(), () => setRead(true));
     });
-    observer.observe(groupRef.current);
+    observer.observe(ref.current);
     return () => {
       observer.disconnect();
     };
   }, []);
 
   return (
-    <section className={style["group-container"]} ref={groupRef}>
-      <div className={style["avatar-container"]} data-banned={!(sender instanceof Member)} data-self={isSelf}>
-        <Avatar
-          src={sender && (sender instanceof Member ? sender.user.avatarURL : sender.avatarURL)}
-          className={style["avatar"]}
-          style={{ backgroundColor: sender && (sender instanceof Member ? sender.user.color : sender.color) }}
-          onClick={() => sender instanceof Member && openMember(sender)}
-        />
+    <div ref={ref} id={message.uuid} className={style["message-container"]} data-self={self}>
+      <div className={style["message"]}>
+        {first && (
+          <h6
+            data-banned={!(sender instanceof Member)}
+            children={sender ? (sender instanceof Member ? sender.user.name : sender.name) : "Unknown Account"}
+            className={style["name"]}
+            onClick={() => sender instanceof Member && openMember(sender)}
+          />
+        )}
+        <div className={style["text"]}>
+          <span children={message.text} />
+          <span className={style["date"]}>
+            {date}
+            <span className={style["inner"]} children={date} />
+          </span>
+        </div>
       </div>
-      <div className={style["content-container"]}>
-        {messages.map((message: Message, index: number) => {
-          return (
-            <div key={message.uuid} id={message.uuid} className={style["message-container"]} data-self={isSelf}>
-              <div className={style["message"]}>
-                {index === 0 && (
-                  <h6
-                    data-banned={!(sender instanceof Member)}
-                    children={sender ? (sender instanceof Member ? sender.user.name : sender.name) : "Unknown Account"}
-                    className={style["name"]}
-                    onClick={() => sender instanceof Member && openMember(sender)}
-                  />
-                )}
-                <div className={style["text"]}>
-                  <span children={message.text} />
-                  <span className={style["date"]}>
-                    {getDate(message)}
-                    <span className={style["inner"]} children={getDate(message)} />
-                  </span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+    </div>
   );
 };
 
@@ -199,7 +232,7 @@ const Log: React.FC<LogProps> = ({ log, last = false }): JSX.Element => {
     } else {
       getUserPreview(log.user)
         .then((user: UserPreview) => mounted && setUser(user))
-        .catch(() => client.error("Failed fetching account"))
+        .catch(client.error)
         .finally(() => mounted && setFetched(true));
     }
     return () => {
@@ -240,7 +273,7 @@ const MessageLoader: React.FC<MessageLoaderProps> = ({ reference }): JSX.Element
               update();
               reference.current.scrollTop(reference.current.getScrollHeight() - start);
             })
-            .catch((err) => console.error(err));
+            .catch(client.error);
         }
       }
     });
@@ -265,7 +298,7 @@ const BottomAnchor: React.FC = (): JSX.Element => {
   const handleMessage = (chatUuid: string, message: Message) => {
     if (chatUuid !== chat.uuid) return;
     if (message.sender === client.user.uuid || visible) ref?.current?.scrollIntoView({ behavior: "smooth" });
-    if (visible && chat && message.sender !== client.user.uuid) chat.readUntil(message.createdAt);
+    /*   if (visible && chat && message.sender !== client.user.uuid) chat.readUntil(message.createdAt); */
   };
 
   client.on(ChatSocketEvent.MESSAGE, handleMessage);

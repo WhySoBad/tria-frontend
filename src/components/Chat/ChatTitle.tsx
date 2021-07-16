@@ -12,11 +12,10 @@ import { useEffect } from "react";
 import { UserSocketEvent } from "../../../../client/dist/src/websocket/types/UserSocket.types";
 
 interface ChatTitleProps {
-  onSettingsOpen?: () => void;
-  view: "CHAT" | "SETTINGS";
+  settings?: boolean;
 }
 
-const ChatTitle: React.FC<ChatTitleProps> = ({ onSettingsOpen, view }): JSX.Element => {
+const ChatTitle: React.FC<ChatTitleProps> = ({ settings = false }): JSX.Element => {
   const { client } = useClient();
   const [, setUpdate] = useState<number>();
   const router = useRouter();
@@ -49,10 +48,14 @@ const ChatTitle: React.FC<ChatTitleProps> = ({ onSettingsOpen, view }): JSX.Elem
 
   const canEdit: boolean = member instanceof Admin || member instanceof Owner;
 
-  const menuAction = (handler: void) => setMenuOpen(false);
+  const menuAction = (handler: any) => setMenuOpen(false);
 
   const deleteChat = () => {
     if (chat instanceof PrivateChat) chat.delete().catch(client.error);
+  };
+
+  const redirect = () => {
+    router.push(`/chat/${chat.uuid}${!settings ? "/settings" : ""}`);
   };
 
   return (
@@ -60,13 +63,13 @@ const ChatTitle: React.FC<ChatTitleProps> = ({ onSettingsOpen, view }): JSX.Elem
       <title children={name} />
       <h3 children={name} className={style["title"]} onClick={() => openChat(chat)} />
       <div className={style["icon-container"]}>
-        {canEdit && <IconButton className={style["iconbutton"]} children={<SettingsIcon className={style["icon"]} />} onClick={onSettingsOpen} />}
+        {canEdit && <IconButton className={style["iconbutton"]} onClick={() => redirect()} children={<SettingsIcon className={style["icon"]} />} />}
         <IconButton className={style["iconbutton"]} children={<MoreIcon ref={moreRef} className={style["icon"]} />} onClick={() => setMenuOpen(!menuOpen)} />
       </div>
       <Menu open={menuOpen} anchorEl={moreRef.current} onClose={() => setMenuOpen(false)}>
         <MenuItem children={"View Group Info"} onClick={() => menuAction(openChat(chat))} />
-        {view === "CHAT" && canEdit && <MenuItem children={"Manage Group"} onClick={() => menuAction(onSettingsOpen())} />}
-        {view === "SETTINGS" && <MenuItem children={"View Chat"} onClick={() => menuAction(onSettingsOpen())} />}
+        {!settings && canEdit && <MenuItem children={"Manage Group"} onClick={() => menuAction(redirect())} />}
+        {settings && <MenuItem children={"View Chat"} onClick={() => menuAction(redirect())} />}
         {!(member instanceof Owner) && chat instanceof Group && <MenuItem>Leave Group</MenuItem>}
         {chat instanceof PrivateChat && <MenuItem onClick={() => menuAction(deleteChat())}>Delete Chat</MenuItem>}
       </Menu>

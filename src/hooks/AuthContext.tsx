@@ -11,7 +11,7 @@ interface AuthContext {
 }
 
 const defaultValue: AuthContext = {
-  login: (credentials: Credentials) => new Promise(() => {}),
+  login: () => new Promise(() => {}),
   validate: () => new Promise(() => {}),
   isLoggedIn: false,
   token: null,
@@ -35,7 +35,7 @@ export const AuthProvider: NextPage = ({ children }): JSX.Element => {
   }, [token]);
 
   const login = (credentials: Credentials): Promise<string> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       loginUser(credentials)
         .then((token: string) => {
           setToken(token);

@@ -143,7 +143,10 @@ const MemberSelect: React.FC<MemberSelectProps> = ({ onSelect, members }): JSX.E
   };
 
   const handleSearch = debounce((event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    client.search({ text: event.target.value, checkUser: true, checkName: true, checkTag: true }).then(setResults).catch(client.error);
+    client
+      .search({ text: event.target.value, checkUser: true, checkName: true, checkTag: true })
+      .then(setResults as any)
+      .catch(client.error);
   }, 250);
 
   return (
@@ -196,7 +199,7 @@ const MemberItem: React.FC<MemberItemProps> = ({ user, selected = false, onChang
       <span className={style["checkbox"]}>
         <Checkbox checked={checked} onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleCheck(event.target.checked)} />
       </span>
-      <Avatar className={style["avatar"]} style={{ backgroundColor: user.color }} />
+      <Avatar className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} />
       <div className={style["title"]}>
         <h6 children={user.name} />
       </div>

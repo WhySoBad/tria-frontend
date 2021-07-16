@@ -14,6 +14,9 @@ import { ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon } from "@mat
 import { useEffect } from "react";
 import Scrollbar from "../Scrollbar/Scrollbar";
 import { useRouter } from "next/router";
+import Snackbar from "../Snackbar/Snackbar";
+import { Alert } from "@material-ui/lab";
+import ChatTitle from "./ChatTitle";
 
 interface ChatSettingsProps {}
 
@@ -26,13 +29,16 @@ const ChatSettings: React.FC<ChatSettingsProps> = (): JSX.Element => {
   if (!(chat instanceof Group)) return <></>;
 
   return (
-    <Scrollbar>
-      <section className={style["chat-settings-container"]}>
-        <Settings chat={chat} />
-        <MemberList chat={chat} />
-        <BannedMemberList chat={chat} />
-      </section>
-    </Scrollbar>
+    <>
+      <div className={style["title-container"]} children={<ChatTitle settings />} />
+      <Scrollbar>
+        <section className={style["chat-settings-container"]}>
+          <Settings chat={chat} />
+          <MemberList chat={chat} />
+          <BannedMemberList chat={chat} />
+        </section>
+      </Scrollbar>
+    </>
   );
 };
 
@@ -63,9 +69,9 @@ const MemberList: React.FC<MemberListProps> = ({ chat }): JSX.Element => {
   return (
     <div className={style["member-container"]}>
       <h5 className={style["title"]}>Member</h5>
-      <div className={style["searchbar"]} children={<Searchbar onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
+      <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
       <div className={style["list-container"]}>
-        <Scrollbar>
+        <Scrollbar withPadding={false}>
           {chat.members
             .values()
             .filter(({ user: { name } }) => name.toLowerCase().startsWith(text.toLowerCase()))
@@ -95,9 +101,11 @@ type MemberItemInputs = {
 
 const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(true);
+  const [snackError, setSnackError] = useState<string>();
   const { client } = useClient();
   const [role, setRole] = useState<GroupRole>(member.role);
   const admin: Admin | undefined = member instanceof Admin ? member : undefined;
+
   const {
     control,
     handleSubmit,
@@ -127,22 +135,24 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
         if ((admin && admin.canKick && data.kick !== false) || changes.get("kick")) permissions.push(Permission.KICK);
         if ((admin && admin.canUnban && data.unban !== false) || changes.get("unban")) permissions.push(Permission.UNBAN);
       }
-      chat.editMember(member, { role: (changes.get("role") as any) || member.role, permissions: permissions }).catch(client.error);
+      chat.editMember(member, { role: (changes.get("role") as any) || member.role, permissions: permissions }).catch(setSnackError);
     }
   };
 
   const handleKick = () => {
-    if (chat.canKick) chat.kickMember(member).catch(client.error);
+    if (chat.canKick) chat.kickMember(member).catch(setSnackError);
   };
 
   const handleBan = () => {
-    if (chat.canBan) chat.banMember(member).catch(client.error);
+    if (chat.canBan) chat.banMember(member).catch(setSnackError);
   };
+
+  const disabled: boolean = member.user.uuid === client.user.uuid || !chat.canEditMembers || member instanceof Owner;
 
   return (
     <div className={style["item-container"]} onClick={() => setCollapsed(!collapsed)}>
       <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: member.user.color }} />
+        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: !member.user.avatarURL && member.user.color }} />
         <h6 children={member.user.name} className={style["title"]} />
         <div children={member.user.description} className={style["description"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}>
@@ -155,7 +165,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   defaultValue={member.role}
                   render={({ field: { onChange, ...rest } }) => (
                     <Select
-                      disabled={member.role === GroupRole.OWNER || member.user.uuid === client.user.uuid}
+                      disabled={disabled}
                       onChange={(event) => {
                         onChange && onChange((event as any).value);
                         setRole((event as any).value);
@@ -163,7 +173,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                       values={[
                         { value: GroupRole.MEMBER, label: GroupRole.MEMBER },
                         { value: GroupRole.ADMIN, label: GroupRole.ADMIN },
-                        user instanceof Owner && { value: GroupRole.OWNER, label: GroupRole.OWNER },
+                        (user instanceof Owner || member instanceof Owner) && { value: GroupRole.OWNER, label: GroupRole.OWNER },
                       ]}
                       {...rest}
                     />
@@ -177,6 +187,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   defaultValue={admin && admin.canEditMembers}
                   render={({ field }) => (
                     <FormControlLabel
+                      disabled={disabled}
                       defaultChecked={admin && admin.canEditMembers}
                       label={"Edit Member"}
                       classes={{ root: style["edit_member"], label: style["label"] }}
@@ -190,6 +201,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   defaultValue={admin && admin.canEditGroup}
                   render={({ field }) => (
                     <FormControlLabel
+                      disabled={disabled}
                       defaultChecked={admin && admin.canEditGroup}
                       label={"Edit Chat"}
                       classes={{ root: style["edit_chat"], label: style["label"] }}
@@ -203,6 +215,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   defaultValue={admin && admin.canKick}
                   render={({ field }) => (
                     <FormControlLabel
+                      disabled={disabled}
                       defaultChecked={admin && admin.canKick}
                       label={"Kick"}
                       classes={{ root: style["kick"], label: style["label"] }}
@@ -216,6 +229,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   defaultValue={admin && admin.canBan}
                   render={({ field }) => (
                     <FormControlLabel
+                      disabled={disabled}
                       defaultChecked={admin && admin.canBan}
                       label={"Ban"}
                       classes={{ root: style["ban"], label: style["label"] }}
@@ -229,6 +243,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   defaultValue={admin && admin.canUnban}
                   render={({ field }) => (
                     <FormControlLabel
+                      disabled={disabled}
                       defaultChecked={admin && admin.canUnban}
                       label={"Unban"}
                       classes={{ root: style["unban"], label: style["label"] }}
@@ -253,6 +268,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
           children={collapsed ? <ArrowDownIcon className={baseStyle["icon"]} /> : <ArrowUpIcon className={baseStyle["icon"]} />}
         />
       </div>
+      <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
     </div>
   );
 };
@@ -271,6 +287,7 @@ type Inputs = {
 
 const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Element => {
   const { client } = useClient();
+  const [snackError, setSnackError] = useState<string>();
   const router = useRouter();
   const [url, setUrl] = useState<string>(chat.avatarURL);
   const [defaultValues, setDefaultValues] = useState<Inputs>({
@@ -295,13 +312,13 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
       if (key === "isPublic") changes.set("type", data[key] ? GroupType.GROUP : GroupType.PRIVATE_GROUP);
       else changes.set(key, data[key]);
     });
-    if (changes.size !== 0) chat.setSettings(Object.fromEntries(changes)).catch(client.error);
+    if (changes.size !== 0) chat.setSettings(Object.fromEntries(changes)).catch(setSnackError);
     if (avatar || (chat.avatarURL && !avatar && !url)) {
-      if (!avatar) chat.deleteAvatar().catch(client.error);
+      if (!avatar) chat.deleteAvatar().catch(setSnackError);
       else {
         const formData: FormData = new FormData();
         formData.append("avatar", avatar, chat.uuid + ".jpg");
-        chat.setAvatar(formData).catch(client.error);
+        chat.setAvatar(formData).catch(setSnackError);
       }
     }
   };
@@ -316,8 +333,8 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
     if (chat.canDelete)
       chat
         .delete()
-        .catch(client.error)
-        .then(() => router.push("/app"));
+        .then(() => router.push("/app"))
+        .catch(setSnackError);
   };
 
   return (
@@ -326,7 +343,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
       <div className={style["avatar-container"]}>
         <label htmlFor={"upload-avatar"}>
           <a>
-            <Avatar aria-disabled={disabled} className={style["avatar"]} src={url} style={{ backgroundColor: chat.color }} />
+            <Avatar aria-disabled={disabled} className={style["avatar"]} src={url} style={{ backgroundColor: !url && chat.color }} />
           </a>
         </label>
         <input
@@ -344,7 +361,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
               if (isJPEG && isFitting) {
                 setAvatar(file);
                 setUrl(url);
-              }
+              } else if (!isFitting) setSnackError("Maxiumum Avatar Size Is 100'000 Bytes");
             }
           }}
         />
@@ -411,6 +428,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
           </div>
         </form>
       </div>
+      <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
     </div>
   );
 };
@@ -438,9 +456,9 @@ const BannedMemberList: React.FC<BannedMemberListProps> = ({ chat }): JSX.Elemen
   return (
     <div className={style["banned-container"]}>
       <h5 className={style["title"]}>Banned Members</h5>
-      <div className={style["searchbar"]} children={<Searchbar onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
+      <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
       <div className={style["list-container"]}>
-        <Scrollbar>
+        <Scrollbar withPadding={false}>
           {chat.bannedMembers
             .values()
             .filter(({ name }) => name.toLowerCase().startsWith(text.toLowerCase()))
@@ -460,16 +478,17 @@ interface BannedListItemProps {
 
 const BannedListItem: React.FC<BannedListItemProps> = ({ member, chat }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(true);
+  const [snackError, setSnackError] = useState<string>();
   const { client } = useClient();
 
   const handleUnban = () => {
-    if (chat.canUnban) chat.unbanMember(member.uuid).catch(client.error);
+    if (chat.canUnban) chat.unbanMember(member.uuid).catch(setSnackError);
   };
 
   return (
     <div className={style["item-container"]} onClick={() => setCollapsed(!collapsed)}>
       <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={member.avatarURL || ""} style={{ backgroundColor: member.color }} />
+        <Avatar className={style["avatar"]} src={member.avatarURL || ""} style={{ backgroundColor: !member.avatarURL && member.color }} />
         <h6 children={member.name} className={style["title"]} />
         <div children={member.description} className={style["description"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}>
@@ -483,6 +502,7 @@ const BannedListItem: React.FC<BannedListItemProps> = ({ member, chat }): JSX.El
           children={collapsed ? <ArrowDownIcon className={baseStyle["icon"]} /> : <ArrowUpIcon className={baseStyle["icon"]} />}
         />
       </div>
+      <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
     </div>
   );
 };

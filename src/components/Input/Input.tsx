@@ -33,11 +33,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ ...rest }
 interface SearchbarProps extends InputBaseProps {
   onTuneOpen?: () => void;
   withTune?: boolean;
+  withMinWidth?: boolean;
 }
 
-export const Searchbar: React.FC<SearchbarProps> = ({ onTuneOpen, withTune = true, ...props }): JSX.Element => {
+export const Searchbar: React.FC<SearchbarProps> = ({ onTuneOpen, withTune = true, withMinWidth = true, ...props }): JSX.Element => {
   return (
-    <div className={style["searchbar-container"]}>
+    <div className={style["searchbar-container"]} data-minwidth={withMinWidth}>
       <InputBase
         className={style["searchbar"]}
         spellCheck={false}

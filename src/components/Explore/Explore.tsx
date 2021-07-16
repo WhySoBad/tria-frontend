@@ -26,10 +26,6 @@ const Explore: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     let rendered: boolean = true;
-    const scrollHandler = () => {
-      if (window.pageYOffset > 200) return;
-    };
-    window.addEventListener("scroll", scrollHandler);
 
     if (window.innerWidth <= 900) setView("list");
     else setView("grid");
@@ -65,7 +61,7 @@ const Explore: React.FC = (): JSX.Element => {
 
   return (
     <main className={style["container"]}>
-      <Scrollbar reference={scrollRef}>
+      <Scrollbar withPadding={false} withMargin={false} reference={scrollRef}>
         <section className={style["title-container"]} style={{ marginRight: scrollVisible && "0px" }} ref={containerRef}>
           <div className={style["title-content"]}>
             <h3 className={style["title"]} children={title} />
@@ -109,7 +105,7 @@ const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
       <div className={style["grid-item"]} onClick={() => openUser(user)}>
         <div className={style["content"]} style={{ background: `linear-gradient(176deg, ${user.color} 29%, rgba(0,0,0,0.3) 100%)` }}>
           <div className={style["background"]} />
-          <Avatar variant={"rounded"} className={style["avatar"]} style={{ backgroundColor: user.color }} />
+          <Avatar variant={"rounded"} className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} />
           <div className={style["text-container"]}>
             <div className={style["name"]}>
               <h4 children={user.name} />
@@ -125,7 +121,7 @@ const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
   } else if (view === "list") {
     return (
       <div className={style["list-item"]} onClick={() => openUser(user)}>
-        <Avatar className={style["avatar"]} style={{ backgroundColor: user.color }} />
+        <Avatar className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} />
         <div className={style["title"]}>
           <h6 children={user.name} />
         </div>
@@ -147,7 +143,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
       <div className={style["grid-item"]} onClick={() => openChatPreview(chat)}>
         <div className={style["content"]} style={{ background: `linear-gradient(176deg, ${chat.color} 29%, rgba(0,0,0,0.3) 100%)` }}>
           <div className={style["background"]} />
-          <Avatar variant={"rounded"} className={style["avatar"]} style={{ backgroundColor: chat.color }} />
+          <Avatar variant={"rounded"} className={style["avatar"]} src={chat.avatarURL} style={{ backgroundColor: !chat.avatarURL && chat.color }} />
           <div className={style["text-container"]}>
             <div className={style["name"]}>
               <h4 children={chat.name} />
@@ -164,7 +160,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
   } else if (view === "list") {
     return (
       <div className={style["list-item"]} onClick={() => openChatPreview(chat)}>
-        <Avatar className={style["avatar"]} style={{ backgroundColor: chat.color }} />
+        <Avatar className={style["avatar"]} src={chat.avatarURL} style={{ backgroundColor: !chat.avatarURL && chat.color }} />
         <div className={style["title"]}>
           <h6 children={chat.name} />
           <GroupIcon className={style["icon"]} />

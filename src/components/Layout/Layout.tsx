@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Layout.module.scss";
 import Burger from "../Burger/Burger";
+import Scrollbar from "../Scrollbar/Scrollbar";
 
 const Layout: React.FC = ({ children }): JSX.Element => {
   const matches = useMediaQuery("(min-width: 800px)");
@@ -35,6 +36,20 @@ const Layout: React.FC = ({ children }): JSX.Element => {
         />
       )}
       <section className={style["content-container"]} children={children} data-overflow={open && !matches} />
+    </main>
+  );
+};
+
+interface FormLayoutProps {
+  small?: boolean;
+}
+
+export const FormLayout: React.FC<FormLayoutProps> = ({ children, small = false }): JSX.Element => {
+  return (
+    <main className={style["form-layout-container"]}>
+      <section className={style["form-container"]}>
+        <div className={style["form-content"]} data-small={small} children={children} />
+      </section>
     </main>
   );
 };

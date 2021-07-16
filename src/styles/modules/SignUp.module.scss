@@ -1,0 +1,45 @@
+@use "../config/" as *;
+
+.container {
+  width: 100%;
+  display: grid;
+  grid-template-areas: "title" "form";
+  gap: 1rem;
+
+  .title {
+    grid-area: title;
+  }
+
+  .form-container {
+    grid-area: form;
+
+    .form {
+      display: grid;
+      grid-template-areas: "username" "password" "buttons";
+      grid-gap: 1rem;
+
+      .username {
+        grid-area: username;
+      }
+
+      .password {
+        grid-area: password;
+      }
+
+      .button-container {
+        grid-area: buttons;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+    }
+  }
+}
+
+.iconbutton {
+  padding: 0 !important;
+
+  .icon {
+    @include icon;
+  }
+}
