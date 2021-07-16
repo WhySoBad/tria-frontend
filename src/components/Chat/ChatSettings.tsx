@@ -109,6 +109,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { dirtyFields, isDirty, isValid },
   } = useForm<MemberItemInputs>({
     defaultValues: {
@@ -120,6 +121,17 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
       unban: admin && admin.canUnban,
     },
   });
+
+  const resetForm = () => {
+    reset({
+      role: member.role,
+      ban: admin && admin.canBan,
+      edit_chat: admin && admin.canEditGroup,
+      edit_member: admin && admin.canEditMembers,
+      kick: admin && admin.canKick,
+      unban: admin && admin.canUnban,
+    });
+  };
 
   const onSubmit: SubmitHandler<MemberItemInputs> = (data: MemberItemInputs) => {
     if (chat.canEditMembers) {
@@ -135,7 +147,10 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
         if ((admin && admin.canKick && data.kick !== false) || changes.get("kick")) permissions.push(Permission.KICK);
         if ((admin && admin.canUnban && data.unban !== false) || changes.get("unban")) permissions.push(Permission.UNBAN);
       }
-      chat.editMember(member, { role: (changes.get("role") as any) || member.role, permissions: permissions }).catch(setSnackError);
+      chat
+        .editMember(member, { role: (changes.get("role") as any) || member.role, permissions: permissions })
+        .then(resetForm)
+        .catch(setSnackError);
     }
   };
 
@@ -184,70 +199,60 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                 <Controller
                   name={"edit_member"}
                   control={control}
-                  defaultValue={admin && admin.canEditMembers}
                   render={({ field }) => (
                     <FormControlLabel
-                      disabled={disabled}
                       defaultChecked={admin && admin.canEditMembers}
                       label={"Edit Member"}
                       classes={{ root: style["edit_member"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canEditMembers} {...field} />}
+                      control={<Checkbox defaultChecked={admin && admin.canEditMembers} disabled={disabled} {...field} />}
                     />
                   )}
                 />
                 <Controller
                   name={"edit_chat"}
                   control={control}
-                  defaultValue={admin && admin.canEditGroup}
                   render={({ field }) => (
                     <FormControlLabel
-                      disabled={disabled}
                       defaultChecked={admin && admin.canEditGroup}
                       label={"Edit Chat"}
                       classes={{ root: style["edit_chat"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canEditGroup} {...field} />}
+                      control={<Checkbox defaultChecked={admin && admin.canEditGroup} disabled={disabled} {...field} />}
                     />
                   )}
                 />
                 <Controller
                   name={"kick"}
                   control={control}
-                  defaultValue={admin && admin.canKick}
                   render={({ field }) => (
                     <FormControlLabel
-                      disabled={disabled}
                       defaultChecked={admin && admin.canKick}
                       label={"Kick"}
                       classes={{ root: style["kick"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canKick} {...field} />}
+                      control={<Checkbox defaultChecked={admin && admin.canKick} disabled={disabled} {...field} />}
                     />
                   )}
                 />
                 <Controller
                   name={"ban"}
                   control={control}
-                  defaultValue={admin && admin.canBan}
                   render={({ field }) => (
                     <FormControlLabel
-                      disabled={disabled}
                       defaultChecked={admin && admin.canBan}
                       label={"Ban"}
                       classes={{ root: style["ban"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canBan} {...field} />}
+                      control={<Checkbox defaultChecked={admin && admin.canBan} disabled={disabled} {...field} />}
                     />
                   )}
                 />
                 <Controller
                   name={"unban"}
                   control={control}
-                  defaultValue={admin && admin.canUnban}
                   render={({ field }) => (
                     <FormControlLabel
-                      disabled={disabled}
                       defaultChecked={admin && admin.canUnban}
                       label={"Unban"}
                       classes={{ root: style["unban"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canUnban} {...field} />}
+                      control={<Checkbox defaultChecked={admin && admin.canUnban} disabled={disabled} {...field} />}
                     />
                   )}
                 />
@@ -290,21 +295,23 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
   const [snackError, setSnackError] = useState<string>();
   const router = useRouter();
   const [url, setUrl] = useState<string>(chat.avatarURL);
-  const [defaultValues, setDefaultValues] = useState<Inputs>({
-    description: chat.description,
-    isPublic: chat.public,
-    name: chat.name,
-    tag: chat.tag,
-  });
   const [avatar, setAvatar] = useState<File>(null);
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors, isValid, isDirty, dirtyFields },
   } = useForm<Inputs>({
-    defaultValues: defaultValues,
+    defaultValues: {
+      description: chat.description,
+      isPublic: chat.public,
+      name: chat.name,
+      tag: chat.tag,
+    },
     mode: "onChange",
   });
+
+  const resetForm = () => reset({ description: chat.description, name: chat.name, isPublic: chat.public, tag: chat.tag });
 
   const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
     const changes: Map<string, string> = new Map<string, string>();
@@ -312,13 +319,13 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
       if (key === "isPublic") changes.set("type", data[key] ? GroupType.GROUP : GroupType.PRIVATE_GROUP);
       else changes.set(key, data[key]);
     });
-    if (changes.size !== 0) chat.setSettings(Object.fromEntries(changes)).catch(setSnackError);
+    if (changes.size !== 0) chat.setSettings(Object.fromEntries(changes)).then(resetForm).catch(setSnackError);
     if (avatar || (chat.avatarURL && !avatar && !url)) {
-      if (!avatar) chat.deleteAvatar().catch(setSnackError);
+      if (!avatar) chat.deleteAvatar().then(resetForm).catch(setSnackError);
       else {
         const formData: FormData = new FormData();
         formData.append("avatar", avatar, chat.uuid + ".jpg");
-        chat.setAvatar(formData).catch(setSnackError);
+        chat.setAvatar(formData).then(resetForm).catch(setSnackError);
       }
     }
   };
@@ -412,14 +419,8 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
           <Controller
             name={"isPublic"}
             control={control}
-            defaultValue={chat.public}
             render={({ field }) => (
-              <FormControlLabel
-                defaultChecked={chat.public}
-                label={"Public"}
-                classes={{ root: style["public"], label: style["label"] }}
-                control={<Checkbox disabled={disabled} defaultChecked={chat.public} {...field} />}
-              />
+              <FormControlLabel defaultChecked={chat.public} label={"Public"} classes={{ root: style["public"], label: style["label"] }} control={<Checkbox disabled={disabled} {...field} />} />
             )}
           />
           <div className={style["button-container"]}>
