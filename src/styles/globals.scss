@@ -11,7 +11,7 @@ body {
   background-color: $darker;
   color: $dark-lighter;
   overflow-x: hidden;
-  font-family: "IBM Plex Sans", sans-serif;
+
   font-size: 16px;
   line-height: 1.5;
   height: 100%;
@@ -26,6 +26,7 @@ body {
 ::before,
 ::after {
   box-sizing: inherit;
+  font-family: $font;
 }
 
 h1,
@@ -34,7 +35,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: bolder;
+  font-weight: 550 !important;
+  font-family: $heading-font;
 }
 
 h1 {
@@ -81,10 +83,8 @@ select {
   outline: none;
   background-image: none;
   background-color: transparent;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
-  font: inherit;
+  font: 400 16px $font !important;
 }
 
 button {

@@ -11,20 +11,20 @@
   font-size: 14px;
   font-weight: bold;
   text-transform: uppercase;
-}
-
-.shared-chats {
-  display: grid;
-  overflow-y: auto;
+  user-select: none;
+  padding-bottom: 2rem;
+  justify-self: center;
+  align-self: center;
 }
 
 .tabs {
-  padding: 1rem 5%;
+  padding: 1rem 2rem;
   padding-bottom: 0;
   display: flex;
   margin-bottom: 1rem;
 
   .tab {
+    user-select: none;
     color: $dark-light;
     font-weight: bold;
     font-size: 14px;
@@ -45,7 +45,7 @@
       margin-left: 1rem;
     }
 
-    &.selected {
+    &[aria-selected="true"] {
       color: $white;
       border-bottom: solid 2px $white !important;
     }
@@ -54,58 +54,117 @@
       border-bottom: solid 2px $dark-light;
     }
   }
+
+  .create-chat {
+    margin-left: auto;
+  }
 }
 
 .content {
-  padding: 0 5%;
+  padding: 0 2rem 2rem 2rem;
   flex: 1 auto;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   .item-container {
-    width: calc(100% - 17px);
+    width: 100%;
     position: relative;
     transition: all 0.2s;
     border-radius: 5px;
+    margin: 0.1rem 0;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
+
+    .item {
+      display: grid;
+      padding: 0.25rem;
+      padding-left: 0.5rem;
+      grid-template-areas: "avatar title" "avatar text";
+      width: 100%;
+      justify-content: flex-start;
+      align-items: inherit;
+      grid-template-columns: 50px;
+      cursor: pointer;
+
+      .avatar {
+        grid-area: avatar;
+        background-color: $dark-light;
+        margin-right: 0.5rem;
+        align-self: center;
+      }
+
+      .name {
+        display: inline-flex;
+        width: fit-content;
+
+        .icon {
+          align-self: flex-start;
+          margin-left: 0.5ch;
+          @include icon;
+          transform: scale(0.75);
+          color: $icon-hover !important;
+        }
+      }
+
+      .tag {
+        margin-top: -0.25ch;
+      }
+    }
   }
 
-  .item {
+  .informations-container {
     display: grid;
-    padding: 0.25rem;
-    padding-left: 0.5rem;
-    grid-template-areas: "avatar title" "avatar text";
-    width: 100%;
-    justify-content: flex-start;
-    align-items: inherit;
-    grid-template-columns: 50px;
-    cursor: pointer;
+    gap: 1rem;
 
-    .avatar {
-      grid-area: avatar;
-      background-color: $dark-light;
-      margin-right: 0.5rem;
-      align-self: center;
+    &[data-user="true"] {
+      grid-template-areas: "name tag" "description description" "createdat lastseen";
     }
 
-    .name {
-      display: inline-flex;
-      width: fit-content;
+    &[data-user="false"] {
+      grid-template-areas: "name tag" "description description";
+    }
 
-      .icon {
-        align-self: flex-start;
-        margin-left: 0.5ch;
-        @include icon;
-        transform: scale(0.75);
-        color: $icon-hover !important;
+    .information-container {
+      display: grid;
+      grid-template-areas: "title" "content";
+      padding: 0.7rem;
+      border-radius: 10px;
+      border: solid 2px $dark-border;
+
+      .information-title {
+        grid-area: title;
+        margin-top: -0.25rem;
+        user-select: none;
+      }
+
+      .information-content {
+        grid-area: content;
+        width: fit-content;
+        white-space: pre-line;
       }
     }
 
+    .name {
+      grid-area: name;
+    }
+
+    .tag {
+      grid-area: tag;
+    }
+
     .description {
-      margin-top: -0.25ch;
+      grid-area: description;
+    }
+
+    .lastseen {
+      grid-area: lastseen;
+    }
+
+    .createdat {
+      grid-area: createdat;
     }
   }
 }

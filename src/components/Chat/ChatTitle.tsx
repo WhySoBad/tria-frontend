@@ -51,7 +51,17 @@ const ChatTitle: React.FC<ChatTitleProps> = ({ settings = false }): JSX.Element 
   const menuAction = (handler: any) => setMenuOpen(false);
 
   const deleteChat = () => {
-    if (chat instanceof PrivateChat) chat.delete().catch(client.error);
+    chat
+      .delete()
+      .then(() => router.push("/app"))
+      .catch(client.error);
+  };
+
+  const handleLeave = () => {
+    client
+      .leaveGroup(chat.uuid)
+      .then(() => router.push("/app"))
+      .catch(client.error);
   };
 
   const redirect = () => {
@@ -67,11 +77,12 @@ const ChatTitle: React.FC<ChatTitleProps> = ({ settings = false }): JSX.Element 
         <IconButton className={style["iconbutton"]} children={<MoreIcon ref={moreRef} className={style["icon"]} />} onClick={() => setMenuOpen(!menuOpen)} />
       </div>
       <Menu open={menuOpen} anchorEl={moreRef.current} onClose={() => setMenuOpen(false)}>
-        <MenuItem children={"View Group Info"} onClick={() => menuAction(openChat(chat))} />
+        <MenuItem children={"View Chat Info"} onClick={() => menuAction(openChat(chat))} />
         {!settings && canEdit && <MenuItem children={"Manage Group"} onClick={() => menuAction(redirect())} />}
         {settings && <MenuItem children={"View Chat"} onClick={() => menuAction(redirect())} />}
-        {!(member instanceof Owner) && chat instanceof Group && <MenuItem>Leave Group</MenuItem>}
-        {chat instanceof PrivateChat && <MenuItem onClick={() => menuAction(deleteChat())}>Delete Chat</MenuItem>}
+        {!(member instanceof Owner) && chat instanceof Group && <MenuItem children={"Leave Group"} onClick={() => menuAction(handleLeave())} />}
+        {member instanceof Owner && chat instanceof Group && chat.members.size === 1 && <MenuItem onClick={() => menuAction(deleteChat())} children={"Delete Group"} />}
+        {chat instanceof PrivateChat && <MenuItem onClick={() => menuAction(deleteChat())} children={"Delete Chat"} />}
       </Menu>
     </>
   );

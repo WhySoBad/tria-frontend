@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { checkUserTag, Locale, Logger, verifyRegister } from "client";
+import { checkUserTag, Locale, verifyRegister } from "client";
 import style from "../../styles/modules/Register.module.scss";
 import Input, { Select } from "../Input/Input";
 import Button, { TextButton } from "../Button/Button";
@@ -21,6 +21,7 @@ type Inputs = {
 const Register: React.FC<RegisterProps> = (): JSX.Element => {
   const [defaultLocale, setDefaultLocale] = useState<Locale>();
   const [snackError, setSnackError] = useState<string>();
+  const [checkedTag, setCheckedTag] = useState<{ tag: string; valid: boolean }>();
   const router = useRouter();
   const {
     register,
@@ -42,7 +43,10 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
   }, []);
 
   const isValidTag = debouncedPromise(async (tag: string): Promise<boolean> => {
+    if (checkedTag?.tag === tag) return checkedTag?.valid;
     const exists: boolean = await checkUserTag(tag);
+    if (exists) setSnackError("Tag Has To Be Unique");
+    setCheckedTag({ tag: tag, valid: !exists });
     return !exists;
   }, 250);
 

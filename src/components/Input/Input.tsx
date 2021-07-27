@@ -14,6 +14,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import { Search as SearchIcon, Tune as TuneIcon } from "@material-ui/icons";
+import { useEffect } from "react";
 
 export const Input = forwardRef<HTMLInputElement, InputBaseProps>(({ ...rest }, ref): JSX.Element => {
   return <InputBase spellCheck={false} ref={ref} classes={{ root: style["input"], error: style["error"], disabled: style["disabled"], focused: style["focus"] }} {...rest} />;
@@ -31,7 +32,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ ...rest }
 });
 
 interface SearchbarProps extends InputBaseProps {
-  onTuneOpen?: () => void;
+  onTuneOpen?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   withTune?: boolean;
   withMinWidth?: boolean;
 }
@@ -65,6 +66,11 @@ interface SelectProps extends MuiSelectProps {
 
 export const Select: React.FC<SelectProps> = forwardRef(({ values, value, onChange, ...rest }, ref): JSX.Element => {
   const [selected, setSelected] = useState<string | number>(value as any);
+
+  useEffect(() => {
+    setSelected(value as any);
+  }, [value]);
+
   return (
     <MuiSelect
       variant={"outlined"}
@@ -74,7 +80,7 @@ export const Select: React.FC<SelectProps> = forwardRef(({ values, value, onChan
       value={selected}
       onChange={(event) => {
         setSelected(event.target.value as any);
-        onChange && onChange(event.target as any, event);
+        onChange && onChange(event, event);
       }}
       input={<Input />}
       {...rest}

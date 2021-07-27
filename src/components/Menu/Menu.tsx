@@ -1,9 +1,10 @@
-import React, { forwardRef, ReactElement } from "react";
+import React, { forwardRef } from "react";
 import style from "../../styles/modules/Menu.module.scss";
-import { Menu as BaseMenu, MenuProps as BaseMenuProps } from "@material-ui/core";
+import { FormControlLabel, Menu as BaseMenu, MenuProps as BaseMenuProps } from "@material-ui/core";
 import { useState } from "react";
-import { useEffect } from "react";
 import { useRef } from "react";
+import { debounce } from "../../util";
+import { Checkbox } from "../Input/Input";
 
 interface MenuProps extends BaseMenuProps {}
 
@@ -49,9 +50,9 @@ export const MenuItem: React.FC<MenuItemProps> = forwardRef(({ children, critica
         }}
         onMouseOver={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           onMouseOver && onMouseOver(event);
-          nested && debounce(setNestedOpen(true), 250);
+          nested && debounce(() => setNestedOpen(true), 250);
         }}
-        onMouseLeave={() => nested && debounce(setNestedOpen(false), 250)}
+        onMouseLeave={() => nested && debounce(() => setNestedOpen(false), 250)}
         {...props}
       >
         {children}
@@ -63,8 +64,8 @@ export const MenuItem: React.FC<MenuItemProps> = forwardRef(({ children, critica
             nested.onClose && nested.onClose(...props);
             setNestedOpen(false);
           }}
-          onMouseEnter={() => debounce(setNestedOpen(true), 250)}
-          onMouseLeave={() => debounce(setNestedOpen(false), 250)}
+          onMouseEnter={() => debounce(() => setNestedOpen(true), 250)}
+          onMouseLeave={() => debounce(() => setNestedOpen(false), 250)}
           {...nested}
           open={nestedOpen}
         />
@@ -72,6 +73,54 @@ export const MenuItem: React.FC<MenuItemProps> = forwardRef(({ children, critica
     </>
   );
 });
+
+interface CheckboxMenuItemProps extends MenuItemProps {
+  checked?: boolean;
+  defaultChecked?: boolean;
+  onCheck?: (checked: boolean) => void;
+}
+
+export const CheckboxMenuItem: React.FC<CheckboxMenuItemProps> = forwardRef(
+  ({ onCheck, defaultChecked, children, critical = false, autoClose = true, onClick, onClose, nested, onMouseOver, checked = false, ...props }, ref): JSX.Element => {
+    const [nestedOpen, setNestedOpen] = useState<boolean>(false);
+    const anchorRef = useRef<HTMLDivElement>(null);
+
+    return (
+      <>
+        <div
+          ref={anchorRef}
+          className={style["checkbox-item-container"]}
+          data-critical={critical}
+          onClick={(event) => {
+            if (autoClose) onClose && onClose(false);
+            onClick && onClick(event);
+          }}
+          onMouseOver={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            onMouseOver && onMouseOver(event);
+            nested && debounce(() => setNestedOpen(true), 250);
+          }}
+          onMouseLeave={() => nested && debounce(() => setNestedOpen(false), 250)}
+          {...props}
+        >
+          <FormControlLabel classes={{ label: style["text"] }} label={children} control={<Checkbox checked={checked} onChange={() => onCheck && onCheck(!checked)} />} />
+        </div>
+        {nested && (
+          <NestedMenu
+            anchorEl={anchorRef.current}
+            onClose={(...props) => {
+              nested.onClose && nested.onClose(...props);
+              setNestedOpen(false);
+            }}
+            onMouseEnter={() => debounce(() => setNestedOpen(true), 250)}
+            onMouseLeave={() => debounce(() => setNestedOpen(false), 250)}
+            {...nested}
+            open={nestedOpen}
+          />
+        )}
+      </>
+    );
+  }
+);
 
 interface NestedMenuProps extends MenuProps {}
 
@@ -94,16 +143,5 @@ export const NestedMenu: React.FC<NestedMenuProps> = forwardRef(({ children, onC
     />
   );
 });
-
-const debounce = (handler: any, delay: number): any => {
-  let timeout: NodeJS.Timeout;
-  const wrapper = (...args: Array<any>) => {
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      handler(...args);
-    }, delay);
-  };
-  return wrapper;
-};
 
 export default Menu;

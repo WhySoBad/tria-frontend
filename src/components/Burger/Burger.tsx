@@ -1,15 +1,16 @@
-import { Chat, ChatSocketEvent, Group, PrivateChat } from "client";
+import { Admin, Chat, ChatSocketEvent, Group, Owner, PrivateChat } from "client";
 import { useRouter } from "next/router";
 import cn from "classnames";
 import React, { useState, useEffect } from "react";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Burger.module.scss";
 import Scrollbar from "../Scrollbar/Scrollbar";
-import { Search as ExploreIcon, AddBox as AddIcon, Person as ProfileIcon, ExitToApp as LogoutIcon, Group as GroupIcon, Menu as MenuIcon } from "@material-ui/icons";
+import { Search as ExploreIcon, AddBox as AddIcon, Person as ProfileIcon, ExitToApp as LogoutIcon, Group as GroupIcon, Menu as MenuIcon, Mouse, MouseSharp } from "@material-ui/icons";
 import Link from "next/link";
 import { Avatar, Badge } from "@material-ui/core";
 import { useModal } from "../../hooks/ModalContext";
 import { UserSocketEvent } from "../../../../client/dist/src/websocket/types/UserSocket.types";
+import Menu, { MenuItem } from "../Menu/Menu";
 
 interface BurgerProps {
   open: boolean;
@@ -19,7 +20,6 @@ interface BurgerProps {
 
 const Burger: React.FC<BurgerProps> = ({ onClick, open, onCollapse }): JSX.Element => {
   const { client } = useClient();
-  const { openChatCreate } = useModal();
   const [, setUpdate] = useState<number>();
 
   const handleUpdate = () => setUpdate(new Date().getTime());
@@ -56,7 +56,7 @@ const Burger: React.FC<BurgerProps> = ({ onClick, open, onCollapse }): JSX.Eleme
   ];
 
   return (
-    <Scrollbar withPadding={false} withMargin={false}>
+    <Scrollbar>
       <Section>
         <Item open={open} icon={<MenuIcon />} text={""} onClick={onCollapse} />
         <Item open={open} href={"/profile"} icon={<ProfileIcon />} text={"Profile"} onClick={onClick} />
@@ -70,7 +70,7 @@ const Burger: React.FC<BurgerProps> = ({ onClick, open, onCollapse }): JSX.Eleme
       )}
       <Section>
         <Item open={open} href={"/explore"} icon={<ExploreIcon />} text={"Explore"} onClick={onClick} />
-        <Item open={open} icon={<AddIcon />} text={"Create"} onClick={openChatCreate} />
+        <Item open={open} href={"/create"} icon={<AddIcon />} text={"Create"} onClick={onClick} />
         <Item open={open} href={"/"} icon={<LogoutIcon />} text={"Logout"} onClick={onClick} />
       </Section>
     </Scrollbar>
@@ -106,7 +106,7 @@ const Item: React.FC<ItemProps> = ({ href, icon, text, onClick, open }): JSX.Ele
   const content: JSX.Element = (
     <div onClick={onClick} className={style["burger-item"]} aria-selected={selected}>
       <div className={style["burger-icon"]} children={icon} />
-      <div className={style["burger-text"]} children={text} data-open={open} />
+      <h6 className={style["burger-text"]} children={text} data-open={open} />
     </div>
   );
 
@@ -122,42 +122,59 @@ interface ChatItemProps {
 
 const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element => {
   const { client } = useClient();
+  const { openChat } = useModal();
   const href: string = `/chat/${chat.uuid}`;
   const name: string = getChatName(chat);
   const src: string = chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : "";
+  const color: string = chat instanceof Group ? chat.color : chat instanceof PrivateChat ? chat.participant.user.color : "";
+  const [menuPos, setMenuPos] = useState<{ x: number | null; y: number | null }>({ x: null, y: null });
 
   const router = useRouter();
   const selected: string = router.query.uuid as string;
   const unread: number = chat.messages.values().filter(({ createdAt, sender }) => sender !== client.user.uuid && createdAt.getTime() > chat.lastRead.getTime()).length;
+  const canManage: boolean = chat instanceof Group && (chat.members.get(client.user.uuid) instanceof Admin || chat.members.get(client.user.uuid) instanceof Owner);
+
+  const handleRightClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    setMenuPos({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleMenuClose = () => setMenuPos({ x: null, y: null });
 
   return (
-    <Link href={href}>
-      <div onClick={onClick} className={style["burger-item"]} aria-selected={chat.uuid === selected} data-unread={unread !== 0}>
-        <div className={style["burger-icon"]}>
-          <Badge
-            overlap="circle"
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            classes={{ badge: cn(style["badge"], !open && style["closed"]) }}
-            variant="dot"
-            badgeContent=""
-            data-online={chat instanceof PrivateChat && chat.participant.user.online}
-            data-group={chat instanceof Group}
-          >
-            <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: !src && chat.color, width: "2rem", height: "2rem" }} />
-          </Badge>
+    <>
+      <Link href={href}>
+        <div onContextMenu={handleRightClick} onClick={onClick} className={style["burger-item"]} aria-selected={chat.uuid === selected} data-unread={unread !== 0}>
+          <div className={style["burger-icon"]}>
+            <Badge
+              overlap="circle"
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              classes={{ badge: cn(style["badge"], !open && style["closed"]) }}
+              variant="dot"
+              badgeContent=""
+              data-online={chat instanceof PrivateChat && chat.participant.user.online}
+              data-group={chat instanceof Group}
+            >
+              <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: !src && color, width: "2rem", height: "2rem" }} />
+            </Badge>
+          </div>
+          <div className={style["burger-text-container"]} data-open={open}>
+            <h6 className={style["burger-text"]} children={name} />
+            {chat instanceof Group && <GroupIcon className={style["icon"]} />}
+          </div>
+          {unread !== 0 && (
+            <Badge badgeContent={unread} variant={"standard"} max={99} style={{ display: "flex", alignItems: "center" }} classes={{ badge: cn(style["burger-unread"], !open && style["closed"]) }} />
+          )}
         </div>
-        <div className={style["burger-text-container"]} data-open={open}>
-          <h6 className={style["burger-text"]} children={name} />
-          {chat instanceof Group && <GroupIcon className={style["icon"]} />}
-        </div>
-        {unread !== 0 && (
-          <Badge badgeContent={unread} variant={"standard"} style={{ display: "flex", alignItems: "center" }} classes={{ badge: cn(style["burger-unread"], !open && style["closed"]) }} />
-        )}
-      </div>
-    </Link>
+      </Link>
+      <Menu keepMounted open={menuPos.x !== null} onClose={handleMenuClose} anchorReference={"anchorPosition"} anchorPosition={menuPos.x === null ? undefined : { left: menuPos.x, top: menuPos.y }}>
+        {unread !== 0 && <MenuItem children={"Mark As Read"} onClick={() => chat.readUntil(new Date())} autoClose onClose={handleMenuClose} />}
+        {canManage && <MenuItem children={"Manage Group"} onClick={() => router.push(`/chat/${chat.uuid}/settings`)} autoClose onClose={handleMenuClose} />}
+        <MenuItem children={"View Chat Info"} onClick={() => openChat(chat)} autoClose onClose={handleMenuClose} />
+      </Menu>
+    </>
   );
 };
 

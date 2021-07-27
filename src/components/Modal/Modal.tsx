@@ -11,6 +11,7 @@ export interface ModalProps {
   open?: boolean;
   withBack?: boolean;
   onClose?: () => void;
+  selectedTab?: number;
 }
 
 export const ModalContainer: React.FC<ModalProps> = ({ open = false, withBack = false, onClose, children }): JSX.Element => {
@@ -56,10 +57,10 @@ export const BaseModal: React.FC<BaseModalProps> = ({ onClose, withBack, name, t
             {group && <GroupIcon className={style["icon"]} />}
           </div>
           <div className={style["tag"]}>
-            <code children={`${tag}`} />
+            <code children={`@${tag}`} />
           </div>
         </div>
-        <code children={uuid} className={style["uuid"]} />
+        <code children={uuid} className={style["uuid"]} onClick={() => navigator.clipboard.writeText(uuid)} />
         <div className={style["icon-container"]}>
           {withBack && <IconButton className={cn(style["iconbutton"], style["back"])} children={<BackIcon className={style["icon"]} />} onClick={onClose} />}
           {icons.map((value, index) => ({ ...value, key: index }))}
@@ -69,10 +70,4 @@ export const BaseModal: React.FC<BaseModalProps> = ({ onClose, withBack, name, t
       <div className={style["content"]} children={children} />
     </>
   );
-};
-
-interface StepperModalProps extends ModalProps {}
-
-export const StepperModal: React.FC<StepperModalProps> = ({ withBack, onClose }): JSX.Element => {
-  return <></>;
 };

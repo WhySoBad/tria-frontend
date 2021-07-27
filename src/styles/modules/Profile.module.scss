@@ -14,7 +14,7 @@
   }
 }
 
-.user-settings-container {
+.user-profile-container {
   display: flex;
   display: grid;
   grid-template-areas: "settings settings" "chats chats" "banned banned";
@@ -134,6 +134,7 @@
   .label {
     color: $gray-text !important;
     font-weight: bold;
+    font-family: $font;
   }
 
   .chats-container {
@@ -162,7 +163,7 @@
       @include flex-column;
 
       .item-container {
-        width: calc(100% - 17px);
+        width: 100%;
         position: relative;
         border-radius: 5px;
         margin-bottom: 0.25rem;
@@ -225,7 +226,7 @@
           }
         }
 
-        .description {
+        .tag {
           grid-area: text;
           margin-top: -0.25ch;
         }
@@ -272,114 +273,6 @@
             .button {
               padding: 0 0.25rem;
             }
-          }
-        }
-      }
-    }
-  }
-
-  .banned-container {
-    grid-area: banned;
-    border-radius: 10px;
-    padding: 1rem;
-    border: solid 2px $dark-border;
-    display: grid;
-    grid-template-areas: "title" "searchbar" "list";
-    grid-template-rows: min-content min-content auto;
-    gap: 1rem 2rem;
-    max-height: 400px;
-    margin-bottom: 17px;
-
-    .title {
-      grid-area: title;
-      margin-top: -0.25rem;
-    }
-
-    .searchbar {
-      grid-area: searchbar;
-      width: 100%;
-    }
-
-    .list-container {
-      grid-area: list;
-      @include flex-column;
-
-      .item-container {
-        width: calc(100% - 17px);
-        position: relative;
-        border-radius: 5px;
-        margin-bottom: 0.25rem;
-
-        &[data-open="true"] {
-          .icon-container {
-            opacity: 1;
-          }
-          background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        &:last-child {
-          margin-bottom: 17px;
-        }
-
-        &:hover {
-          .icon-container {
-            opacity: 1;
-          }
-          background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .icon-container {
-          position: absolute;
-          display: inline-flex;
-          right: 0;
-          top: 0;
-          align-items: center;
-          opacity: 0;
-        }
-      }
-
-      .item {
-        display: grid;
-        padding: 0.25rem;
-        padding-left: 0.5rem;
-        grid-template-areas: "avatar title" "avatar text" "options options";
-        width: 100%;
-        justify-content: flex-start;
-        align-items: inherit;
-        grid-template-columns: 50px calc(100% - 50px);
-        cursor: pointer;
-
-        .avatar {
-          grid-area: avatar;
-          background-color: $dark-light;
-          margin-right: 0.5rem;
-          align-self: center;
-        }
-
-        .title {
-          display: flex;
-          justify-content: flex-start;
-          width: fit-content;
-        }
-
-        .description {
-          grid-area: text;
-          margin-top: -0.25ch;
-        }
-
-        .options-container {
-          cursor: default;
-          padding: 1rem;
-          grid-area: options;
-
-          &[data-collapsed="true"] {
-            display: none;
-          }
-
-          .button {
-            display: flex;
-            justify-content: flex-end;
-            padding: 0.25rem;
           }
         }
       }

@@ -9,6 +9,7 @@ import { useModal } from "../../hooks/ModalContext";
 import Scrollbar from "../Scrollbar/Scrollbar";
 import Scrollbars from "react-custom-scrollbars-2";
 import { debouncedPromise } from "../../util";
+import Menu, { MenuItem } from "../Menu/Menu";
 
 const Messages: React.FC = (): JSX.Element => {
   const { client } = useClient();
@@ -17,6 +18,22 @@ const Messages: React.FC = (): JSX.Element => {
   const chat: Chat | undefined = client?.user.chats.get(selected);
   const [lastRead, setLastRead] = useState<Date>(chat?.lastRead);
   const [reading, setReading] = useState<boolean>(false);
+  const [, setUpdate] = useState<number>();
+
+  const handleUpdate = (chatUuid: string) => chatUuid === selected && setUpdate(new Date().getTime());
+
+  useEffect(() => {
+    client.on(ChatSocketEvent.MESSAGE, handleUpdate);
+    client.on(ChatSocketEvent.MESSAGE_EDIT, handleUpdate);
+    client.on(ChatSocketEvent.MEMBER_JOIN, handleUpdate);
+    client.on(ChatSocketEvent.MEMBER_LEAVE, handleUpdate);
+    return () => {
+      client.off(ChatSocketEvent.MESSAGE, handleUpdate);
+      client.off(ChatSocketEvent.MESSAGE_EDIT, handleUpdate);
+      client.off(ChatSocketEvent.MEMBER_JOIN, handleUpdate);
+      client.off(ChatSocketEvent.MEMBER_LEAVE, handleUpdate);
+    };
+  }, []);
 
   useEffect(() => {
     if (!chat) return;
@@ -95,7 +112,7 @@ const Messages: React.FC = (): JSX.Element => {
         return (
           <React.Fragment key={index + key}>
             {index === 0 && chat.lastFetched && <code className={style["log-container"]} children={"Start of the chat"} />}
-            {((date && previousDate && date.toLocaleDateString() !== previousDate.toLocaleDateString()) || index === 0) && <Date date={date} key={date.getTime()} />}
+            {((date && previousDate && date.toLocaleDateString() !== previousDate.toLocaleDateString()) || index === 0) && <DateEl date={date} key={date.getTime()} />}
             {typeof value === "number" && lastRead && <code className={style["log-container"]} children={"New messages"} />}
             {value instanceof MemberLog && chat.type !== ChatType.PRIVATE && <Log log={value} key={key} />}
             {Array.isArray(value) && <MessageGroup onRead={handleRead} messages={value} key={key} />}
@@ -160,8 +177,12 @@ interface MessageProps {
 
 const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead, date, sender }): JSX.Element => {
   const { openMember } = useModal();
+  const { client } = useClient();
   const [isRead, setRead] = useState<boolean>(read);
   const ref = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [editing, setEditing] = useState<boolean>(false);
+  const [menuPos, setMenuPos] = useState<{ x: number | null; y: number | null }>({ x: null, y: null });
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
@@ -173,9 +194,19 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
     };
   }, []);
 
+  useEffect(() => {
+    if (textRef.current && editing) textRef.current.focus();
+  }, [editing]);
+
+  const handleRightClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    setMenuPos({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleMenuClose = () => setMenuPos({ x: null, y: null });
+
   return (
-    <div ref={ref} id={message.uuid} className={style["message-container"]} data-self={self}>
-      <div className={style["message"]}>
+    <div ref={ref} id={message.uuid} className={style["message-container"]} data-self={self} onContextMenu={handleRightClick}>
+      <div className={style["message"]} data-editing={editing}>
         {first && (
           <h6
             data-banned={!(sender instanceof Member)}
@@ -185,13 +216,51 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
           />
         )}
         <div className={style["text"]}>
-          <span children={message.text} />
-          <span className={style["date"]}>
-            {date}
-            <span className={style["inner"]} children={date} />
+          <span
+            ref={textRef}
+            children={message.text}
+            onKeyPress={(event) => {
+              if (event.key === "\n") document.execCommand("insertText", false, "\n");
+              else if (event.key === "Enter") {
+                event.preventDefault();
+                if (textRef.current.innerText !== message.text) {
+                  message
+                    .setText(textRef.current.innerText)
+                    .then(() => setEditing(false))
+                    .catch(client.error);
+                } else setEditing(false);
+              }
+            }}
+            contentEditable={editing}
+            spellCheck={false}
+            defaultValue={message.text}
+            suppressContentEditableWarning
+          />
+          <span className={style["date"]} data-edited={message.edited > 0}>
+            <span children={date} />
+            {message.edited > 0 && <span children={`${message.edited}x Edited`} />}
+            <span className={style["inner"]}>
+              <span children={date} />
+              {message.edited > 0 && <span children={`${message.edited}x Edited`} />}
+            </span>
           </span>
         </div>
       </div>
+      <Menu keepMounted open={menuPos.x !== null} onClose={handleMenuClose} anchorReference={"anchorPosition"} anchorPosition={menuPos.x === null ? undefined : { left: menuPos.x, top: menuPos.y }}>
+        <MenuItem children={"Profile"} onClick={() => sender instanceof Member && openMember(sender)} autoClose onClose={handleMenuClose} />
+        {message.sender === client.user.uuid && !editing && <MenuItem children={"Edit Message"} onClick={() => setEditing(true)} autoClose onClose={handleMenuClose} />}
+        {editing && (
+          <MenuItem
+            children={"Stop Editing"}
+            onClick={() => {
+              textRef.current.innerText = message.text;
+              setEditing(false);
+            }}
+            autoClose
+            onClose={handleMenuClose}
+          />
+        )}
+      </Menu>
     </div>
   );
 };
@@ -200,7 +269,7 @@ interface DateProps {
   date: Date;
 }
 
-const Date: React.FC<DateProps> = ({ date }): JSX.Element => {
+const DateEl: React.FC<DateProps> = ({ date }): JSX.Element => {
   return (
     <div className={style["date-container"]}>
       <code children={date.toLocaleDateString()} />
@@ -242,10 +311,10 @@ const Log: React.FC<LogProps> = ({ log, last = false }): JSX.Element => {
 
   return (
     <>
-      <code className={style["log-container"]} style={{ opacity: fetched ? 1 : 0 }}>
-        {user ? <code children={user.name} className={style["log"]} onClick={() => openUser(user)} /> : "Deleted Account"}
+      <div className={style["log-container"]} style={{ opacity: fetched ? 1 : 0 }}>
+        {user ? <span children={user.name} className={style["log"]} onClick={() => openUser(user)} /> : "Deleted Account"}
         {log.joined ? " joined" : " left"}
-      </code>
+      </div>
       {last && <BottomAnchor />}
     </>
   );

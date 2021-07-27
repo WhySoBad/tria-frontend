@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ChatPreview, SearchOptions, UserPreview } from "../../../../client/dist/src";
+import { ChatPreview, SearchOptions, UserPreview } from "client";
 import { Avatar } from "@material-ui/core";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { ViewList as ViewListIcon, ViewModule as ViewModuleIcon, Group as GroupIcon } from "@material-ui/icons";
@@ -9,86 +9,81 @@ import { Searchbar } from "../Input/Input";
 import Scrollbars from "react-custom-scrollbars-2";
 import { useModal } from "../../hooks/ModalContext";
 import { useClient } from "../../hooks/ClientContext";
+import { usePalette } from "color-thief-react";
+import Menu, { CheckboxMenuItem } from "../Menu/Menu";
 
 const Explore: React.FC = (): JSX.Element => {
   const { client } = useClient();
   const scrollRef = useRef<Scrollbars>(null);
-  const collapsedTitleRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [text, setText] = useState<string>("");
   const [view, setView] = useState<"grid" | "list">();
   const [results, setResults] = useState<Array<ChatPreview | UserPreview>>([]);
-  const [scrollVisible, setScrollVisible] = useState<boolean>(false);
+  const [tuneElement, setTuneElement] = useState<null | HTMLElement>(null);
+  const [options, setOptions] = useState<SearchOptions>({ text: "", checkChat: true, checkUser: true, checkName: true });
 
-  const handleChange = debounce((event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    client.search({ text: event.target.value, checkChat: true, checkUser: true, checkName: true, checkTag: true, checkUuid: false }).then(setResults).catch(client.error);
+  const handleChange = debounce((text: string) => {
+    client
+      .search({ ...options, text: text })
+      .then(setResults)
+      .catch(client.error);
   }, 250);
 
   useEffect(() => {
-    let rendered: boolean = true;
-
     if (window.innerWidth <= 900) setView("list");
     else setView("grid");
-
-    if (client) {
-      const options: SearchOptions = { text: text, checkChat: true, checkUser: true };
-      client
-        .search(options)
-        .catch(client.error)
-        .then((results: Array<ChatPreview | UserPreview>) => {
-          if (rendered) setResults(results);
-        });
-    }
-
-    return () => {
-      rendered = false;
-    };
   }, []);
 
-  const handleScrollVisibility = () => {
-    if (!scrollRef.current) return;
-    const clientHeight: number = scrollRef.current.getClientHeight();
-    const scrollHeight: number = scrollRef.current.getScrollHeight();
-    setScrollVisible(scrollHeight > clientHeight);
+  const handleOptions = (props: SearchOptions) => {
+    const { checkChat, checkUser, checkName, checkUuid, checkTag } = props;
+    if (!checkChat && !checkUser) {
+      if (options.checkChat) setOptions({ ...props, checkUser: true });
+      else setOptions({ ...props, checkChat: true });
+    } else if (!checkName && !checkUuid && !checkTag) {
+      if (options.checkName) setOptions({ ...props, checkTag: true });
+      else setOptions({ ...props, checkName: true });
+    } else setOptions(props);
   };
 
   useEffect(() => {
-    handleScrollVisibility();
-  }, [results, scrollRef.current]);
-
-  const title: string = "Search Chat";
-  const subtitle: string = "Join and find new Chats";
+    if (!client) return;
+    handleChange(options.text);
+  }, [options]);
 
   return (
     <main className={style["container"]}>
-      <Scrollbar withPadding={false} withMargin={false} reference={scrollRef}>
-        <section className={style["title-container"]} style={{ marginRight: scrollVisible && "0px" }} ref={containerRef}>
+      <Scrollbar reference={scrollRef}>
+        <section className={style["title-container"]}>
           <div className={style["title-content"]}>
-            <h3 className={style["title"]} children={title} />
-            <h5 className={style["subtitle"]} children={subtitle} />
+            <h3 className={style["title"]} children={"Explore user and chats"} />
             <div className={style["searchbar"]}>
               <Searchbar
+                onTuneOpen={(event) => setTuneElement(event.currentTarget)}
                 placeholder={"Search user or chats"}
-                value={text}
+                value={options.text}
                 onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-                  setText(event.target.value);
-                  handleChange(event);
+                  setOptions({ ...options, text: event.target.value });
                 }}
               />
             </div>
           </div>
         </section>
-        <div className={style["icons"]} style={{ marginRight: scrollVisible && "0px" }}>
+        <div className={style["icons"]}>
           <IconContainer selected={view} onChange={setView} />
         </div>
 
-        <section className={style["content-container"]} style={{ marginRight: scrollVisible && "0px" }} data-view={view}>
+        <section className={style["content-container"]} data-view={view}>
           {results.map((value, index) => {
             if (typeof (value as any).size === "number") return <ChatItem view={view} chat={value as any} key={`${value.uuid}${index}`} />;
             else return <UserItem view={view} user={value as any} key={`${value.uuid}${index}`} />;
           })}
         </section>
       </Scrollbar>
+      <Menu anchorEl={tuneElement} open={Boolean(tuneElement)} onClose={() => setTuneElement(null)}>
+        <CheckboxMenuItem children={"User"} checked={options.checkUser} onCheck={(checked: boolean) => handleOptions({ ...options, checkUser: checked })} />
+        <CheckboxMenuItem children={"Chats"} checked={options.checkChat} onCheck={(checked: boolean) => handleOptions({ ...options, checkChat: checked })} />
+        <CheckboxMenuItem children={"Name"} checked={options.checkName} onCheck={(checked: boolean) => handleOptions({ ...options, checkName: checked })} />
+        <CheckboxMenuItem children={"Tag"} checked={options.checkTag} onCheck={(checked: boolean) => handleOptions({ ...options, checkTag: checked })} />
+        <CheckboxMenuItem children={"Uuid"} checked={options.checkUuid} onCheck={(checked: boolean) => handleOptions({ ...options, checkUuid: checked })} />
+      </Menu>
     </main>
   );
 };
@@ -99,21 +94,27 @@ interface UserItemProps {
 }
 
 const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
+  const [color, setColor] = useState<string>();
+
+  const { data, loading, error } = usePalette(user.avatarURL, 2, "hex", { quality: 15, crossOrigin: "anonymous" });
+
+  useEffect(() => {
+    if (error) setColor(user.color);
+    else setColor(Array.isArray(data) ? data[0] : data);
+  }, [loading, error]);
+
   const { openUser } = useModal();
   if (view === "grid") {
     return (
       <div className={style["grid-item"]} onClick={() => openUser(user)}>
-        <div className={style["content"]} style={{ background: `linear-gradient(176deg, ${user.color} 29%, rgba(0,0,0,0.3) 100%)` }}>
+        <div className={style["content"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
           <div className={style["background"]} />
           <Avatar variant={"rounded"} className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} />
           <div className={style["text-container"]}>
             <div className={style["name"]}>
               <h4 children={user.name} />
             </div>
-            <div className={style["tag"]}>
-              <code className={style["at"]} children={"#"} />
-              <code children={`${user.tag}`} />
-            </div>
+            <code children={`@${user.tag}`} />
           </div>
         </div>
       </div>
@@ -121,11 +122,11 @@ const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
   } else if (view === "list") {
     return (
       <div className={style["list-item"]} onClick={() => openUser(user)}>
-        <Avatar className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} />
+        <Avatar className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL ? user.color : color }} />
         <div className={style["title"]}>
           <h6 children={user.name} />
         </div>
-        <div children={user.tag} className={style["description"]} />
+        <code children={`@${user.tag}`} className={style["tag"]} />
       </div>
     );
   }
@@ -137,11 +138,20 @@ interface ChatItemProps {
 }
 
 const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
+  const [color, setColor] = useState<string>();
+
+  const { data, loading, error } = usePalette(chat.avatarURL, 2, "hex", { quality: 15, crossOrigin: "anonymous" });
+
+  useEffect(() => {
+    if (error) setColor(chat.color);
+    else setColor(Array.isArray(data) ? data[0] : data);
+  }, [loading, error]);
+
   const { openChatPreview } = useModal();
   if (view === "grid") {
     return (
       <div className={style["grid-item"]} onClick={() => openChatPreview(chat)}>
-        <div className={style["content"]} style={{ background: `linear-gradient(176deg, ${chat.color} 29%, rgba(0,0,0,0.3) 100%)` }}>
+        <div className={style["content"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
           <div className={style["background"]} />
           <Avatar variant={"rounded"} className={style["avatar"]} src={chat.avatarURL} style={{ backgroundColor: !chat.avatarURL && chat.color }} />
           <div className={style["text-container"]}>
@@ -149,10 +159,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
               <h4 children={chat.name} />
               <GroupIcon className={style["icon"]} />
             </div>
-            <div className={style["tag"]}>
-              <code className={style["at"]} children={"#"} />
-              <code children={`${chat.tag}`} />
-            </div>
+            <code children={`@${chat.tag}`} />
           </div>
         </div>
       </div>
@@ -160,12 +167,12 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
   } else if (view === "list") {
     return (
       <div className={style["list-item"]} onClick={() => openChatPreview(chat)}>
-        <Avatar className={style["avatar"]} src={chat.avatarURL} style={{ backgroundColor: !chat.avatarURL && chat.color }} />
+        <Avatar className={style["avatar"]} src={chat.avatarURL} style={{ backgroundColor: !chat.avatarURL ? chat.color : color }} />
         <div className={style["title"]}>
           <h6 children={chat.name} />
           <GroupIcon className={style["icon"]} />
         </div>
-        <div children={chat.tag} className={style["description"]} />
+        <code children={`@${chat.tag}`} className={style["tag"]} />
       </div>
     );
   }
@@ -187,8 +194,8 @@ const IconContainer: React.FC<IconContainerProps> = ({ onChange, selected }): JS
           value && onChange(value as any);
         }}
       >
-        <ToggleButton value={"list"} children={<ViewListIcon className={style["icon"]} />} />
-        <ToggleButton value={"grid"} children={<ViewModuleIcon className={style["icon"]} />} />
+        <ToggleButton disableRipple value={"list"} children={<ViewListIcon className={style["icon"]} />} />
+        <ToggleButton disableRipple value={"grid"} children={<ViewModuleIcon className={style["icon"]} />} />
       </ToggleButtonGroup>
     </div>
   );

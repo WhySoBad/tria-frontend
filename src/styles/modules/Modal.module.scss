@@ -91,6 +91,8 @@
     right: 0.5rem;
     bottom: 0.25rem;
     font-size: 14px;
+    user-select: none;
+    cursor: pointer;
   }
 
   .icon-container {
@@ -155,6 +157,10 @@
     height: 250px !important;
     border-radius: 0 !important;
   }
+
+  .content {
+    height: 100% !important;
+  }
 }
 
 @include smallest {
@@ -171,5 +177,9 @@
   .head {
     height: 250px !important;
     border-radius: 0 !important;
+  }
+
+  .content {
+    height: 100% !important;
   }
 }

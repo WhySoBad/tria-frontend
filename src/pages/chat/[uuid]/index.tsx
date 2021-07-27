@@ -9,17 +9,14 @@ interface Props {
 }
 
 const ChatPage: NextPage<Props> = ({ chat }): JSX.Element => {
-  const { setSelected } = useChat();
+  const { setSelected, selected } = useChat();
 
   useEffect(() => {
     setSelected(chat);
   }, [chat]);
 
-  return (
-    <>
-      <Layout children={<Chat />} />
-    </>
-  );
+  if (selected !== chat) return <Layout />;
+  else return <Layout children={<Chat />} />;
 };
 
 ChatPage.getInitialProps = async (context: NextPageContext) => {

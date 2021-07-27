@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import style from "../../styles/modules/Header.module.scss";
-import Button from "../Button/Button";
 import { useAuth } from "../../hooks/AuthContext";
 import Link from "next/link";
 
@@ -19,16 +18,11 @@ const Header = (): JSX.Element => {
 
   return (
     <header className={style["container"]}>
-      <div className={cn(style["child"], style["logo-container"])} children={<h3 children={"Name"} />} />
-      <div className={cn(style["child"], style["navigation-container"])}></div>
-      <div className={cn(style["child"])}>
-        {canLogin !== null && !canLogin && <Button children={"Authentication"} href={"#auth"} />}
-        {/*  {canLogin !== null && canLogin && <Button text={"To App"} to={"/app"} />} */}
-        {canLogin !== null && canLogin && (
-          <Link href={"/app"}>
-            <Button children={"To App"} />
-          </Link>
-        )}
+      <div className={style["logo-container"]} children={<h3 /* children={"Name"} */ />} />
+      <div className={style["navigation-container"]}>
+        <Link href={"/login"} children={<h6 className={style["nav-link"]} children={"Login"} />} />
+        <Link href={"/signup"} children={<h6 className={style["nav-link"]} children={"Sign Up"} />} />
+        {canLogin && <Link href={"/app"} children={<h6 className={style["nav-link"]} children={"To App"} />} />}
       </div>
     </header>
   );

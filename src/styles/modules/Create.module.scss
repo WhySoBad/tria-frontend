@@ -1,0 +1,189 @@
+@use "../config/" as *;
+
+.title-container {
+  width: 100%;
+  display: flex;
+  padding: 1rem 0.75rem;
+  .title {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.createchat-container {
+  padding: 0 0.75rem;
+  padding-bottom: 1rem;
+
+  .settings-container {
+    grid-area: settings;
+    border-radius: 10px;
+    padding: 1rem;
+    border: solid 2px $dark-border;
+    display: grid;
+    grid-template-areas: "title" "form";
+    grid-template-columns: auto;
+    gap: 1rem 2rem;
+
+    .title {
+      grid-area: title;
+      margin-top: -0.25rem;
+    }
+
+    .button-container {
+      grid-area: buttons;
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+
+      .button {
+        white-space: nowrap;
+        padding: 0 0.25rem;
+      }
+    }
+
+    .form-container {
+      grid-area: form;
+
+      .form {
+        display: grid;
+        grid-template-areas: "name name description" "tag public description" "members members members" ". . buttons";
+        gap: 0.5rem;
+
+        .name {
+          grid-area: name;
+        }
+
+        .tag {
+          grid-area: tag;
+        }
+
+        .description {
+          grid-area: description;
+        }
+
+        .locale {
+          grid-area: locale;
+          display: flex;
+          justify-content: center;
+        }
+
+        .public {
+          justify-self: center;
+          grid-area: public;
+          padding: 0 0.5rem;
+        }
+
+        .members-container {
+          margin-top: 1rem;
+          grid-area: members;
+          display: grid;
+          grid-template-areas: "title" "searchbar" "list";
+          grid-template-rows: min-content min-content auto;
+          gap: 1rem 2rem;
+          max-height: 400px;
+
+          .title {
+            grid-area: title;
+            margin-top: -0.25rem;
+          }
+
+          .searchbar {
+            grid-area: searchbar;
+            width: 100%;
+          }
+
+          .list-container {
+            grid-area: list;
+            @include flex-column;
+            height: 400px;
+
+            .item-container {
+              width: 100%;
+              position: relative;
+              border-radius: 5px;
+              margin-bottom: 0.25rem;
+
+              &[data-open="true"] {
+                .icon-container {
+                  opacity: 1;
+                }
+                background-color: rgba(255, 255, 255, 0.05);
+              }
+
+              &:last-child {
+                margin-bottom: 17px;
+              }
+
+              &:hover {
+                .icon-container {
+                  opacity: 1;
+                }
+                background-color: rgba(255, 255, 255, 0.05);
+              }
+
+              .icon-container {
+                position: absolute;
+                display: inline-flex;
+                right: 0;
+                top: 0;
+                align-items: center;
+                opacity: 0;
+              }
+            }
+
+            .item {
+              display: grid;
+              padding: 0.25rem;
+              padding-left: 0.5rem;
+              grid-template-areas: "checkbox avatar title" "checkbox avatar text";
+              width: 100%;
+              justify-content: flex-start;
+              align-items: inherit;
+              grid-template-columns: 50px 50px auto;
+              cursor: pointer;
+
+              .checkbox {
+                grid-area: checkbox;
+              }
+
+              .avatar {
+                grid-area: avatar;
+                background-color: $dark-light;
+                margin-right: 0.5rem;
+                align-self: center;
+              }
+
+              .title {
+                grid-area: title;
+                display: inline-flex;
+                align-items: center;
+                line-height: 1;
+                .icon {
+                  align-self: flex-start;
+                  margin-left: 0.5ch;
+                  color: $icon-hover !important;
+                  transform: scale(0.75);
+                }
+              }
+
+              .tag {
+                grid-area: text;
+                margin-top: -0.25ch;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .label {
+    color: $gray-text !important;
+    font-weight: bold;
+    font-family: $font;
+  }
+}

@@ -6,11 +6,10 @@ import Button from "../Button/Button";
 import { useRouter } from "next/router";
 import { IconButton } from "@material-ui/core";
 import { Visibility as HiddenIcon, VisibilityOff as ShownIcon } from "@material-ui/icons";
-import { checkUserMail, registerUser, validateRegister } from "client";
+import { checkUserMail, registerUser } from "client";
 import Snackbar from "../Snackbar/Snackbar";
 import { Alert } from "@material-ui/lab";
 import { debouncedPromise } from "../../util";
-import { useEffect } from "react";
 
 type Inputs = {
   username: string;

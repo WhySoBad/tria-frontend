@@ -131,6 +131,15 @@
     grid-template-areas: "name ." "text text";
     width: fit-content;
     position: relative;
+    border: solid 2px rgba(255, 255, 255, 0);
+
+    &[data-editing="true"] {
+      border: solid 2px rgba($white, 0.2);
+
+      .text {
+        cursor: text;
+      }
+    }
 
     .name {
       grid-area: name;
@@ -144,6 +153,7 @@
     }
 
     .text {
+      margin-top: -0.3rem;
       grid-area: text;
       width: fit-content;
       white-space: pre-line;
@@ -151,19 +161,36 @@
       .date {
         user-select: none;
         visibility: hidden;
-        margin-bottom: -0.25rem;
         float: right;
         font-weight: bold;
         font-size: 12px;
         padding-left: 1rem;
         color: $gray-text;
+        position: relative;
+
+        &[data-edited="true"] {
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: space-between;
+          width: 100%;
+          padding: 0;
+
+          .inner {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            width: calc(100% + 0.4rem);
+            right: -0.25rem;
+            bottom: -0.4rem;
+          }
+        }
 
         .inner {
           user-select: none;
           visibility: visible;
           position: absolute;
-          bottom: 0.5rem;
-          right: 0.5rem;
+          bottom: -0.75rem;
+          right: -0.25rem;
           float: right;
           font-weight: bold;
           font-size: 12px;
@@ -374,6 +401,7 @@
   .label {
     color: $gray-text !important;
     font-weight: bold;
+    font-family: $font;
   }
 
   .member-container {
@@ -402,7 +430,7 @@
       @include flex-column;
 
       .item-container {
-        width: calc(100% - 17px);
+        width: 100%;
         position: relative;
         border-radius: 5px;
         margin-bottom: 0.25rem;
@@ -539,7 +567,7 @@
       @include flex-column;
 
       .item-container {
-        width: calc(100% - 17px);
+        width: 100%;
         position: relative;
         border-radius: 5px;
         margin-bottom: 0.25rem;

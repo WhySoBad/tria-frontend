@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Layout.module.scss";
 import Burger from "../Burger/Burger";
-import Scrollbar from "../Scrollbar/Scrollbar";
 
 const Layout: React.FC = ({ children }): JSX.Element => {
   const matches = useMediaQuery("(min-width: 800px)");
@@ -27,7 +26,7 @@ const Layout: React.FC = ({ children }): JSX.Element => {
   if (!client) return <></>;
 
   return (
-    <main className={style["container"]} data-open={open} ref={ref}>
+    <main className={style["container"]} data-open={open} ref={ref} onContextMenu={(event) => event.preventDefault()}>
       {typeof open !== "undefined" && (
         <section
           className={style["burger-container"]}

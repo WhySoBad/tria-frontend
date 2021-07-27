@@ -1,19 +1,17 @@
 import React from "react";
-import { BannedMember, Chat, ChatSocketEvent, checkGroupTag, Group, Locale, Member, PrivateChat } from "client";
+import { BannedMember, Chat, ChatSocketEvent, checkGroupTag, Group, Locale, PrivateChat } from "client";
 import { useClient } from "../../hooks/ClientContext";
 import style from "../../styles/modules/Profile.module.scss";
-import { useChat } from "../../hooks/ChatContext";
-import { Avatar, FormControlLabel, IconButton } from "@material-ui/core";
+import { Avatar, IconButton } from "@material-ui/core";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Button, { TextButton } from "../Button/Button";
-import Input, { Checkbox, Searchbar, Select } from "../Input/Input";
+import Input, { Searchbar, Select } from "../Input/Input";
 import { debouncedPromise } from "../../util";
 import { useState } from "react";
 import baseStyle from "../../styles/modules/Modal.module.scss";
 import { ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon, Group as GroupIcon } from "@material-ui/icons";
 import { useEffect } from "react";
 import Scrollbar from "../Scrollbar/Scrollbar";
-import { useRouter } from "next/router";
 import Snackbar from "../Snackbar/Snackbar";
 import { Alert } from "@material-ui/lab";
 import { useModal } from "../../hooks/ModalContext";
@@ -21,9 +19,6 @@ import { useModal } from "../../hooks/ModalContext";
 interface ProfileProps {}
 
 const Profile: React.FC<ProfileProps> = (): JSX.Element => {
-  const { client } = useClient();
-  const { selected } = useChat();
-
   return (
     <>
       <div className={style["title-container"]}>
@@ -31,10 +26,9 @@ const Profile: React.FC<ProfileProps> = (): JSX.Element => {
         <h3 className={style["title"]} children={"Profile"} />
       </div>
       <Scrollbar>
-        <section className={style["user-settings-container"]}>
+        <section className={style["user-profile-container"]}>
           <Settings />
           <ChatsList />
-          <BannedMemberList />
         </section>
       </Scrollbar>
     </>
@@ -66,7 +60,7 @@ const ChatsList: React.FC<ChatsListProps> = ({}): JSX.Element => {
       <h5 className={style["title"]}>Chats</h5>
       <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
       <div className={style["list-container"]}>
-        <Scrollbar withPadding={false}>
+        <Scrollbar>
           {client.user.chats
             .values()
             .filter((chat: Chat) => {
@@ -94,7 +88,7 @@ const ChatsListItem: React.FC<ChatsListItemProps> = ({ chat }): JSX.Element => {
   const name: string = chat instanceof PrivateChat ? chat.participant.user.name : chat instanceof Group ? chat.name : "";
   const avatarURL: string | null = chat instanceof PrivateChat ? chat.participant.user.avatarURL : chat instanceof Group ? chat.avatarURL : null;
   const color: string = chat instanceof PrivateChat ? chat.participant.user.color : chat instanceof Group ? chat.color : "";
-  const description: string = chat instanceof PrivateChat ? chat.participant.user.description : chat instanceof Group ? chat.description : "";
+  const tag: string = chat instanceof PrivateChat ? chat.participant.user.tag : chat instanceof Group ? chat.tag : "";
 
   return (
     <div className={style["item-container"]} onClick={() => openChat(chat)}>
@@ -104,7 +98,7 @@ const ChatsListItem: React.FC<ChatsListItemProps> = ({ chat }): JSX.Element => {
           <h6 children={name} />
           {chat instanceof Group && <GroupIcon className={style["icon"]} />}
         </div>
-        <div children={description} className={style["description"]} />
+        <div children={`@${tag}`} className={style["tag"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}></div>
       </div>
       <div className={style["icon-container"]}>
@@ -169,7 +163,6 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
   const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
     const changes: Map<string, string | Locale> = new Map<string, string | Locale>();
     Object.keys(dirtyFields).forEach((key: string) => changes.set(key, data[key]));
-    console.log(changes, defaultAvatar, avatar, url);
     if (changes.size !== 0) client.user.setSettings(Object.fromEntries(changes)).then(resetForm).catch(setSnackError);
     if (defaultAvatar && !avatar && !url)
       client.user
@@ -303,60 +296,6 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             />
           </div>
         </form>
-      </div>
-      <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
-    </div>
-  );
-};
-
-interface BannedMemberListProps {}
-
-const BannedMemberList: React.FC<BannedMemberListProps> = ({}): JSX.Element => {
-  const [text, setText] = useState<string>("");
-  const { client } = useClient();
-  const [, setUpdate] = useState<number>(0);
-
-  return (
-    <div className={style["banned-container"]}>
-      <h5 className={style["title"]}>Banned Members</h5>
-      <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
-      <div className={style["list-container"]}>
-        <Scrollbar withPadding={false}>
-          {/*  {chat.bannedMembers
-            .values()
-            .filter(({ name }) => name.toLowerCase().startsWith(text.toLowerCase()))
-            .map((member: BannedMember) => {
-              return <BannedListItem member={member} chat={chat} key={member.uuid} />;
-            })} */}
-        </Scrollbar>
-      </div>
-    </div>
-  );
-};
-
-interface BannedListItemProps {
-  member: BannedMember;
-}
-
-const BannedListItem: React.FC<BannedListItemProps> = ({ member }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState<boolean>(true);
-  const [snackError, setSnackError] = useState<string>();
-  const { client } = useClient();
-
-  return (
-    <div className={style["item-container"]} onClick={() => setCollapsed(!collapsed)}>
-      <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={member.avatarURL || ""} style={{ backgroundColor: !member.avatarURL && member.color }} />
-        <h6 children={member.name} className={style["title"]} />
-        <div children={member.description} className={style["description"]} />
-        <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}></div>
-      </div>
-      <div className={style["icon-container"]}>
-        <IconButton
-          className={baseStyle["iconbutton"]}
-          onClick={() => setCollapsed(!collapsed)}
-          children={collapsed ? <ArrowDownIcon className={baseStyle["icon"]} /> : <ArrowUpIcon className={baseStyle["icon"]} />}
-        />
       </div>
       <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
     </div>

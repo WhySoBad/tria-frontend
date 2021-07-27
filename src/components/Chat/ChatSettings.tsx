@@ -71,7 +71,7 @@ const MemberList: React.FC<MemberListProps> = ({ chat }): JSX.Element => {
       <h5 className={style["title"]}>Member</h5>
       <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
       <div className={style["list-container"]}>
-        <Scrollbar withPadding={false}>
+        <Scrollbar>
           {chat.members
             .values()
             .filter(({ user: { name } }) => name.toLowerCase().startsWith(text.toLowerCase()))
@@ -102,14 +102,15 @@ type MemberItemInputs = {
 const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const [snackError, setSnackError] = useState<string>();
-  const { client } = useClient();
   const [role, setRole] = useState<GroupRole>(member.role);
+  const { client } = useClient();
   const admin: Admin | undefined = member instanceof Admin ? member : undefined;
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { dirtyFields, isDirty, isValid },
   } = useForm<MemberItemInputs>({
     defaultValues: {
@@ -133,12 +134,16 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
     });
   };
 
+  useEffect(() => {
+    resetForm();
+    setRole(member.role);
+    setValue("role", member.role);
+  }, [chat.uuid]);
+
   const onSubmit: SubmitHandler<MemberItemInputs> = (data: MemberItemInputs) => {
     if (chat.canEditMembers) {
       const changes: Map<string, string> = new Map<string, string>();
-      Object.keys(dirtyFields).forEach((key: string) => {
-        changes.set(key, data[key]);
-      });
+      Object.keys(dirtyFields).forEach((key: string) => changes.set(key, data[key]));
       const permissions: Array<Permission> = [];
       if ((changes.get("role") || member.role) === GroupRole.ADMIN) {
         if ((admin && admin.canBan && data.ban !== false) || changes.get("ban")) permissions.push(Permission.BAN);
@@ -177,14 +182,14 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                 <Controller
                   name={"role"}
                   control={control}
-                  defaultValue={member.role}
-                  render={({ field: { onChange, ...rest } }) => (
+                  render={({ field: { onChange, value, ...rest } }) => (
                     <Select
                       disabled={disabled}
                       onChange={(event) => {
-                        onChange && onChange((event as any).value);
+                        onChange(event.target.value);
                         setRole((event as any).value);
                       }}
+                      value={value}
                       values={[
                         { value: GroupRole.MEMBER, label: GroupRole.MEMBER },
                         { value: GroupRole.ADMIN, label: GroupRole.ADMIN },
@@ -201,10 +206,11 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      defaultChecked={admin && admin.canEditMembers}
                       label={"Edit Member"}
+                      checked={typeof field.value === "string" ? false : !!field.value}
+                      onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["edit_member"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canEditMembers} disabled={disabled} {...field} />}
+                      control={<Checkbox disabled={disabled} />}
                     />
                   )}
                 />
@@ -213,10 +219,11 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      defaultChecked={admin && admin.canEditGroup}
                       label={"Edit Chat"}
+                      checked={typeof field.value === "string" ? false : !!field.value}
+                      onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["edit_chat"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canEditGroup} disabled={disabled} {...field} />}
+                      control={<Checkbox disabled={disabled} />}
                     />
                   )}
                 />
@@ -225,10 +232,11 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      defaultChecked={admin && admin.canKick}
                       label={"Kick"}
+                      checked={typeof field.value === "string" ? false : !!field.value}
+                      onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["kick"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canKick} disabled={disabled} {...field} />}
+                      control={<Checkbox disabled={disabled} />}
                     />
                   )}
                 />
@@ -237,10 +245,11 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      defaultChecked={admin && admin.canBan}
                       label={"Ban"}
+                      checked={typeof field.value === "string" ? false : !!field.value}
+                      onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["ban"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canBan} disabled={disabled} {...field} />}
+                      control={<Checkbox disabled={disabled} />}
                     />
                   )}
                 />
@@ -249,10 +258,11 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      defaultChecked={admin && admin.canUnban}
                       label={"Unban"}
+                      checked={typeof field.value === "string" ? false : !!field.value}
+                      onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["unban"], label: style["label"] }}
-                      control={<Checkbox defaultChecked={admin && admin.canUnban} disabled={disabled} {...field} />}
+                      control={<Checkbox disabled={disabled} />}
                     />
                   )}
                 />
@@ -291,7 +301,6 @@ type Inputs = {
 };
 
 const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Element => {
-  const { client } = useClient();
   const [snackError, setSnackError] = useState<string>();
   const router = useRouter();
   const [url, setUrl] = useState<string>(chat.avatarURL);
@@ -312,6 +321,11 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
   });
 
   const resetForm = () => reset({ description: chat.description, name: chat.name, isPublic: chat.public, tag: chat.tag });
+
+  useEffect(() => {
+    resetForm();
+    setUrl(chat.avatarURL);
+  }, [chat.uuid]);
 
   const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
     const changes: Map<string, string> = new Map<string, string>();
@@ -420,7 +434,13 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
             name={"isPublic"}
             control={control}
             render={({ field }) => (
-              <FormControlLabel defaultChecked={chat.public} label={"Public"} classes={{ root: style["public"], label: style["label"] }} control={<Checkbox disabled={disabled} {...field} />} />
+              <FormControlLabel
+                label={"Public"}
+                checked={typeof field.value === "string" ? false : !!field.value}
+                onChange={(e, checked) => field.onChange(checked)}
+                classes={{ root: style["public"], label: style["label"] }}
+                control={<Checkbox disabled={disabled} />}
+              />
             )}
           />
           <div className={style["button-container"]}>
@@ -459,7 +479,7 @@ const BannedMemberList: React.FC<BannedMemberListProps> = ({ chat }): JSX.Elemen
       <h5 className={style["title"]}>Banned Members</h5>
       <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
       <div className={style["list-container"]}>
-        <Scrollbar withPadding={false}>
+        <Scrollbar>
           {chat.bannedMembers
             .values()
             .filter(({ name }) => name.toLowerCase().startsWith(text.toLowerCase()))
@@ -480,7 +500,6 @@ interface BannedListItemProps {
 const BannedListItem: React.FC<BannedListItemProps> = ({ member, chat }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const [snackError, setSnackError] = useState<string>();
-  const { client } = useClient();
 
   const handleUnban = () => {
     if (chat.canUnban) chat.unbanMember(member.uuid).catch(setSnackError);

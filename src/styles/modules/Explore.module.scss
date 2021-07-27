@@ -27,7 +27,6 @@
   min-height: 100px;
   max-height: 40vh;
   height: calc(100% - 20%);
-  border-bottom: solid 3px $dark-border;
   background-color: $lighter-dark;
   align-items: center;
 
@@ -39,19 +38,15 @@
     align-items: center;
 
     .title {
-      display: flex;
-    }
-
-    .subtitle {
-      margin-top: -0.5ch;
-      font-weight: normal;
-      color: $gray-text;
+      padding: 0.5rem;
     }
 
     .searchbar {
       display: flex;
       justify-content: center;
-      width: calc(100% / 3);
+      max-width: 500px;
+      padding: 0 2rem;
+      width: 100%;
     }
   }
 }
@@ -60,36 +55,6 @@
   position: absolute;
   top: 1rem;
   right: 0.75rem;
-}
-
-.collapsed-title-container {
-  opacity: 0;
-  z-index: -10;
-  position: absolute;
-  width: calc(100%);
-  padding: 1rem 0.75rem;
-  display: flex;
-  border-bottom: solid 3px $dark-border;
-  background-color: $lighter-dark;
-  transition: all 0.2s;
-  align-items: center;
-
-  .collapsed-title {
-    opacity: 0;
-    width: calc(100% / 3);
-    transition: all 0.2s;
-  }
-
-  .collapsed-searchbar {
-    opacity: 0;
-    width: calc(100% / 3);
-    transition: all 0.2s;
-  }
-
-  .icon-container {
-    width: calc(100% / 3);
-    transition: all 0.2s;
-  }
 }
 
 .icon-container {
@@ -162,15 +127,6 @@
       }
     }
 
-    .tag {
-      margin-top: 0rem;
-      color: #fff;
-      .at {
-        font-family: "Open Sans", sans-serif;
-        font-size: 16px;
-      }
-    }
-
     .uuid {
       position: absolute;
       color: $dark-darker;
@@ -223,7 +179,7 @@
     }
   }
 
-  .description {
+  .tag {
     margin-top: -0.25ch;
   }
 }

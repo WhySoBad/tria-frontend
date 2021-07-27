@@ -7,19 +7,40 @@
   position: fixed;
   z-index: 999;
   padding: 1rem;
-
-  .child {
-    margin: 0 0.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 }
 
 .logo-container {
   color: $dark-lighter;
+  margin: 0 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .navigation-container {
+  margin: 0 0.5rem;
   flex: 1 auto;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+
+  .nav-link {
+    cursor: pointer;
+    color: $white;
+    margin: 0.5rem;
+    margin-left: 1rem;
+    position: relative;
+    z-index: 1000;
+    text-transform: uppercase;
+    font-weight: 700 !important;
+
+    &:hover {
+      -webkit-text-stroke: 0.1px $white;
+      -webkit-text-fill-color: transparent;
+    }
+
+    &:first-child {
+      margin-left: 0.5rem;
+    }
+  }
 }
