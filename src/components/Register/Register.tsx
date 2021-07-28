@@ -8,6 +8,7 @@ import { debouncedPromise } from "../../util";
 import { useRouter } from "next/router";
 import Snackbar from "../Snackbar/Snackbar";
 import { Alert } from "@material-ui/lab";
+import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
 
 interface RegisterProps {}
 
@@ -53,48 +54,51 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
   if (!defaultLocale) return <></>;
 
   return (
-    <div className={style["container"]}>
-      <h4 children={"Finish Registration"} className={style["title"]} />
-      <div className={style["form-container"]}>
-        <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
-          <Input className={style["name"]} placeholder={"Username"} {...register("name", { required: true })} error={!!errors.name} />
-          <Input
-            className={style["tag"]}
-            onKeyDown={(event) => event.key.length === 1 && !event.key.match(/[A-Za-z0-9]/) && event.preventDefault()}
-            placeholder={"Tag"}
-            {...register("tag", { validate: isValidTag, pattern: /[A-Za-z0-9]+/, required: true })}
-            error={!!errors.tag}
-          />
-          <Input className={style["description"]} placeholder={"Description"} {...register("description", { required: true })} error={!!errors.description} />
-          <div
-            className={style["locale"]}
-            children={
-              <Controller
-                name={"locale"}
-                control={control}
-                defaultValue={defaultLocale}
-                render={({ field: { onChange, ...rest } }) => (
-                  <Select
-                    onChange={(event) => onChange && onChange((event as any).value)}
-                    values={[
-                      { value: "EN", label: "English" },
-                      { value: "DE", label: "German" },
-                      { value: "FR", label: "French" },
-                    ]}
-                    {...rest}
-                  />
-                )}
-              />
-            }
-          />
-          <div className={style["button-container"]}>
-            <TextButton children={"Close"} onClick={() => router.push("/")} />
-            <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Finish"} />
-          </div>
-        </form>
+    <>
+      <AnimatedBackground />
+      <div className={style["container"]}>
+        <h4 children={"Finish Registration"} className={style["title"]} />
+        <div className={style["form-container"]}>
+          <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
+            <Input className={style["name"]} placeholder={"Username"} {...register("name", { required: true })} error={!!errors.name} />
+            <Input
+              className={style["tag"]}
+              onKeyDown={(event) => event.key.length === 1 && !event.key.match(/[A-Za-z0-9]/) && event.preventDefault()}
+              placeholder={"Tag"}
+              {...register("tag", { validate: isValidTag, pattern: /[A-Za-z0-9]+/, required: true })}
+              error={!!errors.tag}
+            />
+            <Input className={style["description"]} placeholder={"Description"} {...register("description", { required: true })} error={!!errors.description} />
+            <div
+              className={style["locale"]}
+              children={
+                <Controller
+                  name={"locale"}
+                  control={control}
+                  defaultValue={defaultLocale}
+                  render={({ field: { onChange, ...rest } }) => (
+                    <Select
+                      onChange={(event) => onChange && onChange((event as any).value)}
+                      values={[
+                        { value: "EN", label: "English" },
+                        { value: "DE", label: "German" },
+                        { value: "FR", label: "French" },
+                      ]}
+                      {...rest}
+                    />
+                  )}
+                />
+              }
+            />
+            <div className={style["button-container"]}>
+              <TextButton children={"Close"} onClick={() => router.push("/")} />
+              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Finish"} />
+            </div>
+          </form>
+        </div>
+        <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
       </div>
-      <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
-    </div>
+    </>
   );
 };
 

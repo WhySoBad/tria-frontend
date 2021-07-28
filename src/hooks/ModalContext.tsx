@@ -3,12 +3,14 @@ import { NextPage } from "next";
 import React, { useState } from "react";
 import { ModalContainer, ModalProps } from "../components/Modal/Modal";
 import { ChatPreviewModal, ChatModal, MemberModal, UserModal } from "../components/Modal/variants";
+import ChangePasswordModal from "../components/Modal/variants/ChangePasswordModal";
 
 interface ModalContext {
   openUser: (user: User | UserPreview, props?: ModalProps) => void;
   openChat: (chat: Chat, props?: ModalProps) => void;
   openMember: (member: Member, props?: ModalProps) => void;
   openChatPreview: (chat: ChatPreview, props?: ModalProps) => void;
+  openPasswordChange: (props?: ModalProps) => void;
   close: () => void;
 }
 
@@ -17,14 +19,15 @@ const defaultValue: ModalContext = {
   openChat: () => {},
   openMember: () => {},
   openChatPreview: () => {},
+  openPasswordChange: () => {},
   close: () => {},
 };
 
 export const ModalContext = React.createContext<ModalContext>(defaultValue);
 
 export const ModalProvider: NextPage = ({ children }): JSX.Element => {
-  const [open, setOpen] = useState<User | UserPreview | Chat | Member | ChatPreview>(null);
-  const [type, setType] = useState<"User" | "Chat" | "ChatPreview" | "Member">();
+  const [open, setOpen] = useState<User | UserPreview | Chat | Member | ChatPreview | boolean>(null);
+  const [type, setType] = useState<"User" | "Chat" | "ChatPreview" | "Member" | "PasswordChange">();
   const [props, setProps] = useState<ModalProps>({});
   const [closed, setClosed] = useState<boolean>(true);
 
@@ -55,6 +58,12 @@ export const ModalProvider: NextPage = ({ children }): JSX.Element => {
     setClosed(false);
   };
 
+  const openPasswordChange = (props: ModalProps = {}) => {
+    setType("PasswordChange");
+    setOpen(true);
+    setClosed(false);
+  };
+
   const close = () => {
     setClosed(true);
     setOpen(null);
@@ -67,6 +76,7 @@ export const ModalProvider: NextPage = ({ children }): JSX.Element => {
         openChat: openChat,
         openMember: openMember,
         openChatPreview: openChatPreview,
+        openPasswordChange: openPasswordChange,
         close: close,
       }}
     >
@@ -107,6 +117,16 @@ export const ModalProvider: NextPage = ({ children }): JSX.Element => {
         {type === "User" && open && (
           <UserModal
             user={open as any}
+            withBack={props.withBack}
+            onClose={() => {
+              if (props.onClose) props.onClose();
+              else close();
+            }}
+            selectedTab={props.selectedTab}
+          />
+        )}
+        {typeof open === "boolean" && (
+          <ChangePasswordModal
             withBack={props.withBack}
             onClose={() => {
               if (props.onClose) props.onClose();

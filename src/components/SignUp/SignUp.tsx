@@ -10,6 +10,7 @@ import { checkUserMail, registerUser } from "client";
 import Snackbar from "../Snackbar/Snackbar";
 import { Alert } from "@material-ui/lab";
 import { debouncedPromise } from "../../util";
+import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
 
 type Inputs = {
   username: string;
@@ -46,37 +47,40 @@ const SignUp: React.FC = (): JSX.Element => {
   }, 250);
 
   return (
-    <div className={style["container"]}>
-      <h4 children={"Sign Up"} className={style["title"]} />
-      <div className={style["form-container"]}>
-        <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            className={style["username"]}
-            placeholder={"Mail"}
-            type={"mail"}
-            {...register("username", { required: true, pattern: /\S+@\S+\.\S+/, validate: isValidMail })}
-            error={!!errors.username}
-          />
-          <Input
-            className={style["password"]}
-            placeholder={"Password"}
-            {...register("password", { required: true })}
-            error={!!errors.password}
-            type={hidden ? "password" : "text"}
-            endAdornment={
-              <IconButton disableRipple className={style["iconbutton"]} onClick={() => setHidden(!hidden)}>
-                {hidden ? <HiddenIcon className={style["icon"]} /> : <ShownIcon className={style["icon"]} />}
-              </IconButton>
-            }
-          />
-          <div className={style["button-container"]}>
-            <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Sign Up"} />
-          </div>
-        </form>
+    <>
+      <AnimatedBackground />
+      <div className={style["container"]}>
+        <h4 children={"Sign Up"} className={style["title"]} />
+        <div className={style["form-container"]}>
+          <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
+            <Input
+              className={style["username"]}
+              placeholder={"Mail"}
+              type={"mail"}
+              {...register("username", { required: true, pattern: /\S+@\S+\.\S+/, validate: isValidMail })}
+              error={!!errors.username}
+            />
+            <Input
+              className={style["password"]}
+              placeholder={"Password"}
+              {...register("password", { required: true })}
+              error={!!errors.password}
+              type={hidden ? "password" : "text"}
+              endAdornment={
+                <IconButton disableRipple className={style["iconbutton"]} onClick={() => setHidden(!hidden)}>
+                  {hidden ? <HiddenIcon className={style["icon"]} /> : <ShownIcon className={style["icon"]} />}
+                </IconButton>
+              }
+            />
+            <div className={style["button-container"]}>
+              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Sign Up"} />
+            </div>
+          </form>
+        </div>
+        <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
+        <Snackbar open={!!snackSuccess} onClose={() => setSnackSuccess(null)} children={<Alert severity={"success"} children={snackSuccess} />} />
       </div>
-      <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
-      <Snackbar open={!!snackSuccess} onClose={() => setSnackSuccess(null)} children={<Alert severity={"success"} children={snackSuccess} />} />
-    </div>
+    </>
   );
 };
 

@@ -1,0 +1,15 @@
+@use "../config/" as *;
+
+.container {
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  left: 0;
+  bottom: 0;
+  position: fixed;
+  overflow: hidden;
+}
+
+.animatedbackground {
+  background: linear-gradient(159deg, rgba(50, 160, 226, 1) 22%, rgba(41, 105, 214, 1) 85%);
+}

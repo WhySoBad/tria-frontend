@@ -5,7 +5,6 @@ import { Group as GroupIcon, ChevronLeft as BackIcon, Close as CloseIcon } from 
 import { usePalette } from "color-thief-react";
 import { useState, useEffect } from "react";
 import cn from "classnames";
-import Button from "../Button/Button";
 
 export interface ModalProps {
   open?: boolean;

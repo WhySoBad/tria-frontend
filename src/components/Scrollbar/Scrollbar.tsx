@@ -14,6 +14,7 @@ const Scrollbar: React.FC<ScrollbarProps> = ({ children, reference, ...props }):
       universal
       renderView={(props) => <div {...props} style={{ ...props.style, overflow: "hidden scroll", marginBottom: "0px" }} />}
       renderThumbVertical={(props) => <div {...props} className={style["scroll-thumb"]} />}
+      renderThumbHorizontal={(props) => <div {...props} style={{ zIndex: "-10" }} />}
       children={children}
       {...props}
     />

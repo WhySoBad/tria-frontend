@@ -4,9 +4,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 1rem;
   color: $dark-dark;
   width: 100%;
+  background-color: $darker;
+  padding-bottom: 1rem;
 }
 
 .content {
@@ -14,14 +15,27 @@
   flex-direction: column;
   width: 80%;
   border-top: solid 1px $dark-border;
-  padding: 3rem;
+  padding: 1rem;
 }
 
 .quick-nav {
-  display: flex;
+  display: grid;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4rem;
+  grid-template-areas: "title" "columns";
+  grid-template-columns: 100%;
+
+  .title {
+    grid-area: title;
+    color: $white;
+  }
+
+  .columns {
+    grid-area: columns;
+    display: flex;
+    justify-content: space-between;
+  }
 }
 
 .column {
@@ -30,10 +44,6 @@
   flex-direction: column;
   align-items: baseline;
   line-height: 2.5;
-}
-
-.column-title {
-  color: $white;
 }
 
 .column-link {

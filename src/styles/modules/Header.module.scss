@@ -34,11 +34,6 @@
     text-transform: uppercase;
     font-weight: 700 !important;
 
-    &:hover {
-      -webkit-text-stroke: 0.1px $white;
-      -webkit-text-fill-color: transparent;
-    }
-
     &:first-child {
       margin-left: 0.5rem;
     }

@@ -126,6 +126,7 @@ type Inputs = {
 
 const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element => {
   const { client } = useClient();
+  const { openPasswordChange } = useModal();
   const [defaultLocale, setDefaultLocale] = useState<Locale>();
   const [snackError, setSnackError] = useState<string>();
   const [url, setUrl] = useState<string>(client.user.avatarURL);
@@ -226,7 +227,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
         <div className={style["delete"]}>
           <TextButton
             disabled={disabled}
-            children={"Delete avatar"}
+            children={"Delete Avatar"}
             onClick={() => {
               setUrl(null);
               setAvatar(null);
@@ -259,6 +260,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
               />
             )}
           />
+
           <Controller
             name={"description"}
             control={control}
@@ -287,8 +289,8 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
               />
             }
           />
-
           <div className={style["button-container"]}>
+            <div className={style["change-password"]} children={<TextButton children={"Change Password"} onClick={() => openPasswordChange()} />} />
             <div className={style["button"]} children={<Button children={"Delete"} onClick={handleDelete} />} />
             <div
               className={style["button"]}

@@ -114,7 +114,14 @@
           grid-area: name;
         }
 
+        .change-password {
+          font-size: 14px;
+          padding-right: 0.25rem;
+          margin-top: -2px;
+        }
+
         .tag {
+          position: relative;
           grid-area: tag;
         }
 
@@ -276,6 +283,36 @@
           }
         }
       }
+    }
+  }
+}
+
+@include small {
+  .settings-container {
+    grid-template-areas: "title ." "avatar avatar" "form form" !important;
+  }
+
+  .form {
+    grid-template-areas: "name name" "tag locale" "description description" "buttons buttons" !important;
+  }
+}
+
+@include smaller {
+  .settings-container {
+    grid-template-areas: "title ." "avatar avatar" "form form" !important;
+
+    .form {
+      grid-template-areas: "name name" "tag locale" "description description" "buttons buttons" !important;
+    }
+  }
+}
+
+@include smallest {
+  .settings-container {
+    grid-template-areas: "title ." "avatar avatar" "form form" !important;
+
+    .form {
+      grid-template-areas: "name name" "tag locale" "description description" "buttons buttons" !important;
     }
   }
 }

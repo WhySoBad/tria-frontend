@@ -9,6 +9,7 @@ import { Visibility as HiddenIcon, VisibilityOff as ShownIcon } from "@material-
 import { useAuth } from "../../hooks/AuthContext";
 import Snackbar from "../Snackbar/Snackbar";
 import { Alert } from "@material-ui/lab";
+import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
 
 type Inputs = {
   username: string;
@@ -33,34 +34,37 @@ const Login: React.FC = (): JSX.Element => {
   };
 
   return (
-    <div className={style["container"]}>
-      <h4 children={"Login"} className={style["title"]} />
-      <div className={style["form-container"]}>
-        <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
-          <Input className={style["username"]} placeholder={"Mail"} type={"mail"} {...register("username", { required: true, pattern: /\S+@\S+\.\S+/ })} error={!!errors.username} />
-          <div className={style["password-container"]}>
-            <Input
-              className={style["password"]}
-              placeholder={"Password"}
-              {...register("password", { required: true })}
-              error={!!errors.password}
-              type={hidden ? "password" : "text"}
-              endAdornment={
-                <IconButton disableRipple className={style["iconbutton"]} onClick={() => setHidden(!hidden)}>
-                  {hidden ? <HiddenIcon className={style["icon"]} /> : <ShownIcon className={style["icon"]} />}
-                </IconButton>
-              }
-            />
-            <span className={style["forgot"]} children={<TextButton children={"Forgot Password"} />} />
-          </div>
+    <>
+      <AnimatedBackground />
+      <div className={style["container"]}>
+        <h4 children={"Login"} className={style["title"]} />
+        <div className={style["form-container"]}>
+          <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
+            <Input className={style["username"]} placeholder={"Mail"} type={"mail"} {...register("username", { required: true, pattern: /\S+@\S+\.\S+/ })} error={!!errors.username} />
+            <div className={style["password-container"]}>
+              <Input
+                className={style["password"]}
+                placeholder={"Password"}
+                {...register("password", { required: true })}
+                error={!!errors.password}
+                type={hidden ? "password" : "text"}
+                endAdornment={
+                  <IconButton disableRipple className={style["iconbutton"]} onClick={() => setHidden(!hidden)}>
+                    {hidden ? <HiddenIcon className={style["icon"]} /> : <ShownIcon className={style["icon"]} />}
+                  </IconButton>
+                }
+              />
+              <span className={style["forgot"]} children={<TextButton children={"Forgot Password"} />} />
+            </div>
 
-          <div className={style["button-container"]}>
-            <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Login"} />
-          </div>
-        </form>
+            <div className={style["button-container"]}>
+              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Login"} />
+            </div>
+          </form>
+        </div>
+        <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
       </div>
-      <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
-    </div>
+    </>
   );
 };
 
