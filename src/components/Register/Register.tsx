@@ -40,7 +40,7 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
 
   useEffect(() => {
     const lang: string = navigator.language.length > 2 ? navigator.language.split("-")[1] : navigator.language;
-    setDefaultLocale(lang === "DE" ? "DE" : lang === "FR" ? "FR" : "EN");
+    setDefaultLocale(lang === "DE" ? "DE" : lang === "FR" ? "EN" : "EN");
   }, []);
 
   const isValidTag = debouncedPromise(async (tag: string): Promise<boolean> => {
@@ -58,6 +58,7 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
       <AnimatedBackground />
       <div className={style["container"]}>
         <h4 children={"Finish Registration"} className={style["title"]} />
+        <div className={style["description"]} children={"Finish the registration of your account by filling the following fields."} />
         <div className={style["form-container"]}>
           <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
             <Input className={style["name"]} placeholder={"Username"} {...register("name", { required: true })} error={!!errors.name} />
@@ -82,7 +83,7 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
                       values={[
                         { value: "EN", label: "English" },
                         { value: "DE", label: "German" },
-                        { value: "FR", label: "French" },
+                        { value: "FR", label: "French", disabled: true },
                       ]}
                       {...rest}
                     />
@@ -91,7 +92,6 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
               }
             />
             <div className={style["button-container"]}>
-              <TextButton children={"Close"} onClick={() => router.push("/")} />
               <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Finish"} />
             </div>
           </form>

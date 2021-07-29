@@ -1,6 +1,5 @@
 import { Avatar, CircularProgress } from "@material-ui/core";
-import { BannedMember, Chat, ChatSocketEvent, ChatType, getUserPreview, Member, Message, UserPreview, Group, ClientEvent } from "client";
-import { MemberLog } from "client/dist/src/chat/classes/MemberLog.class";
+import { BannedMember, Chat, ChatSocketEvent, ChatType, getUserPreview, Member, Message, UserPreview, Group, MemberLog } from "client";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import style from "../../styles/modules/Chat.module.scss";
 import { useChat } from "../../hooks/ChatContext";

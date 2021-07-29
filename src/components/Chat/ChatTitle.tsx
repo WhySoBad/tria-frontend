@@ -1,15 +1,13 @@
 import React, { useRef, useState } from "react";
 import style from "../../styles/modules/Chat.module.scss";
-import { useChat } from "../../hooks/ChatContext";
 import { IconButton } from "@material-ui/core";
 import { MoreVert as MoreIcon, Settings as SettingsIcon } from "@material-ui/icons";
-import { Admin, Chat, ChatSocketEvent, Group, Member, Owner, PrivateChat } from "client";
+import { Admin, Chat, ChatSocketEvent, Group, Member, Owner, PrivateChat, UserSocketEvent } from "client";
 import { useClient } from "../../hooks/ClientContext";
 import { useModal } from "../../hooks/ModalContext";
 import Menu, { MenuItem } from "../Menu/Menu";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { UserSocketEvent } from "../../../../client/dist/src/websocket/types/UserSocket.types";
 
 interface ChatTitleProps {
   settings?: boolean;

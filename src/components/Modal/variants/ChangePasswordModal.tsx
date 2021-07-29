@@ -8,7 +8,6 @@ import Input from "../../Input/Input";
 import Snackbar from "../../Snackbar/Snackbar";
 import { ModalProps } from "../Modal";
 import { VisibilityOff as HiddenIcon, Visibility as ShownIcon, Close as CloseIcon } from "@material-ui/icons";
-import { useRouter } from "next/router";
 import { useClient } from "../../../hooks/ClientContext";
 
 interface ChangePasswordModalProps extends ModalProps {}

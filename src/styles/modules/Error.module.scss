@@ -1,0 +1,19 @@
+@use "../config/" as *;
+
+.container {
+  @include flex-column;
+  width: 100%;
+  text-align: center;
+}
+
+.text {
+  padding-top: 1rem;
+  color: $gray-text;
+}
+
+.button {
+  padding-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}

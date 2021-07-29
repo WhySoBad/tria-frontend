@@ -51,6 +51,7 @@ const SignUp: React.FC = (): JSX.Element => {
       <AnimatedBackground />
       <div className={style["container"]}>
         <h4 children={"Sign Up"} className={style["title"]} />
+        <div className={style["description"]} children={"Sign up using a mail address and a password. You'll recieve a mail to confirm your identity and to finish the registration."} />
         <div className={style["form-container"]}>
           <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
             <Input

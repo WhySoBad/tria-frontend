@@ -17,7 +17,11 @@ RegisterPage.getInitialProps = async (context: NextPageContext) => {
   const token: string = (context.query?.token as string) || "";
   const valid: boolean = await validateRegister(token);
   if (!valid) {
-  } //TODO: redirect
+    context.res.writeHead(301, {
+      Location: "/",
+    });
+    context.res.end();
+  }
   return { token: token };
 };
 

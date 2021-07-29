@@ -1,4 +1,4 @@
-import { Admin, Chat, ChatSocketEvent, Group, Owner, PrivateChat } from "client";
+import { Admin, Chat, ChatSocketEvent, Group, Owner, PrivateChat, UserSocketEvent } from "client";
 import { useRouter } from "next/router";
 import cn from "classnames";
 import React, { useState, useEffect } from "react";
@@ -9,7 +9,6 @@ import { Search as ExploreIcon, AddBox as AddIcon, Person as ProfileIcon, ExitTo
 import Link from "next/link";
 import { Avatar, Badge } from "@material-ui/core";
 import { useModal } from "../../hooks/ModalContext";
-import { UserSocketEvent } from "../../../../client/dist/src/websocket/types/UserSocket.types";
 import Menu, { MenuItem } from "../Menu/Menu";
 
 interface BurgerProps {

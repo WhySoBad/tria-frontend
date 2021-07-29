@@ -27,7 +27,12 @@ ChatSettingsPage.getInitialProps = async (context: NextPageContext) => {
   const uuidRegex: RegExp = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
   if (typeof uuid == "string" && uuidRegex.test(uuid)) {
     return { chat: uuid };
-  } else return { chat: undefined }; //TODO: redirect
+  } else {
+    context.res.writeHead(301, {
+      Location: "/passwordreset",
+    });
+    context.res.end();
+  }
 };
 
 export default ChatSettingsPage;

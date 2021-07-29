@@ -1,5 +1,5 @@
 import { Avatar, IconButton } from "@material-ui/core";
-import { Chat, User, UserPreview, Group, PrivateChat, ChatSocketEvent } from "client";
+import { Chat, User, UserPreview, Group, PrivateChat, ChatSocketEvent, UserSocketEvent } from "client";
 import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import { useChat } from "../../../hooks/ChatContext";
@@ -11,10 +11,7 @@ import { useRouter } from "next/router";
 import Scrollbar from "../../Scrollbar/Scrollbar";
 import Link from "next/link";
 import { useModal } from "../../../hooks/ModalContext";
-import { Group as GroupIcon, Person as ProfileIcon, AddBox as AddChatIcon, Chat as ChatIcon, MoreVert as MoreIcon } from "@material-ui/icons";
-import { useRef } from "react";
-import Menu, { MenuItem } from "../../Menu/Menu";
-import { UserSocketEvent } from "../../../../../client/dist/src/websocket/types/UserSocket.types";
+import { Group as GroupIcon, Person as ProfileIcon, AddBox as AddChatIcon, Chat as ChatIcon } from "@material-ui/icons";
 import Button from "../../Button/Button";
 
 interface UserModalProps extends ModalProps {
@@ -23,12 +20,11 @@ interface UserModalProps extends ModalProps {
 
 const UserModal: React.FC<UserModalProps> = ({ onClose, user, ...rest }): JSX.Element => {
   const { client } = useClient();
-  const { selected, setSelected } = useChat();
+  const { selected } = useChat();
   const { close } = useModal();
   const [tab, setTab] = useState<number>(0);
   const router = useRouter();
   const icons: Array<JSX.Element> = [];
-  const moreRef = useRef<SVGSVGElement>(null);
   const [, setUpdate] = useState<number>();
 
   const handleUpdate = (userUuid: string) => userUuid === user.uuid && setUpdate(new Date().getTime());

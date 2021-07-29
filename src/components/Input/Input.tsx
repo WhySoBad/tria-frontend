@@ -1,19 +1,7 @@
 import React, { forwardRef, useState } from "react";
 import style from "../../styles/modules/Input.module.scss";
-import {
-  InputBase,
-  InputBaseProps,
-  InputAdornment,
-  IconButton,
-  Checkbox as MuiCheckbox,
-  CheckboxProps,
-  SelectProps as MuiSelectProps,
-  Select as MuiSelect,
-  TextField,
-  NativeSelect,
-  MenuItem,
-} from "@material-ui/core";
-import { Search as SearchIcon, Tune as TuneIcon } from "@material-ui/icons";
+import { InputBase, InputBaseProps, InputAdornment, IconButton, Checkbox as MuiCheckbox, CheckboxProps, SelectProps as MuiSelectProps, Select as MuiSelect, MenuItem } from "@material-ui/core";
+import { Tune as TuneIcon } from "@material-ui/icons";
 import { useEffect } from "react";
 
 export const Input = forwardRef<HTMLInputElement, InputBaseProps>(({ ...rest }, ref): JSX.Element => {
@@ -61,7 +49,7 @@ export const Searchbar: React.FC<SearchbarProps> = ({ onTuneOpen, withTune = tru
 };
 
 interface SelectProps extends MuiSelectProps {
-  values: Array<{ value: string | number; label: string }>;
+  values: Array<{ value: string | number; label: string; disabled?: boolean }>;
 }
 
 export const Select: React.FC<SelectProps> = forwardRef(({ values, value, onChange, ...rest }, ref): JSX.Element => {
@@ -85,8 +73,15 @@ export const Select: React.FC<SelectProps> = forwardRef(({ values, value, onChan
       input={<Input />}
       {...rest}
     >
-      {values.map(({ value, label }, index) => (
-        <MenuItem className={style["menu-item"]} value={value} disableRipple children={label && label.length > 0 ? label[0] + label.substr(1).toLocaleLowerCase() : label} key={index} />
+      {values.map(({ value, label, disabled = false }, index) => (
+        <MenuItem
+          disabled={disabled}
+          className={style["menu-item"]}
+          value={value}
+          disableRipple
+          children={label && label.length > 0 ? label[0] + label.substr(1).toLocaleLowerCase() : label}
+          key={index}
+        />
       ))}
     </MuiSelect>
   );
