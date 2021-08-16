@@ -1,14 +1,14 @@
 import { IconButton } from "@material-ui/core";
+import { Close as CloseIcon, Visibility as ShownIcon, VisibilityOff as HiddenIcon } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useClient } from "../../../hooks/ClientContext";
 import style from "../../../styles/modules/ChangePasswordModal.module.scss";
 import Button, { TextButton } from "../../Button/Button";
 import Input from "../../Input/Input";
 import Snackbar from "../../Snackbar/Snackbar";
 import { ModalProps } from "../Modal";
-import { VisibilityOff as HiddenIcon, Visibility as ShownIcon, Close as CloseIcon } from "@material-ui/icons";
-import { useClient } from "../../../hooks/ClientContext";
 
 interface ChangePasswordModalProps extends ModalProps {}
 

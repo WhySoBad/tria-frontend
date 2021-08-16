@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import style from "../../styles/modules/SignUp.module.scss";
-import Input from "../Input/Input";
-import Button from "../Button/Button";
-import { useRouter } from "next/router";
 import { IconButton } from "@material-ui/core";
 import { Visibility as HiddenIcon, VisibilityOff as ShownIcon } from "@material-ui/icons";
-import { checkUserMail, registerUser } from "client";
-import Snackbar from "../Snackbar/Snackbar";
 import { Alert } from "@material-ui/lab";
+import { checkUserMail, registerUser } from "client";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useLang } from "../../hooks/LanguageContext";
+import style from "../../styles/modules/SignUp.module.scss";
 import { debouncedPromise } from "../../util";
 import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
+import Button from "../Button/Button";
+import Input from "../Input/Input";
+import Snackbar from "../Snackbar/Snackbar";
 
 type Inputs = {
   username: string;
@@ -18,6 +19,7 @@ type Inputs = {
 };
 
 const SignUp: React.FC = (): JSX.Element => {
+  const { translation } = useLang();
   const [hidden, setHidden] = useState<boolean>(true);
   const [snackError, setSnackError] = useState<string>();
   const [snackSuccess, setSnackSuccess] = useState<string>();
@@ -48,22 +50,23 @@ const SignUp: React.FC = (): JSX.Element => {
 
   return (
     <>
+      <title children={translation.sites.signup} />
       <AnimatedBackground />
       <div className={style["container"]}>
-        <h4 children={"Sign Up"} className={style["title"]} />
-        <div className={style["description"]} children={"Sign up using a mail address and a password. You'll recieve a mail to confirm your identity and to finish the registration."} />
+        <h4 children={translation.signup.title} className={style["title"]} />
+        <div className={style["description"]} children={translation.signup.description} />
         <div className={style["form-container"]}>
           <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
             <Input
               className={style["username"]}
-              placeholder={"Mail"}
+              placeholder={translation.signup.mail}
               type={"mail"}
               {...register("username", { required: true, pattern: /\S+@\S+\.\S+/, validate: isValidMail })}
               error={!!errors.username}
             />
             <Input
               className={style["password"]}
-              placeholder={"Password"}
+              placeholder={translation.signup.password}
               {...register("password", { required: true })}
               error={!!errors.password}
               type={hidden ? "password" : "text"}
@@ -74,7 +77,7 @@ const SignUp: React.FC = (): JSX.Element => {
               }
             />
             <div className={style["button-container"]}>
-              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Sign Up"} />
+              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={translation.signup.signup} />
             </div>
           </form>
         </div>

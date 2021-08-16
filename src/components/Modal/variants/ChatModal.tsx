@@ -1,18 +1,16 @@
 import { Avatar, IconButton } from "@material-ui/core";
+import { MoreVert as MoreIcon, Settings as SettingsIcon } from "@material-ui/icons";
+import cn from "classnames";
 import { Admin, Chat, ChatSocketEvent, Group, Member, Owner, PrivateChat, UserSocketEvent } from "client";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useRef, useState } from "react";
+import { useClient } from "../../../hooks/ClientContext";
+import { useModal } from "../../../hooks/ModalContext";
 import style from "../../../styles/modules/ChatModal.module.scss";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
-import { useClient } from "../../../hooks/ClientContext";
-import { MoreVert as MoreIcon, Settings as SettingsIcon } from "@material-ui/icons";
-import { BaseModal, ModalProps } from "../Modal";
-import { useModal } from "../../../hooks/ModalContext";
-import Scrollbar from "../../Scrollbar/Scrollbar";
 import Menu, { MenuItem } from "../../Menu/Menu";
-import { useRef } from "react";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-import cn from "classnames";
+import Scrollbar from "../../Scrollbar/Scrollbar";
+import { BaseModal, ModalProps } from "../Modal";
 
 interface ChatModalProps extends ModalProps {
   chat: Chat;
@@ -24,7 +22,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat, selectedTab = 0, .
   const router = useRouter();
   const [tab, setTab] = useState<number>(selectedTab);
 
-  const handleUpdate = (chatUuid: string) => chatUuid === chat.uuid && setUpdate(new Date().getTime());
+  const handleUpdate = (chatUuid: string) => chatUuid === chat.uuid && setUpdate(Date.now());
 
   useEffect(() => {
     client.on(ChatSocketEvent.CHAT_EDIT, handleUpdate);

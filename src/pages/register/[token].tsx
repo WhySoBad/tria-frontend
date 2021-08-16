@@ -1,17 +1,10 @@
+import { validateRegister } from "client";
 import { NextPage, NextPageContext } from "next";
 import React from "react";
-import { validateRegister } from "client";
 import { FormLayout } from "../../components/Layout/Layout";
 import Register from "../../components/Register/Register";
 
-const RegisterPage: NextPage = (): JSX.Element => {
-  return (
-    <>
-      <title>Register</title>
-      <FormLayout children={<Register />} />
-    </>
-  );
-};
+const RegisterPage: NextPage = (): JSX.Element => <FormLayout children={<Register />} />;
 
 RegisterPage.getInitialProps = async (context: NextPageContext) => {
   const token: string = (context.query?.token as string) || "";

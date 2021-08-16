@@ -15,7 +15,15 @@ export interface ModalProps {
 
 export const ModalContainer: React.FC<ModalProps> = ({ open = false, withBack = false, onClose, children }): JSX.Element => {
   return (
-    <Modal open={open} onClose={onClose} className={style["modal"]} closeAfterTransition BackdropComponent={Backdrop} BackdropProps={{ timeout: 500, invisible: withBack }}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      className={style["modal"]}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{ timeout: 500, invisible: withBack }}
+      onContextMenu={(event) => event.preventDefault()}
+    >
       <Fade in={open}>
         <section className={style["container"]} onClick={onClose}>
           <div className={style["content-container"]} children={children} onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event.stopPropagation()} />

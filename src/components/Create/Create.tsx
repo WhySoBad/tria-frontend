@@ -1,24 +1,25 @@
 import { Avatar, FormControlLabel } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import { checkGroupTag, GroupRole, GroupType, Locale, SearchOptions, UserPreview } from "client";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { checkGroupTag, GroupRole, GroupType, Locale, SearchOptions, UserPreview } from "client";
 import { useClient } from "../../hooks/ClientContext";
-import { useModal } from "../../hooks/ModalContext";
+import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Create.module.scss";
 import { debounce, debouncedPromise } from "../../util";
-import Button, { TextButton } from "../Button/Button";
-import Input, { Checkbox, Searchbar, Select } from "../Input/Input";
+import Button from "../Button/Button";
+import Input, { Checkbox, Searchbar } from "../Input/Input";
 import Scrollbar from "../Scrollbar/Scrollbar";
 import Snackbar from "../Snackbar/Snackbar";
-import router, { useRouter } from "next/router";
 
 const Create: React.FC = (): JSX.Element => {
+  const { translation } = useLang();
   return (
     <>
+      <title children={translation.sites.create} />
       <div className={style["title-container"]}>
-        <title children={"Create Chat"} />
-        <h3 className={style["title"]} children={"Create Chat"} />
+        <h3 className={style["title"]} children={translation.app.create.title} />
       </div>
       <Scrollbar>
         <section className={style["createchat-container"]}>
@@ -42,6 +43,7 @@ type Inputs = {
 
 const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element => {
   const { client } = useClient();
+  const { translation } = useLang();
   const [snackError, setSnackError] = useState<string>();
   const [text, setText] = useState<string>("");
   const [results, setResults] = useState<Array<UserPreview>>([]);
@@ -50,8 +52,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
   const {
     control,
     handleSubmit,
-    reset,
-    formState: { errors, isValid, isDirty, dirtyFields },
+    formState: { errors, isValid, isDirty, dirtyFields, isSubmitting },
   } = useForm<Inputs>({
     defaultValues: {
       description: "",
@@ -112,14 +113,14 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
 
   return (
     <div className={style["settings-container"]}>
-      <h5 className={style["title"]} children={"Informations"} />
+      <h5 className={style["title"]} children={translation.app.create.informations.title} />
       <div className={style["form-container"]}>
         <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
           <Controller
             name={"name"}
             control={control}
             rules={{ required: true }}
-            render={({ field }) => <Input disabled={disabled} placeholder={"Name"} className={style["name"]} {...field} error={!!errors.name} />}
+            render={({ field }) => <Input disabled={disabled} placeholder={translation.app.create.informations.name} className={style["name"]} {...field} error={!!errors.name} />}
           />
           <Controller
             name={"tag"}
@@ -128,7 +129,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             render={({ field }) => (
               <Input
                 disabled={disabled}
-                placeholder={"Tag"}
+                placeholder={translation.app.create.informations.tag}
                 className={style["tag"]}
                 onKeyDown={(event) => event.key.length === 1 && !event.key.match(/[A-Za-z0-9]/) && event.preventDefault()}
                 {...field}
@@ -141,7 +142,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             control={control}
             render={({ field }) => (
               <FormControlLabel
-                label={"Public"}
+                label={translation.app.create.informations.public}
                 checked={typeof field.value === "string" ? false : !!field.value}
                 onChange={(e, checked) => field.onChange(checked)}
                 classes={{ root: style["public"], label: style["label"] }}
@@ -153,10 +154,10 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             name={"description"}
             control={control}
             rules={{ required: true }}
-            render={({ field }) => <Input disabled={disabled} placeholder={"Description"} className={style["description"]} {...field} error={!!errors.description} />}
+            render={({ field }) => <Input disabled={disabled} placeholder={translation.app.create.informations.description} className={style["description"]} {...field} error={!!errors.description} />}
           />
           <div className={style["members-container"]}>
-            <h5 className={style["title"]} children={"Members"} />
+            <h5 className={style["title"]} children={translation.app.create.members.title} />
             <div
               className={style["searchbar"]}
               children={
@@ -167,7 +168,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
                     setText(event.target.value);
                   }}
                   withTune={false}
-                  placeholder={"Search user"}
+                  placeholder={translation.app.create.members.search_user}
                 />
               }
             />
@@ -180,11 +181,10 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             </div>
           </div>
           <div className={style["button-container"]}>
-            <div className={style["button"]} children={<Button children={"Create"} type={"submit"} disabled={disabled || !(isValid && isDirty)} />} />
+            <div className={style["button"]} children={<Button children={translation.app.create.create} type={"submit"} disabled={disabled || isSubmitting || !(isValid && isDirty)} />} />
           </div>
         </form>
       </div>
-
       <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
     </div>
   );

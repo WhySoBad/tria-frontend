@@ -67,7 +67,7 @@
         }
         &[aria-disabled="false"] {
           &::after {
-            content: "Upload avatar";
+            content: attr(data-content);
             opacity: 0;
             position: absolute;
             top: 0;
@@ -207,7 +207,7 @@
         display: grid;
         padding: 0.25rem;
         padding-left: 0.5rem;
-        grid-template-areas: "avatar title" "avatar text" "options options";
+        grid-template-areas: "avatar title" "avatar text";
         width: 100%;
         justify-content: flex-start;
         align-items: inherit;
@@ -237,63 +237,24 @@
           grid-area: text;
           margin-top: -0.25ch;
         }
-
-        .options-container {
-          cursor: default;
-          padding: 1rem;
-          grid-area: options;
-          display: grid;
-          grid-template-areas: "form form";
-
-          &[data-collapsed="true"] {
-            display: none;
-          }
-
-          .form-container {
-            grid-area: form;
-
-            .form {
-              display: grid;
-              grid-template-areas: "role permission" "buttons buttons";
-              gap: 1rem;
-
-              .role-container {
-                grid-area: role;
-              }
-
-              .permission-container {
-                grid-area: permission;
-
-                &[data-visible="false"] {
-                  opacity: 0;
-                }
-              }
-            }
-          }
-
-          .button-container {
-            grid-area: buttons;
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-
-            .button {
-              padding: 0 0.25rem;
-            }
-          }
-        }
       }
     }
+  }
+}
+
+@include wide {
+  .form {
+    grid-template-areas: "name name name" "tag tag locale" "description description description" ". . buttons" !important;
   }
 }
 
 @include small {
   .settings-container {
     grid-template-areas: "title ." "avatar avatar" "form form" !important;
-  }
 
-  .form {
-    grid-template-areas: "name name" "tag locale" "description description" "buttons buttons" !important;
+    .form {
+      grid-template-areas: "name name name" "tag tag locale" "description description description" ". . buttons" !important;
+    }
   }
 }
 
@@ -305,6 +266,14 @@
       grid-template-areas: "name name" "tag locale" "description description" "buttons buttons" !important;
     }
   }
+
+  .button-container {
+    flex-direction: column;
+    align-items: flex-end;
+    .button {
+      padding: 0.25rem 0 !important;
+    }
+  }
 }
 
 @include smallest {
@@ -313,6 +282,14 @@
 
     .form {
       grid-template-areas: "name name" "tag locale" "description description" "buttons buttons" !important;
+    }
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: flex-end;
+    .button {
+      padding: 0.25rem 0 !important;
     }
   }
 }

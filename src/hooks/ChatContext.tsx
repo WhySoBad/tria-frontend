@@ -24,7 +24,7 @@ export const ChatProvider: NextPage = ({ children }): JSX.Element => {
   const [updated, setUpdate] = useState<number>();
 
   const update: () => void = (): void => {
-    setUpdate(new Date().getTime());
+    setUpdate(Date.now());
   };
 
   return (

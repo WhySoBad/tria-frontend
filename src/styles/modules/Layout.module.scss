@@ -34,21 +34,27 @@
     flex-direction: column;
     overflow: hidden;
     width: 100%;
-    transition: all 0.5s;
+    transition: width 0.5s;
 
     &[data-overflow="true"] {
-      transform: scale(0.95);
+      padding-left: calc(5rem + 17px);
     }
   }
 }
 
 .burger-container {
+  position: absolute;
   grid-area: burger;
   display: flex;
   flex-direction: column;
   background-color: $dark;
   height: 100%;
   transition: all 0.5s;
+  z-index: 10;
+
+  &[data-overflow="false"] {
+    position: relative;
+  }
 }
 
 .form-layout-container {

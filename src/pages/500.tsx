@@ -2,13 +2,15 @@ import { NextPage } from "next";
 import React from "react";
 import Error from "../components/Error/Error";
 import { FormLayout } from "../components/Layout/Layout";
+import { useLang } from "../hooks/LanguageContext";
 
 const ServerSideErrorPage: NextPage = (): JSX.Element => {
+  const { translation } = useLang();
   return (
-    <>
-      <title children={"500 - Error"} />
-      <FormLayout children={<Error code={500} text={"A Server side error occured. This is probably a temporarily issue. Please come back and try again in a few minutes."} />} />
-    </>
+    <FormLayout>
+      <title children={translation.sites[500]} />
+      <Error code={500} />
+    </FormLayout>
   );
 };
 

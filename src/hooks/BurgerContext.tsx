@@ -14,7 +14,7 @@ const defaultValue: BurgerContext = {
 export const BurgerContext = React.createContext<BurgerContext>(defaultValue);
 
 export const BurgerProvider: NextPage = ({ children }): JSX.Element => {
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>();
 
   return <BurgerContext.Provider value={{ open: open, setOpen: setOpen }}>{children}</BurgerContext.Provider>;
 };

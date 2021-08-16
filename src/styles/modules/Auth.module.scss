@@ -1,0 +1,13 @@
+@use "../config/" as *;
+
+.container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .loader {
+    color: $white;
+  }
+}

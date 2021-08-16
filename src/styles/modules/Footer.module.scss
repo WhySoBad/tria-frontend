@@ -2,6 +2,7 @@
 
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   color: $dark-dark;
@@ -10,42 +11,59 @@
   padding-bottom: 1rem;
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  width: 80%;
+.footer-section {
   border-top: solid 1px $dark-border;
   padding: 1rem;
-}
+  width: 80%;
+  display: flex;
 
-.quick-nav {
-  display: grid;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4rem;
-  grid-template-areas: "title" "columns";
-  grid-template-columns: 100%;
+  .quick-nav {
+    display: grid;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-areas: "title" "columns";
+    grid-template-columns: 100%;
+    width: 100%;
 
-  .title {
-    grid-area: title;
-    color: $white;
+    .title {
+      grid-area: title;
+      color: $white;
+    }
+
+    .columns {
+      grid-area: columns;
+      display: flex;
+      justify-content: space-between;
+
+      .column {
+        font-size: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+        line-height: 2.5;
+      }
+
+      .column-link {
+        padding: 0.25rem;
+      }
+    }
   }
 
-  .columns {
-    grid-area: columns;
+  .footer-content {
     display: flex;
     justify-content: space-between;
+    width: 100%;
   }
 }
 
-.column {
-  font-size: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: baseline;
-  line-height: 2.5;
+@include smaller {
+  .columns {
+    flex-direction: column;
+  }
 }
 
-.column-link {
-  padding: 0.25rem;
+@include smallest {
+  .columns {
+    flex-direction: column;
+  }
 }

@@ -1,13 +1,16 @@
 import React from "react";
-import Footer from "./Footer";
-import Header from "./Header";
+import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Landing.module.scss";
-import Scrollbar from "../Scrollbar/Scrollbar";
 import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
+import Footer from "../Footer/Footer";
+import Header from "../Header/Header";
+import Scrollbar from "../Scrollbar/Scrollbar";
 
 const Landing = (): JSX.Element => {
+  const { translation } = useLang();
   return (
     <main>
+      <title children={translation.sites.home} />
       <Header />
       <Scrollbar style={{ height: "100vh" }}>
         <AnimatedBackground />
@@ -34,37 +37,27 @@ const Hero: React.FC = (): JSX.Element => {
 
 interface AboutProps {}
 
-const textb = "NAME is a messenger to let you communicate with other people over the web. NAME is available for free for anybody connected to the internet.";
-
 const About: React.FC<AboutProps> = (): JSX.Element => {
+  const { translation } = useLang();
   return (
     <section className={style["about-container"]}>
-      <AboutSection name={"Secure"} />
-      <AboutSection name={"Modern"} />
-      <AboutSection name={"Free"} />
+      <AboutSection {...translation.landing.secure} />
+      <AboutSection {...translation.landing.modern} />
+      <AboutSection {...translation.landing.free} />
     </section>
   );
 };
 
 interface AboutSectionProps {
-  name: string;
+  title: string;
+  description: string;
 }
 
-const captions = {
-  free: "Register a free account and start chatting with the world",
-  modern: "NAME is built with latest frameworks to profide the best experience",
-  secure: "NAME is encrypted over TLS and the whole source code is public visible on GitHub",
-  /* security:
-    "In order to make the messenger available on any device over the web NAME isn't secured with end-to-end encryption. This doesn't mean the data isn't protected at all - the backend and the frontend are secured with TLS. Additionally the source code of the messenger is public available on GitHub.",
-  frameworks: "NAME is built with modern frameworks. The backend is built with Nest running with Express and the frontend is built with Next to gain all the benefits of server-side-rendering. ",
- */
-};
-
-const AboutSection: React.FC<AboutSectionProps> = ({ name }): JSX.Element => {
+const AboutSection: React.FC<AboutSectionProps> = ({ title, description }): JSX.Element => {
   return (
     <div className={style["topic-container"]}>
-      <h5 className={style["title"]} children={name} />
-      <div className={style["text"]} children={captions[name.toLowerCase()]} />
+      <h5 className={style["title"]} children={title} />
+      <div className={style["text"]} children={description} />
     </div>
   );
 };

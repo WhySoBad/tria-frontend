@@ -1,19 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ChatPreview, SearchOptions, UserPreview } from "client";
 import { Avatar } from "@material-ui/core";
+import { Group as GroupIcon, ViewList as ViewListIcon, ViewModule as ViewModuleIcon } from "@material-ui/icons";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import { ViewList as ViewListIcon, ViewModule as ViewModuleIcon, Group as GroupIcon } from "@material-ui/icons";
-import Scrollbar from "../Scrollbar/Scrollbar";
-import style from "../../styles/modules/Explore.module.scss";
-import { Searchbar } from "../Input/Input";
-import Scrollbars from "react-custom-scrollbars-2";
-import { useModal } from "../../hooks/ModalContext";
-import { useClient } from "../../hooks/ClientContext";
+import { ChatPreview, SearchOptions, UserPreview } from "client";
 import { usePalette } from "color-thief-react";
+import React, { useEffect, useRef, useState } from "react";
+import Scrollbars from "react-custom-scrollbars-2";
+import { useClient } from "../../hooks/ClientContext";
+import { useLang } from "../../hooks/LanguageContext";
+import { useModal } from "../../hooks/ModalContext";
+import style from "../../styles/modules/Explore.module.scss";
+import { debounce } from "../../util";
+import { Searchbar } from "../Input/Input";
 import Menu, { CheckboxMenuItem } from "../Menu/Menu";
+import Scrollbar from "../Scrollbar/Scrollbar";
 
 const Explore: React.FC = (): JSX.Element => {
   const { client } = useClient();
+  const { translation } = useLang();
   const scrollRef = useRef<Scrollbars>(null);
   const [view, setView] = useState<"grid" | "list">();
   const [results, setResults] = useState<Array<ChatPreview | UserPreview>>([]);
@@ -50,14 +53,15 @@ const Explore: React.FC = (): JSX.Element => {
 
   return (
     <main className={style["container"]}>
+      <title children={translation.sites.explore} />
       <Scrollbar reference={scrollRef}>
         <section className={style["title-container"]}>
           <div className={style["title-content"]}>
-            <h3 className={style["title"]} children={"Explore user and chats"} />
+            <h3 className={style["title"]} children={translation.app.explore.title} />
             <div className={style["searchbar"]}>
               <Searchbar
                 onTuneOpen={(event) => setTuneElement(event.currentTarget)}
-                placeholder={"Search user or chats"}
+                placeholder={translation.app.explore.search}
                 value={options.text}
                 onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
                   setOptions({ ...options, text: event.target.value });
@@ -78,11 +82,11 @@ const Explore: React.FC = (): JSX.Element => {
         </section>
       </Scrollbar>
       <Menu anchorEl={tuneElement} open={Boolean(tuneElement)} onClose={() => setTuneElement(null)}>
-        <CheckboxMenuItem children={"User"} checked={options.checkUser} onCheck={(checked: boolean) => handleOptions({ ...options, checkUser: checked })} />
-        <CheckboxMenuItem children={"Chats"} checked={options.checkChat} onCheck={(checked: boolean) => handleOptions({ ...options, checkChat: checked })} />
-        <CheckboxMenuItem children={"Name"} checked={options.checkName} onCheck={(checked: boolean) => handleOptions({ ...options, checkName: checked })} />
-        <CheckboxMenuItem children={"Tag"} checked={options.checkTag} onCheck={(checked: boolean) => handleOptions({ ...options, checkTag: checked })} />
-        <CheckboxMenuItem children={"Uuid"} checked={options.checkUuid} onCheck={(checked: boolean) => handleOptions({ ...options, checkUuid: checked })} />
+        <CheckboxMenuItem children={translation.app.explore.filters.user} checked={options.checkUser} onCheck={(checked: boolean) => handleOptions({ ...options, checkUser: checked })} />
+        <CheckboxMenuItem children={translation.app.explore.filters.chats} checked={options.checkChat} onCheck={(checked: boolean) => handleOptions({ ...options, checkChat: checked })} />
+        <CheckboxMenuItem children={translation.app.explore.filters.name} checked={options.checkName} onCheck={(checked: boolean) => handleOptions({ ...options, checkName: checked })} />
+        <CheckboxMenuItem children={translation.app.explore.filters.tag} checked={options.checkTag} onCheck={(checked: boolean) => handleOptions({ ...options, checkTag: checked })} />
+        <CheckboxMenuItem children={translation.app.explore.filters.uuid} checked={options.checkUuid} onCheck={(checked: boolean) => handleOptions({ ...options, checkUuid: checked })} />
       </Menu>
     </main>
   );
@@ -199,29 +203,6 @@ const IconContainer: React.FC<IconContainerProps> = ({ onChange, selected }): JS
       </ToggleButtonGroup>
     </div>
   );
-};
-
-/**
- * Function to make a debounced input
- *
- * @param handler handler function
- *
- * @param delay delay since last action
- *
- * @returns Function
- */
-
-let timeout: NodeJS.Timeout;
-
-export const debounce = (handler: any, delay: number) => {
-  return function (...args: Array<any>) {
-    const context = this;
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      timeout = null;
-      handler.apply(context, args);
-    }, delay);
-  };
 };
 
 export default Explore;

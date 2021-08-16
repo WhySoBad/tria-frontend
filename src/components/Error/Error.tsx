@@ -1,22 +1,25 @@
+import { useRouter } from "next/router";
 import React from "react";
-import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
+import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Error.module.scss";
+import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
 import Button from "../Button/Button";
 
 interface ErrorProps {
   code: number;
-  text: string;
 }
 
-const Error: React.FC<ErrorProps> = ({ code, text }): JSX.Element => {
-  const title: string = code === 404 ? "Page Not Found" : "Server Side Error";
+const Error: React.FC<ErrorProps> = ({ code }): JSX.Element => {
+  const { translation } = useLang();
+  const data: { title: string; description: string } = code === 404 ? translation.error[404] : translation.error[500];
+  const router = useRouter();
   return (
     <>
       <AnimatedBackground />
       <div className={style["container"]}>
-        <h4 children={title} />
-        <div className={style["text"]} children={text} />
-        <div className={style["button"]} children={<Button children={"Back To Home"} />} />
+        <h4 children={data.title} />
+        <div className={style["text"]} children={data.description} />
+        <div className={style["button"]} children={<Button children={translation.error.back} onClick={() => router.push("/")} />} />
       </div>
     </>
   );

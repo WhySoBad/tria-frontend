@@ -1,28 +1,26 @@
-import React from "react";
-import { Admin, BannedMember, Chat, checkGroupTag, ClientEvent, Group, GroupRole, GroupType, Member, Owner, Permission } from "client";
-import { useClient } from "../../hooks/ClientContext";
-import style from "../../styles/modules/Chat.module.scss";
-import { useChat } from "../../hooks/ChatContext";
 import { Avatar, FormControlLabel, IconButton } from "@material-ui/core";
+import { ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon } from "@material-ui/icons";
+import { Alert } from "@material-ui/lab";
+import { Admin, BannedMember, Chat, checkGroupTag, ClientEvent, Group, GroupRole, GroupType, Member, Owner, Permission } from "client";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useChat } from "../../hooks/ChatContext";
+import { useClient } from "../../hooks/ClientContext";
+import { useLang } from "../../hooks/LanguageContext";
+import style from "../../styles/modules/Chat.module.scss";
+import baseStyle from "../../styles/modules/Modal.module.scss";
+import { debouncedPromise } from "../../util";
 import Button, { TextButton } from "../Button/Button";
 import Input, { Checkbox, Searchbar, Select } from "../Input/Input";
-import { debouncedPromise } from "../../util";
-import { useState } from "react";
-import baseStyle from "../../styles/modules/Modal.module.scss";
-import { ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon } from "@material-ui/icons";
-import { useEffect } from "react";
 import Scrollbar from "../Scrollbar/Scrollbar";
-import { useRouter } from "next/router";
 import Snackbar from "../Snackbar/Snackbar";
-import { Alert } from "@material-ui/lab";
 import ChatTitle from "./ChatTitle";
 
-interface ChatSettingsProps {}
-
-const ChatSettings: React.FC<ChatSettingsProps> = (): JSX.Element => {
+const ChatSettings: React.FC = (): JSX.Element => {
   const { client } = useClient();
   const { selected } = useChat();
+  const { translation } = useLang();
 
   const chat: Chat | undefined = client.user.chats.get(selected);
 
@@ -30,6 +28,7 @@ const ChatSettings: React.FC<ChatSettingsProps> = (): JSX.Element => {
 
   return (
     <>
+      <title children={`${translation.sites.chat_settings} ${chat.name}`} />
       <div className={style["title-container"]} children={<ChatTitle settings />} />
       <Scrollbar>
         <section className={style["chat-settings-container"]}>
@@ -49,9 +48,10 @@ interface MemberListProps {
 const MemberList: React.FC<MemberListProps> = ({ chat }): JSX.Element => {
   const [text, setText] = useState<string>("");
   const { client } = useClient();
+  const { translation } = useLang();
   const [, setUpdate] = useState<number>(0);
 
-  const handleUpdate = (chatUuid: string) => chatUuid === chat.uuid && setUpdate(new Date().getTime());
+  const handleUpdate = (chatUuid: string) => chatUuid === chat.uuid && setUpdate(Date.now());
 
   useEffect(() => {
     client.on(ClientEvent.MEMBER_JOIN, handleUpdate);
@@ -68,15 +68,18 @@ const MemberList: React.FC<MemberListProps> = ({ chat }): JSX.Element => {
 
   return (
     <div className={style["member-container"]}>
-      <h5 className={style["title"]}>Member</h5>
-      <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
+      <h5 className={style["title"]} children={translation.app.chat_settings.member.title} />
+      <div
+        className={style["searchbar"]}
+        children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={translation.app.chat_settings.member.search_member} />}
+      />
       <div className={style["list-container"]}>
         <Scrollbar>
           {chat.members
             .values()
             .filter(({ user: { name } }) => name.toLowerCase().startsWith(text.toLowerCase()))
             .map((member: Member) => {
-              return <MemberListItem member={member} user={user} chat={chat} key={member.user.uuid} />;
+              return <MemberListItem uuid={member.user.uuid} user={user} chat={chat} key={member.user.uuid} />;
             })}
         </Scrollbar>
       </div>
@@ -85,7 +88,7 @@ const MemberList: React.FC<MemberListProps> = ({ chat }): JSX.Element => {
 };
 
 interface MemberListItemProps {
-  member: Member;
+  uuid: string;
   user: Member;
   chat: Group;
 }
@@ -99,9 +102,11 @@ type MemberItemInputs = {
   kick: boolean;
 };
 
-const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): JSX.Element => {
+const MemberListItem: React.FC<MemberListItemProps> = ({ uuid, user, chat }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const [snackError, setSnackError] = useState<string>();
+  const { translation } = useLang();
+  const member: Member = chat.members.get(uuid);
   const [role, setRole] = useState<GroupRole>(member.role);
   const { client } = useClient();
   const admin: Admin | undefined = member instanceof Admin ? member : undefined;
@@ -124,6 +129,8 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
   });
 
   const resetForm = () => {
+    const member: Member = chat.members.get(uuid);
+    const admin: Admin | undefined = member instanceof Admin ? member : undefined;
     reset({
       role: member.role,
       ban: admin && admin.canBan,
@@ -177,7 +184,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
         <div children={member.user.description} className={style["description"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}>
           <div className={style["form-container"]}>
-            <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
+            <form className={style["form"]} onSubmit={handleSubmit(onSubmit)} data-visible={role === GroupRole.ADMIN}>
               <div className={style["role-container"]}>
                 <Controller
                   name={"role"}
@@ -187,26 +194,26 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                       disabled={disabled}
                       onChange={(event) => {
                         onChange(event.target.value);
-                        setRole((event as any).value);
+                        setRole(event.target.value as GroupRole);
                       }}
                       value={value}
                       values={[
-                        { value: GroupRole.MEMBER, label: GroupRole.MEMBER },
-                        { value: GroupRole.ADMIN, label: GroupRole.ADMIN },
-                        (user instanceof Owner || member instanceof Owner) && { value: GroupRole.OWNER, label: GroupRole.OWNER },
+                        { value: GroupRole.MEMBER, label: translation.app.chat_settings.member.roles.member },
+                        { value: GroupRole.ADMIN, label: translation.app.chat_settings.member.roles.admin },
+                        (user instanceof Owner || member instanceof Owner) && { value: GroupRole.OWNER, label: translation.app.chat_settings.member.roles.owner },
                       ]}
                       {...rest}
                     />
                   )}
                 />
               </div>
-              <div className={style["permission-container"]} data-visible={role === GroupRole.ADMIN}>
+              <div className={style["permission-container"]}>
                 <Controller
                   name={"edit_member"}
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      label={"Edit Member"}
+                      label={translation.app.chat_settings.member.edit_member}
                       checked={typeof field.value === "string" ? false : !!field.value}
                       onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["edit_member"], label: style["label"] }}
@@ -219,7 +226,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      label={"Edit Chat"}
+                      label={translation.app.chat_settings.member.edit_chat}
                       checked={typeof field.value === "string" ? false : !!field.value}
                       onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["edit_chat"], label: style["label"] }}
@@ -232,7 +239,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      label={"Kick"}
+                      label={translation.app.chat_settings.member.kick}
                       checked={typeof field.value === "string" ? false : !!field.value}
                       onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["kick"], label: style["label"] }}
@@ -245,7 +252,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      label={"Ban"}
+                      label={translation.app.chat_settings.member.ban}
                       checked={typeof field.value === "string" ? false : !!field.value}
                       onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["ban"], label: style["label"] }}
@@ -258,7 +265,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      label={"Unban"}
+                      label={translation.app.chat_settings.member.unban}
                       checked={typeof field.value === "string" ? false : !!field.value}
                       onChange={(e, checked) => field.onChange(checked)}
                       classes={{ root: style["unban"], label: style["label"] }}
@@ -268,9 +275,11 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, user, chat }): 
                 />
               </div>
               <div className={style["button-container"]}>
-                {chat.canKick && !(member instanceof Owner) && <div className={style["button"]} children={<Button children={"Kick"} onClick={handleKick} />} />}
-                {chat.canBan && !(member instanceof Owner) && <div className={style["button"]} children={<Button children={"Ban"} onClick={handleBan} />} />}
-                {!(member instanceof Owner) && <div className={style["button"]} children={<Button children={"Save"} type={"submit"} disabled={!(isValid && isDirty)} />} />}
+                {chat.canKick && !(member instanceof Owner) && <div className={style["button"]} children={<Button children={translation.app.chat_settings.member.kick} onClick={handleKick} />} />}
+                {chat.canBan && !(member instanceof Owner) && <div className={style["button"]} children={<Button children={translation.app.chat_settings.member.ban} onClick={handleBan} />} />}
+                {!(member instanceof Owner) && (
+                  <div className={style["button"]} children={<Button children={translation.app.chat_settings.member.save} type={"submit"} disabled={!(isValid && isDirty)} />} />
+                )}
               </div>
             </form>
           </div>
@@ -303,13 +312,14 @@ type Inputs = {
 const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Element => {
   const [snackError, setSnackError] = useState<string>();
   const router = useRouter();
+  const { translation } = useLang();
   const [url, setUrl] = useState<string>(chat.avatarURL);
   const [avatar, setAvatar] = useState<File>(null);
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isValid, isDirty, dirtyFields },
+    formState: { errors, isValid, isDirty, dirtyFields, isSubmitting },
   } = useForm<Inputs>({
     defaultValues: {
       description: chat.description,
@@ -351,20 +361,26 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
   }, 250);
 
   const handleDelete = () => {
-    if (chat.canDelete)
-      chat
-        .delete()
-        .then(() => router.push("/app"))
-        .catch(setSnackError);
+    if (!chat.canDelete) return;
+    chat
+      .delete()
+      .then(() => router.push("/app"))
+      .catch(setSnackError);
   };
 
   return (
     <div className={style["settings-container"]}>
-      <h5 className={style["title"]}>Settings</h5>
+      <h5 className={style["title"]} children={translation.app.chat_settings.settings.title} />
       <div className={style["avatar-container"]}>
         <label htmlFor={"upload-avatar"}>
           <a>
-            <Avatar aria-disabled={disabled} className={style["avatar"]} src={url} style={{ backgroundColor: !url && chat.color }} />
+            <Avatar
+              aria-disabled={disabled}
+              data-content={translation.app.chat_settings.settings.upload_avatar}
+              className={style["avatar"]}
+              src={url}
+              style={{ backgroundColor: !url && chat.color }}
+            />
           </a>
         </label>
         <input
@@ -389,7 +405,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
         <div className={style["delete"]}>
           <TextButton
             disabled={disabled}
-            children={"Delete avatar"}
+            children={translation.app.chat_settings.settings.delete_avatar}
             onClick={() => {
               setUrl(null);
               setAvatar(null);
@@ -404,7 +420,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
             control={control}
             defaultValue={chat.name}
             rules={{ required: true }}
-            render={({ field }) => <Input disabled={disabled} placeholder={"Name"} className={style["name"]} {...field} error={!!errors.name} />}
+            render={({ field }) => <Input disabled={disabled} placeholder={translation.app.chat_settings.settings.name} className={style["name"]} {...field} error={!!errors.name} />}
           />
           <Controller
             name={"tag"}
@@ -414,7 +430,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
             render={({ field }) => (
               <Input
                 disabled={disabled}
-                placeholder={"Tag"}
+                placeholder={translation.app.chat_settings.settings.tag}
                 className={style["tag"]}
                 onKeyDown={(event) => event.key.length === 1 && !event.key.match(/[A-Za-z0-9]/) && event.preventDefault()}
                 {...field}
@@ -427,7 +443,9 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
             control={control}
             defaultValue={chat.description}
             rules={{ required: true }}
-            render={({ field }) => <Input disabled={disabled} placeholder={"Description"} className={style["description"]} {...field} error={!!errors.description} />}
+            render={({ field }) => (
+              <Input disabled={disabled} placeholder={translation.app.chat_settings.settings.description} className={style["description"]} {...field} error={!!errors.description} />
+            )}
           />
 
           <Controller
@@ -435,7 +453,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
             control={control}
             render={({ field }) => (
               <FormControlLabel
-                label={"Public"}
+                label={translation.app.chat_settings.settings.public}
                 checked={typeof field.value === "string" ? false : !!field.value}
                 onChange={(e, checked) => field.onChange(checked)}
                 classes={{ root: style["public"], label: style["label"] }}
@@ -444,8 +462,17 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
             )}
           />
           <div className={style["button-container"]}>
-            {chat.canDelete && <div className={style["button"]} children={<Button children={"Delete"} onClick={handleDelete} />} />}
-            <div className={style["button"]} children={<Button children={"Save"} type={"submit"} disabled={disabled || !(isValid && (isDirty || avatar || (chat.avatarURL && !avatar && !url)))} />} />
+            {chat.canDelete && <div className={style["button"]} children={<Button children={translation.app.chat_settings.settings.delete} onClick={handleDelete} />} />}
+            <div
+              className={style["button"]}
+              children={
+                <Button
+                  children={translation.app.chat_settings.settings.save}
+                  type={"submit"}
+                  disabled={disabled || isSubmitting || url === chat.avatarURL || !(isValid && (isDirty || avatar || (chat.avatarURL && !avatar && !url)))}
+                />
+              }
+            />
           </div>
         </form>
       </div>
@@ -461,9 +488,10 @@ interface BannedMemberListProps {
 const BannedMemberList: React.FC<BannedMemberListProps> = ({ chat }): JSX.Element => {
   const [text, setText] = useState<string>("");
   const { client } = useClient();
+  const { translation } = useLang();
   const [, setUpdate] = useState<number>(0);
 
-  const handleUpdate = (chatUuid: string) => chatUuid === chat.uuid && setUpdate(new Date().getTime());
+  const handleUpdate = (chatUuid: string) => chatUuid === chat.uuid && setUpdate(Date.now());
 
   useEffect(() => {
     client.on(ClientEvent.MEMBER_BAN, handleUpdate);
@@ -476,8 +504,11 @@ const BannedMemberList: React.FC<BannedMemberListProps> = ({ chat }): JSX.Elemen
 
   return (
     <div className={style["banned-container"]}>
-      <h5 className={style["title"]}>Banned Members</h5>
-      <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
+      <h5 className={style["title"]} children={translation.app.chat_settings.banned_member.title} />
+      <div
+        className={style["searchbar"]}
+        children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={translation.app.chat_settings.banned_member.search_member} />}
+      />
       <div className={style["list-container"]}>
         <Scrollbar>
           {chat.bannedMembers
@@ -500,6 +531,7 @@ interface BannedListItemProps {
 const BannedListItem: React.FC<BannedListItemProps> = ({ member, chat }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const [snackError, setSnackError] = useState<string>();
+  const { translation } = useLang();
 
   const handleUnban = () => {
     if (chat.canUnban) chat.unbanMember(member.uuid).catch(setSnackError);
@@ -512,7 +544,7 @@ const BannedListItem: React.FC<BannedListItemProps> = ({ member, chat }): JSX.El
         <h6 children={member.name} className={style["title"]} />
         <div children={member.description} className={style["description"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}>
-          <div className={style["button"]} children={<Button children={"Unban"} disabled={!chat.canUnban} onClick={handleUnban} />} />
+          <div className={style["button"]} children={<Button children={translation.app.chat_settings.banned_member.unban} disabled={!chat.canUnban} onClick={handleUnban} />} />
         </div>
       </div>
       <div className={style["icon-container"]}>

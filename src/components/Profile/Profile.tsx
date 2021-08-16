@@ -1,29 +1,30 @@
-import React from "react";
-import { BannedMember, Chat, ChatSocketEvent, checkGroupTag, Group, Locale, PrivateChat } from "client";
-import { useClient } from "../../hooks/ClientContext";
-import style from "../../styles/modules/Profile.module.scss";
-import { Avatar, IconButton } from "@material-ui/core";
+import { Avatar } from "@material-ui/core";
+import { Group as GroupIcon } from "@material-ui/icons";
+import { Alert } from "@material-ui/lab";
+import { Chat, ChatSocketEvent, checkGroupTag, Group, Locale, PrivateChat } from "client";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useClient } from "../../hooks/ClientContext";
+import { useLang } from "../../hooks/LanguageContext";
+import { useModal } from "../../hooks/ModalContext";
+import style from "../../styles/modules/Profile.module.scss";
+import { debouncedPromise } from "../../util";
 import Button, { TextButton } from "../Button/Button";
 import Input, { Searchbar, Select } from "../Input/Input";
-import { debouncedPromise } from "../../util";
-import { useState } from "react";
-import baseStyle from "../../styles/modules/Modal.module.scss";
-import { ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon, Group as GroupIcon } from "@material-ui/icons";
-import { useEffect } from "react";
 import Scrollbar from "../Scrollbar/Scrollbar";
 import Snackbar from "../Snackbar/Snackbar";
-import { Alert } from "@material-ui/lab";
-import { useModal } from "../../hooks/ModalContext";
 
 interface ProfileProps {}
 
 const Profile: React.FC<ProfileProps> = (): JSX.Element => {
+  const { translation } = useLang();
+  const { client } = useClient();
   return (
     <>
+      <title children={`${translation.sites.profile} ${client.user.name}`} />
       <div className={style["title-container"]}>
-        <title children={"Profile"} />
-        <h3 className={style["title"]} children={"Profile"} />
+        <h3 className={style["title"]} children={translation.app.profile.title} />
       </div>
       <Scrollbar>
         <section className={style["user-profile-container"]}>
@@ -35,14 +36,13 @@ const Profile: React.FC<ProfileProps> = (): JSX.Element => {
   );
 };
 
-interface ChatsListProps {}
-
-const ChatsList: React.FC<ChatsListProps> = ({}): JSX.Element => {
+const ChatsList: React.FC = (): JSX.Element => {
   const [text, setText] = useState<string>("");
   const { client } = useClient();
+  const { translation } = useLang();
   const [, setUpdate] = useState<number>(0);
 
-  const handleUpdate = () => setUpdate(new Date().getTime());
+  const handleUpdate = () => setUpdate(Date.now());
 
   useEffect(() => {
     client.on(ChatSocketEvent.CHAT_DELETE, handleUpdate);
@@ -57,8 +57,11 @@ const ChatsList: React.FC<ChatsListProps> = ({}): JSX.Element => {
 
   return (
     <div className={style["chats-container"]}>
-      <h5 className={style["title"]}>Chats</h5>
-      <div className={style["searchbar"]} children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={"Search member"} />} />
+      <h5 className={style["title"]} children={translation.app.profile.chats.title} />
+      <div
+        className={style["searchbar"]}
+        children={<Searchbar withMinWidth={false} onChange={({ target: { value } }) => setText(value)} withTune={false} placeholder={translation.app.profile.chats.search_chat} />}
+      />
       <div className={style["list-container"]}>
         <Scrollbar>
           {client.user.chats
@@ -81,7 +84,6 @@ interface ChatsListItemProps {
 }
 
 const ChatsListItem: React.FC<ChatsListItemProps> = ({ chat }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState<boolean>(true);
   const [snackError, setSnackError] = useState<string>();
   const { openChat } = useModal();
 
@@ -99,14 +101,7 @@ const ChatsListItem: React.FC<ChatsListItemProps> = ({ chat }): JSX.Element => {
           {chat instanceof Group && <GroupIcon className={style["icon"]} />}
         </div>
         <div children={`@${tag}`} className={style["tag"]} />
-        <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}></div>
-      </div>
-      <div className={style["icon-container"]}>
-        <IconButton
-          className={baseStyle["iconbutton"]}
-          onClick={() => setCollapsed(!collapsed)}
-          children={collapsed ? <ArrowDownIcon className={baseStyle["icon"]} /> : <ArrowUpIcon className={baseStyle["icon"]} />}
-        />
+        <div className={style["options-container"]} onClick={(event) => event.stopPropagation()}></div>
       </div>
       <Snackbar open={!!snackError} onClose={() => setSnackError(null)} children={<Alert severity={"error"} children={snackError} />} />
     </div>
@@ -126,17 +121,19 @@ type Inputs = {
 
 const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element => {
   const { client } = useClient();
+  const { translation, setLanguage } = useLang();
   const { openPasswordChange } = useModal();
   const [defaultLocale, setDefaultLocale] = useState<Locale>();
   const [snackError, setSnackError] = useState<string>();
   const [url, setUrl] = useState<string>(client.user.avatarURL);
   const [defaultAvatar, setDefaultAvatar] = useState<boolean>(!!client.user.avatarURL);
   const [avatar, setAvatar] = useState<File>(null);
+  const router = useRouter();
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isValid, isDirty, dirtyFields },
+    formState: { errors, isValid, isDirty, dirtyFields, isSubmitting },
   } = useForm<Inputs>({
     defaultValues: {
       description: client.user.description,
@@ -148,6 +145,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
   });
 
   const resetForm = () => {
+    setLanguage(client.user.locale);
     reset({
       description: client.user.description,
       locale: client.user.locale,
@@ -193,15 +191,26 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
     return !exists;
   }, 250);
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    client
+      .delete()
+      .then(() => router.push("/"))
+      .catch(setSnackError);
+  };
 
   return (
     <div className={style["settings-container"]}>
-      <h5 className={style["title"]}>Settings</h5>
+      <h5 className={style["title"]} children={translation.app.profile.settings.title} />
       <div className={style["avatar-container"]}>
         <label htmlFor={"upload-avatar"}>
           <a>
-            <Avatar aria-disabled={disabled} className={style["avatar"]} src={url} style={{ backgroundColor: !url && client.user.color }} />
+            <Avatar
+              aria-disabled={disabled || isSubmitting}
+              data-content={translation.app.profile.settings.upload_avatar}
+              className={style["avatar"]}
+              src={url}
+              style={{ backgroundColor: !url && client.user.color }}
+            />
           </a>
         </label>
         <input
@@ -227,7 +236,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
         <div className={style["delete"]}>
           <TextButton
             disabled={disabled}
-            children={"Delete Avatar"}
+            children={translation.app.profile.settings.delete_avatar}
             onClick={() => {
               setUrl(null);
               setAvatar(null);
@@ -242,7 +251,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             control={control}
             defaultValue={client.user.name}
             rules={{ required: true }}
-            render={({ field }) => <Input disabled={disabled} placeholder={"Name"} className={style["name"]} {...field} error={!!errors.name} />}
+            render={({ field }) => <Input disabled={disabled} placeholder={translation.app.profile.settings.name} className={style["name"]} {...field} error={!!errors.name} />}
           />
           <Controller
             name={"tag"}
@@ -252,7 +261,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             render={({ field }) => (
               <Input
                 disabled={disabled}
-                placeholder={"Tag"}
+                placeholder={translation.app.profile.settings.tag}
                 className={style["tag"]}
                 onKeyDown={(event) => event.key.length === 1 && !event.key.match(/[A-Za-z0-9]/) && event.preventDefault()}
                 {...field}
@@ -266,7 +275,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             control={control}
             defaultValue={client.user.description}
             rules={{ required: true }}
-            render={({ field }) => <Input disabled={disabled} placeholder={"Description"} className={style["description"]} {...field} error={!!errors.description} />}
+            render={({ field }) => <Input disabled={disabled} placeholder={translation.app.profile.settings.description} className={style["description"]} {...field} error={!!errors.description} />}
           />
           <div
             className={style["locale"]}
@@ -277,11 +286,11 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
                 defaultValue={defaultLocale}
                 render={({ field: { onChange, ...rest } }) => (
                   <Select
-                    onChange={(event) => onChange && onChange((event as any).value)}
+                    onChange={(event) => onChange && onChange(event.target.value)}
                     values={[
-                      { value: "EN", label: "English" },
-                      { value: "DE", label: "German" },
-                      { value: "FR", label: "French" },
+                      { value: "EN", label: translation.locales.EN },
+                      { value: "DE", label: translation.locales.DE },
+                      { value: "FR", label: translation.locales.FR, disabled: true },
                     ]}
                     {...rest}
                   />
@@ -290,11 +299,17 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
             }
           />
           <div className={style["button-container"]}>
-            <div className={style["change-password"]} children={<TextButton children={"Change Password"} onClick={() => openPasswordChange()} />} />
-            <div className={style["button"]} children={<Button children={"Delete"} onClick={handleDelete} />} />
+            <div className={style["change-password"]} children={<TextButton children={translation.app.profile.settings.change_password} onClick={() => openPasswordChange()} />} />
+            <div className={style["button"]} children={<Button children={translation.app.profile.settings.delete} onClick={handleDelete} />} />
             <div
               className={style["button"]}
-              children={<Button children={"Save"} type={"submit"} disabled={disabled || !(isValid && (isDirty || avatar || (client.user.avatarURL && !avatar && !url)))} />}
+              children={
+                <Button
+                  children={translation.app.profile.settings.save}
+                  type={"submit"}
+                  disabled={disabled || isSubmitting || url === client.user.avatarURL || !(isValid && (isDirty || avatar || (client.user.avatarURL && !avatar && !url)))}
+                />
+              }
             />
           </div>
         </form>

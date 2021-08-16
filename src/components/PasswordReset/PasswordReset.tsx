@@ -1,12 +1,13 @@
+import { Alert } from "@material-ui/lab";
+import { requestPasswordReset } from "client";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
+import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/PasswordReset.module.scss";
-import { Alert } from "@material-ui/lab";
-import Input from "../Input/Input";
+import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
 import Button from "../Button/Button";
+import Input from "../Input/Input";
 import Snackbar from "../Snackbar/Snackbar";
-import { requestPasswordReset } from "client";
 
 type Inputs = {
   mail: string;
@@ -15,6 +16,7 @@ type Inputs = {
 const PasswordReset: React.FC = (): JSX.Element => {
   const [snackError, setSnackError] = useState<string>();
   const [snackSuccess, setSnackSuccess] = useState<string>();
+  const { translation } = useLang();
   const {
     register,
     handleSubmit,
@@ -33,15 +35,16 @@ const PasswordReset: React.FC = (): JSX.Element => {
 
   return (
     <>
+      <title children={translation.sites.passwordreset} />
       <AnimatedBackground />
       <div className={style["container"]}>
-        <h4 children={"Password Reset"} className={style["title"]} />
-        <div className={style["description"]} children={"Enter the mail address with which your account was created. You'll recieve a mail with a link to finish the password reset."} />
+        <h4 children={translation.passwordreset.title} className={style["title"]} />
+        <div className={style["description"]} children={translation.passwordreset.description} />
         <div className={style["form-container"]}>
           <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
-            <Input className={style["mail"]} placeholder={"Mail"} type={"mail"} {...register("mail", { required: true, pattern: /\S+@\S+\.\S+/ })} error={!!errors.mail} />
+            <Input className={style["mail"]} placeholder={translation.passwordreset.mail} type={"mail"} {...register("mail", { required: true, pattern: /\S+@\S+\.\S+/ })} error={!!errors.mail} />
             <div className={style["button-container"]}>
-              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Send Mail"} />
+              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={translation.passwordreset.send_mail} />
             </div>
           </form>
         </div>

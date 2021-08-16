@@ -1,27 +1,29 @@
-import { Admin, Chat, ChatSocketEvent, Group, Owner, PrivateChat, UserSocketEvent } from "client";
-import { useRouter } from "next/router";
-import cn from "classnames";
-import React, { useState, useEffect } from "react";
-import { useClient } from "../../hooks/ClientContext";
-import style from "../../styles/modules/Burger.module.scss";
-import Scrollbar from "../Scrollbar/Scrollbar";
-import { Search as ExploreIcon, AddBox as AddIcon, Person as ProfileIcon, ExitToApp as LogoutIcon, Group as GroupIcon, Menu as MenuIcon, Mouse, MouseSharp } from "@material-ui/icons";
-import Link from "next/link";
 import { Avatar, Badge } from "@material-ui/core";
+import { AddBox as AddIcon, ExitToApp as LogoutIcon, Group as GroupIcon, Menu as MenuIcon, Person as ProfileIcon, Search as ExploreIcon } from "@material-ui/icons";
+import cn from "classnames";
+import { Admin, Chat, ChatSocketEvent, Group, Owner, PrivateChat, UserSocketEvent } from "client";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useBurger } from "../../hooks/BurgerContext";
+import { useClient } from "../../hooks/ClientContext";
+import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
+import style from "../../styles/modules/Burger.module.scss";
 import Menu, { MenuItem } from "../Menu/Menu";
+import Scrollbar from "../Scrollbar/Scrollbar";
 
 interface BurgerProps {
-  open: boolean;
   onClick?: () => void;
-  onCollapse?: () => void;
 }
 
-const Burger: React.FC<BurgerProps> = ({ onClick, open, onCollapse }): JSX.Element => {
+const Burger: React.FC<BurgerProps> = ({ onClick }): JSX.Element => {
   const { client } = useClient();
+  const { translation } = useLang();
+  const { open, setOpen } = useBurger();
   const [, setUpdate] = useState<number>();
 
-  const handleUpdate = () => setUpdate(new Date().getTime());
+  const handleUpdate = () => setUpdate(Date.now());
 
   useEffect(() => {
     client.on(ChatSocketEvent.MEMBER_ONLINE, handleUpdate);
@@ -57,8 +59,8 @@ const Burger: React.FC<BurgerProps> = ({ onClick, open, onCollapse }): JSX.Eleme
   return (
     <Scrollbar>
       <Section>
-        <Item open={open} icon={<MenuIcon />} text={""} onClick={onCollapse} />
-        <Item open={open} href={"/profile"} icon={<ProfileIcon />} text={"Profile"} onClick={onClick} />
+        <Item open={open} icon={<MenuIcon />} text={""} onClick={() => setOpen(!open)} />
+        <Item open={open} href={"/profile"} icon={<ProfileIcon />} text={translation.app.profile.burger_title} onClick={onClick} />
       </Section>
       {sortedChats.length !== 0 && (
         <Section>
@@ -68,9 +70,9 @@ const Burger: React.FC<BurgerProps> = ({ onClick, open, onCollapse }): JSX.Eleme
         </Section>
       )}
       <Section>
-        <Item open={open} href={"/explore"} icon={<ExploreIcon />} text={"Explore"} onClick={onClick} />
-        <Item open={open} href={"/create"} icon={<AddIcon />} text={"Create"} onClick={onClick} />
-        <Item open={open} href={"/"} icon={<LogoutIcon />} text={"Logout"} onClick={onClick} />
+        <Item open={open} href={"/explore"} icon={<ExploreIcon />} text={translation.app.explore.burger_title} onClick={onClick} />
+        <Item open={open} href={"/create"} icon={<AddIcon />} text={translation.app.create.burger_title} onClick={onClick} />
+        <Item open={open} href={"/"} icon={<LogoutIcon />} text={translation.app.logout} onClick={onClick} />
       </Section>
     </Scrollbar>
   );
@@ -122,6 +124,8 @@ interface ChatItemProps {
 const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element => {
   const { client } = useClient();
   const { openChat } = useModal();
+  const [, setUpdate] = useState<number>();
+  const { translation } = useLang();
   const href: string = `/chat/${chat.uuid}`;
   const name: string = getChatName(chat);
   const src: string = chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : "";
@@ -139,9 +143,13 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element
 
   const handleMenuClose = () => setMenuPos({ x: null, y: null });
 
+  const markAsRead = () => {
+    chat.readUntil(new Date()).then(() => setUpdate(Date.now()));
+  };
+
   return (
     <>
-      <Link href={href}>
+      <Link href={href === router.asPath.toLowerCase() && canManage ? `${href}/settings` : href}>
         <div onContextMenu={handleRightClick} onClick={onClick} className={style["burger-item"]} aria-selected={chat.uuid === selected} data-unread={unread !== 0}>
           <div className={style["burger-icon"]}>
             <Badge
@@ -169,9 +177,9 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element
         </div>
       </Link>
       <Menu keepMounted open={menuPos.x !== null} onClose={handleMenuClose} anchorReference={"anchorPosition"} anchorPosition={menuPos.x === null ? undefined : { left: menuPos.x, top: menuPos.y }}>
-        {unread !== 0 && <MenuItem children={"Mark As Read"} onClick={() => chat.readUntil(new Date())} autoClose onClose={handleMenuClose} />}
-        {canManage && <MenuItem children={"Manage Group"} onClick={() => router.push(`/chat/${chat.uuid}/settings`)} autoClose onClose={handleMenuClose} />}
-        <MenuItem children={"View Chat Info"} onClick={() => openChat(chat)} autoClose onClose={handleMenuClose} />
+        {unread !== 0 && <MenuItem children={translation.app.chat.mark_as_read} onClick={markAsRead} autoClose onClose={handleMenuClose} />}
+        {canManage && <MenuItem children={translation.app.chat.manage_group} onClick={() => router.push(`/chat/${chat.uuid}/settings`)} autoClose onClose={handleMenuClose} />}
+        <MenuItem children={translation.app.chat.view_info} onClick={() => openChat(chat)} autoClose onClose={handleMenuClose} />
       </Menu>
     </>
   );

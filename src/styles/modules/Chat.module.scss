@@ -87,7 +87,7 @@
   font-size: 14px;
 
   .log {
-    margin-right: 1ch;
+    margin-right: 0.5ch;
     &:hover {
       cursor: pointer;
     }
@@ -204,7 +204,7 @@
   padding: 0.5rem 0;
   display: grid;
   grid-template-areas: ". input .";
-  grid-template-columns: 65px auto calc(65px + 17px);
+  grid-template-columns: 65px auto 65px;
 
   .input-container {
     grid-area: input;
@@ -334,7 +334,7 @@
         }
         &[aria-disabled="false"] {
           &::after {
-            content: "Upload avatar";
+            content: attr(data-content);
             opacity: 0;
             position: absolute;
             top: 0;
@@ -511,16 +511,18 @@
               grid-template-areas: "role permission" "buttons buttons";
               gap: 1rem;
 
+              &[data-visible="false"] {
+                .permission-container {
+                  display: none;
+                }
+              }
+
               .role-container {
                 grid-area: role;
               }
 
               .permission-container {
                 grid-area: permission;
-
-                &[data-visible="false"] {
-                  opacity: 0;
-                }
               }
             }
           }
@@ -653,9 +655,19 @@
   @include icon;
 }
 
+@include wide {
+  .form {
+    grid-template-areas: "name name name" "tag tag public" "description description description" ". . buttons" !important;
+  }
+}
+
 @include small {
   .settings-container {
     grid-template-areas: "title ." "avatar avatar" "form form" !important;
+
+    .form {
+      grid-template-areas: "name name name" "tag tag public" "description description description" ". . buttons" !important;
+    }
   }
 }
 
@@ -665,6 +677,14 @@
 
     .form {
       grid-template-areas: "name name" "tag public" "description description" "buttons buttons" !important;
+    }
+
+    .button-container {
+      flex-direction: column;
+      align-items: flex-end;
+      .button {
+        padding: 0.25rem 0 !important;
+      }
     }
   }
 
@@ -681,6 +701,10 @@
       }
     }
   }
+
+  .chat-input-container {
+    grid-template-columns: 0.75rem auto 0.75rem;
+  }
 }
 
 @include smallest {
@@ -690,15 +714,35 @@
     .form {
       grid-template-areas: "name name" "tag public" "description description" "buttons buttons" !important;
     }
+
+    .button-container {
+      flex-direction: column;
+      align-items: flex-end;
+      .button {
+        padding: 0.25rem 0 !important;
+      }
+    }
   }
 
   .options-container {
     .form {
       grid-template-areas: "role" "permission" "buttons" !important;
     }
+
+    .button-container {
+      flex-direction: column;
+
+      .button {
+        padding: 0.25rem 0 !important;
+      }
+    }
   }
 
   .message-container {
     grid-template-columns: auto auto !important;
+  }
+
+  .chat-input-container {
+    grid-template-columns: 0.75rem auto 0.75rem;
   }
 }

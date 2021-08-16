@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import style from "../../styles/modules/Login.module.scss";
-import Input from "../Input/Input";
-import Button, { TextButton } from "../Button/Button";
-import { useRouter } from "next/router";
 import { IconButton } from "@material-ui/core";
 import { Visibility as HiddenIcon, VisibilityOff as ShownIcon } from "@material-ui/icons";
-import { useAuth } from "../../hooks/AuthContext";
-import Snackbar from "../Snackbar/Snackbar";
 import { Alert } from "@material-ui/lab";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useAuth } from "../../hooks/AuthContext";
+import { useLang } from "../../hooks/LanguageContext";
+import style from "../../styles/modules/Login.module.scss";
 import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
+import Button, { TextButton } from "../Button/Button";
+import Input from "../Input/Input";
+import Snackbar from "../Snackbar/Snackbar";
 
 type Inputs = {
   username: string;
@@ -19,6 +20,7 @@ type Inputs = {
 const Login: React.FC = (): JSX.Element => {
   const [hidden, setHidden] = useState<boolean>(true);
   const { login } = useAuth();
+  const { translation } = useLang();
   const [snackError, setSnackError] = useState<string>();
   const router = useRouter();
   const {
@@ -35,16 +37,17 @@ const Login: React.FC = (): JSX.Element => {
 
   return (
     <>
+      <title children={translation.sites.login} />
       <AnimatedBackground />
       <div className={style["container"]}>
-        <h4 children={"Login"} className={style["title"]} />
+        <h4 children={translation.login.title} className={style["title"]} />
         <div className={style["form-container"]}>
           <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
-            <Input className={style["username"]} placeholder={"Mail"} type={"mail"} {...register("username", { required: true, pattern: /\S+@\S+\.\S+/ })} error={!!errors.username} />
+            <Input className={style["username"]} placeholder={translation.login.mail} type={"mail"} {...register("username", { required: true, pattern: /\S+@\S+\.\S+/ })} error={!!errors.username} />
             <div className={style["password-container"]}>
               <Input
                 className={style["password"]}
-                placeholder={"Password"}
+                placeholder={translation.login.password}
                 {...register("password", { required: true })}
                 error={!!errors.password}
                 type={hidden ? "password" : "text"}
@@ -54,11 +57,11 @@ const Login: React.FC = (): JSX.Element => {
                   </IconButton>
                 }
               />
-              <span className={style["forgot"]} children={<TextButton children={"Forgot Password"} />} />
+              <span className={style["forgot"]} children={<TextButton children={translation.login.forgot} onClick={() => router.push("/passwordreset")} />} />
             </div>
 
             <div className={style["button-container"]}>
-              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Login"} />
+              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={translation.login.login} />
             </div>
           </form>
         </div>

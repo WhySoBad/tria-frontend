@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { Credentials, loginUser, validateToken } from "client";
-import { useCookies } from "react-cookie";
 import { NextPage } from "next";
+import React, { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 
 interface AuthContext {
   login: (credentials: Credentials) => Promise<string>;
@@ -28,7 +28,7 @@ export const AuthProvider: NextPage = ({ children }): JSX.Element => {
   useEffect(() => {
     if (token) {
       setCookie("token", token, {
-        expires: new Date(new Date().getTime() + 100 * 86400000),
+        expires: new Date(Date.now() + 100 * 86400000),
         path: "/",
       });
     }

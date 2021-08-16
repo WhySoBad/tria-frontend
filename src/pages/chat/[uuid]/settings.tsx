@@ -15,11 +15,7 @@ const ChatSettingsPage: NextPage<Props> = ({ chat }): JSX.Element => {
     setSelected(chat);
   }, [chat]);
 
-  return (
-    <>
-      <Layout children={<ChatSettings />} />
-    </>
-  );
+  return <Layout children={<ChatSettings />} />;
 };
 
 ChatSettingsPage.getInitialProps = async (context: NextPageContext) => {

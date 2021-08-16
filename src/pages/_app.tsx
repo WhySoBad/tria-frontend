@@ -2,8 +2,10 @@ import { NextPage } from "next";
 import { AppProps } from "next/dist/next-server/lib/router/router";
 import React, { useEffect } from "react";
 import { AuthProvider } from "../hooks/AuthContext";
+import { BurgerProvider } from "../hooks/BurgerContext";
 import { ChatProvider } from "../hooks/ChatContext";
 import { ClientProvider } from "../hooks/ClientContext";
+import { LanguageProvider } from "../hooks/LanguageContext";
 import { ModalProvider } from "../hooks/ModalContext";
 import "../styles/main.scss";
 
@@ -16,11 +18,15 @@ const WrapPage: NextPage<AppProps> = ({ Component, pageProps }: AppProps): JSX.E
   return (
     <AuthProvider>
       <ClientProvider>
-        <ModalProvider>
-          <ChatProvider>
-            <Component {...pageProps} />
-          </ChatProvider>
-        </ModalProvider>
+        <LanguageProvider>
+          <ModalProvider>
+            <BurgerProvider>
+              <ChatProvider>
+                <Component {...pageProps} />
+              </ChatProvider>
+            </BurgerProvider>
+          </ModalProvider>
+        </LanguageProvider>
       </ClientProvider>
     </AuthProvider>
   );

@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { checkUserTag, Locale, verifyRegister } from "client";
-import style from "../../styles/modules/Register.module.scss";
-import Input, { Select } from "../Input/Input";
-import Button, { TextButton } from "../Button/Button";
-import { debouncedPromise } from "../../util";
-import { useRouter } from "next/router";
-import Snackbar from "../Snackbar/Snackbar";
 import { Alert } from "@material-ui/lab";
+import { checkUserTag, Locale, verifyRegister } from "client";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useLang } from "../../hooks/LanguageContext";
+import style from "../../styles/modules/Register.module.scss";
+import { debouncedPromise } from "../../util";
 import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
+import Button from "../Button/Button";
+import Input, { Select } from "../Input/Input";
+import Snackbar from "../Snackbar/Snackbar";
 
 interface RegisterProps {}
 
@@ -21,6 +22,7 @@ type Inputs = {
 
 const Register: React.FC<RegisterProps> = (): JSX.Element => {
   const [defaultLocale, setDefaultLocale] = useState<Locale>();
+  const { translation } = useLang();
   const [snackError, setSnackError] = useState<string>();
   const [checkedTag, setCheckedTag] = useState<{ tag: string; valid: boolean }>();
   const router = useRouter();
@@ -55,21 +57,22 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
 
   return (
     <>
+      <title children={translation.sites.register} />
       <AnimatedBackground />
       <div className={style["container"]}>
-        <h4 children={"Finish Registration"} className={style["title"]} />
-        <div className={style["description"]} children={"Finish the registration of your account by filling the following fields."} />
+        <h4 children={translation.register.title} className={style["title"]} />
+        <div className={style["description"]} children={translation.register.form_description} />
         <div className={style["form-container"]}>
           <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
-            <Input className={style["name"]} placeholder={"Username"} {...register("name", { required: true })} error={!!errors.name} />
+            <Input className={style["name"]} placeholder={translation.register.username} {...register("name", { required: true })} error={!!errors.name} />
             <Input
               className={style["tag"]}
               onKeyDown={(event) => event.key.length === 1 && !event.key.match(/[A-Za-z0-9]/) && event.preventDefault()}
-              placeholder={"Tag"}
+              placeholder={translation.register.tag}
               {...register("tag", { validate: isValidTag, pattern: /[A-Za-z0-9]+/, required: true })}
               error={!!errors.tag}
             />
-            <Input className={style["description"]} placeholder={"Description"} {...register("description", { required: true })} error={!!errors.description} />
+            <Input className={style["description"]} placeholder={translation.register.description} {...register("description", { required: true })} error={!!errors.description} />
             <div
               className={style["locale"]}
               children={
@@ -81,9 +84,9 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
                     <Select
                       onChange={(event) => onChange && onChange((event as any).value)}
                       values={[
-                        { value: "EN", label: "English" },
-                        { value: "DE", label: "German" },
-                        { value: "FR", label: "French", disabled: true },
+                        { value: "EN", label: translation.locales.EN },
+                        { value: "DE", label: translation.locales.DE },
+                        { value: "FR", label: translation.locales.FR, disabled: true },
                       ]}
                       {...rest}
                     />
@@ -92,7 +95,7 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
               }
             />
             <div className={style["button-container"]}>
-              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Finish"} />
+              <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={translation.register.finish} />
             </div>
           </form>
         </div>

@@ -1,24 +1,25 @@
 import { Avatar, IconButton } from "@material-ui/core";
-import { Chat, User, UserPreview, Group, PrivateChat, ChatSocketEvent, UserSocketEvent } from "client";
-import React, { useEffect, useState } from "react";
+import { AddBox as AddChatIcon, Chat as ChatIcon, Group as GroupIcon, Person as ProfileIcon } from "@material-ui/icons";
 import cn from "classnames";
+import { Chat, ChatSocketEvent, Group, PrivateChat, User, UserPreview, UserSocketEvent } from "client";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { useChat } from "../../../hooks/ChatContext";
 import { useClient } from "../../../hooks/ClientContext";
-import style from "../../../styles/modules/UserModal.module.scss";
-import baseStyle from "../../../styles/modules/Modal.module.scss";
-import { BaseModal, ModalProps } from "../Modal";
-import { useRouter } from "next/router";
-import Scrollbar from "../../Scrollbar/Scrollbar";
-import Link from "next/link";
 import { useModal } from "../../../hooks/ModalContext";
-import { Group as GroupIcon, Person as ProfileIcon, AddBox as AddChatIcon, Chat as ChatIcon } from "@material-ui/icons";
+import baseStyle from "../../../styles/modules/Modal.module.scss";
+import style from "../../../styles/modules/UserModal.module.scss";
 import Button from "../../Button/Button";
+import Menu, { MenuItem } from "../../Menu/Menu";
+import Scrollbar from "../../Scrollbar/Scrollbar";
+import { BaseModal, ModalProps } from "../Modal";
 
 interface UserModalProps extends ModalProps {
   user: User | UserPreview;
 }
 
-const UserModal: React.FC<UserModalProps> = ({ onClose, user, ...rest }): JSX.Element => {
+const UserModal: React.FC<UserModalProps> = ({ onClose, user, selectedTab = 0, ...rest }): JSX.Element => {
   const { client } = useClient();
   const { selected } = useChat();
   const { close } = useModal();
@@ -27,22 +28,26 @@ const UserModal: React.FC<UserModalProps> = ({ onClose, user, ...rest }): JSX.El
   const icons: Array<JSX.Element> = [];
   const [, setUpdate] = useState<number>();
 
-  const handleUpdate = (userUuid: string) => userUuid === user.uuid && setUpdate(new Date().getTime());
+  useEffect(() => {
+    setTab(selectedTab);
+  }, [selectedTab]);
+
+  const handleUpdate = (userUuid: string) => userUuid === user.uuid && setUpdate(Date.now());
 
   useEffect(() => {
     let mounted: boolean = true;
     client.on(UserSocketEvent.USER_EDIT, handleUpdate);
     client.on(UserSocketEvent.USER_DELETE, onClose);
-    client.on(ChatSocketEvent.PRIVATE_CREATE, () => mounted && setUpdate(new Date().getTime()));
-    client.on(ChatSocketEvent.GROUP_CREATE, () => mounted && setUpdate(new Date().getTime()));
-    client.on(ChatSocketEvent.CHAT_DELETE, () => mounted && setUpdate(new Date().getTime()));
+    client.on(ChatSocketEvent.PRIVATE_CREATE, () => mounted && setUpdate(Date.now()));
+    client.on(ChatSocketEvent.GROUP_CREATE, () => mounted && setUpdate(Date.now()));
+    client.on(ChatSocketEvent.CHAT_DELETE, () => mounted && setUpdate(Date.now()));
     return () => {
       mounted = false;
       client.off(UserSocketEvent.USER_EDIT, handleUpdate);
       client.off(UserSocketEvent.USER_DELETE, onClose);
-      client.off(ChatSocketEvent.PRIVATE_CREATE, () => mounted && setUpdate(new Date().getTime()));
-      client.off(ChatSocketEvent.GROUP_CREATE, () => mounted && setUpdate(new Date().getTime()));
-      client.off(ChatSocketEvent.CHAT_DELETE, () => mounted && setUpdate(new Date().getTime()));
+      client.off(ChatSocketEvent.PRIVATE_CREATE, () => mounted && setUpdate(Date.now()));
+      client.off(ChatSocketEvent.GROUP_CREATE, () => mounted && setUpdate(Date.now()));
+      client.off(ChatSocketEvent.CHAT_DELETE, () => mounted && setUpdate(Date.now()));
     };
   }, []);
 
@@ -73,7 +78,10 @@ const UserModal: React.FC<UserModalProps> = ({ onClose, user, ...rest }): JSX.El
       .catch(client.error);
   };
 
-  const openProfile = () => router.push(`/profile`);
+  const openProfile = () => {
+    router.push(`/profile`);
+    close();
+  };
 
   if (isSelf) icons.push(<IconButton className={baseStyle["iconbutton"]} children={<ProfileIcon className={baseStyle["icon"]} />} onClick={openProfile} />);
   else if (!privateChat && !isSelf) icons.push(<IconButton className={baseStyle["iconbutton"]} children={<AddChatIcon className={baseStyle["icon"]} />} onClick={createChat} />);
@@ -164,7 +172,7 @@ const SharedChats: React.FC<SharedChatsProps> = ({ user }): JSX.Element => {
   return (
     <Scrollbar>
       {sharedChats.map((chat: Chat) => (
-        <ChatItem chat={chat} key={chat.uuid} />
+        <ChatItem user={user} chat={chat} key={chat.uuid} />
       ))}
     </Scrollbar>
   );
@@ -172,19 +180,27 @@ const SharedChats: React.FC<SharedChatsProps> = ({ user }): JSX.Element => {
 
 interface ChatItemProps {
   chat: Chat;
+  user: User | UserPreview;
 }
 
-const ChatItem: React.FC<ChatItemProps> = ({ chat }): JSX.Element => {
-  const { close } = useModal();
+const ChatItem: React.FC<ChatItemProps> = ({ chat, user }): JSX.Element => {
+  const { close, openChat, openUser } = useModal();
+  const [menuPos, setMenuPos] = useState<{ x: number | null; y: number | null }>({ x: null, y: null });
   const name: string = chat instanceof Group ? chat.name : chat instanceof PrivateChat ? chat.participant.user.name : "";
   const tag: string = chat instanceof Group ? chat.tag : chat instanceof PrivateChat ? chat.participant.user.tag : "";
   const src: string = chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : "";
   const color: string = chat instanceof Group ? chat.color : chat instanceof PrivateChat ? chat.participant.user.color : "";
 
+  const handleRightClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    setMenuPos({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleMenuClose = () => setMenuPos({ x: null, y: null });
+
   return (
-    <div id={chat.uuid} className={style["item-container"]} onClick={close}>
+    <div id={chat.uuid} className={style["item-container"]} onContextMenu={handleRightClick}>
       <Link href={`/chat/${chat.uuid}`}>
-        <div className={style["item"]}>
+        <div className={style["item"]} onClick={close}>
           <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: color }} />
           <div className={style["name"]}>
             <h6 children={name} />
@@ -193,6 +209,9 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat }): JSX.Element => {
           <div children={`@${tag}`} className={style["tag"]} />
         </div>
       </Link>
+      <Menu keepMounted open={menuPos.x !== null} onClose={handleMenuClose} anchorReference={"anchorPosition"} anchorPosition={menuPos.x === null ? undefined : { left: menuPos.x, top: menuPos.y }}>
+        <MenuItem children={"View Chat Info"} autoClose onClick={() => openChat(chat, { withBack: true, onClose: () => openUser(user, { selectedTab: 1 }) })} onClose={handleMenuClose} />
+      </Menu>
     </div>
   );
 };

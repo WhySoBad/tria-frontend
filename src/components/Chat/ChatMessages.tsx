@@ -1,25 +1,28 @@
 import { Avatar, CircularProgress } from "@material-ui/core";
-import { BannedMember, Chat, ChatSocketEvent, ChatType, getUserPreview, Member, Message, UserPreview, Group, MemberLog } from "client";
+import { BannedMember, Chat, ChatSocketEvent, ChatType, getUserPreview, Group, Member, MemberLog, Message, UserPreview } from "client";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
-import style from "../../styles/modules/Chat.module.scss";
+import Scrollbars from "react-custom-scrollbars-2";
 import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
+import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
-import Scrollbar from "../Scrollbar/Scrollbar";
-import Scrollbars from "react-custom-scrollbars-2";
+import style from "../../styles/modules/Chat.module.scss";
 import { debouncedPromise } from "../../util";
 import Menu, { MenuItem } from "../Menu/Menu";
+import Scrollbar from "../Scrollbar/Scrollbar";
 
 const Messages: React.FC = (): JSX.Element => {
   const { client } = useClient();
   const { selected } = useChat();
+  const { translation } = useLang();
   const ref = useRef<Scrollbars>(null);
   const chat: Chat | undefined = client?.user.chats.get(selected);
   const [lastRead, setLastRead] = useState<Date>(chat?.lastRead);
   const [reading, setReading] = useState<boolean>(false);
   const [, setUpdate] = useState<number>();
+  const [users, setUsers] = useState<Array<UserPreview>>([]);
 
-  const handleUpdate = (chatUuid: string) => chatUuid === selected && setUpdate(new Date().getTime());
+  const handleUpdate = (chatUuid: string) => chatUuid === selected && setUpdate(Date.now());
 
   useEffect(() => {
     client.on(ChatSocketEvent.MESSAGE, handleUpdate);
@@ -36,6 +39,21 @@ const Messages: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     if (!chat) return;
+    const unknownUsers: Array<string> = [];
+
+    chat.messages.values().forEach((message: Message) => {
+      if (!chat.members.keys().includes(message.sender) && !unknownUsers.includes(message.sender)) unknownUsers.push(message.sender);
+    });
+
+    unknownUsers.forEach((uuid: string) => {
+      if (users.find((preview: UserPreview) => preview.uuid === uuid)) return;
+      getUserPreview(uuid)
+        .then((user: UserPreview) => setUsers([...users, user]))
+        .catch(() => client.error(`Failed Prefetching Account "${uuid}"`));
+    });
+  }, [selected, chat?.messages?.size]);
+
+  useEffect(() => {
     const messages: Array<Message> = chat.messages.values().filter(({ createdAt, sender }) => {
       return sender !== client.user.uuid && createdAt.getTime() > chat.lastRead.getTime();
     });
@@ -110,11 +128,11 @@ const Messages: React.FC = (): JSX.Element => {
         const date: Date | undefined = Array.isArray(value) ? value[0]?.createdAt : typeof value !== "number" ? value.timestamp : undefined;
         return (
           <React.Fragment key={index + key}>
-            {index === 0 && chat.lastFetched && <code className={style["log-container"]} children={"Start of the chat"} />}
+            {index === 0 && chat.lastFetched && <code className={style["log-container"]} children={translation.app.chat.start} />}
             {((date && previousDate && date.toLocaleDateString() !== previousDate.toLocaleDateString()) || index === 0) && <DateEl date={date} key={date.getTime()} />}
-            {typeof value === "number" && lastRead && <code className={style["log-container"]} children={"New messages"} />}
+            {typeof value === "number" && lastRead && <code className={style["log-container"]} children={translation.app.chat.new_messages} />}
             {value instanceof MemberLog && chat.type !== ChatType.PRIVATE && <Log log={value} key={key} />}
-            {Array.isArray(value) && <MessageGroup onRead={handleRead} messages={value} key={key} />}
+            {Array.isArray(value) && <MessageGroup fetchedSender={users} onRead={handleRead} messages={value} key={key} />}
           </React.Fragment>
         );
       })}
@@ -125,16 +143,18 @@ const Messages: React.FC = (): JSX.Element => {
 
 interface MessageGroupProps {
   messages: Array<Message>;
+  fetchedSender: Array<UserPreview>;
   onRead: (timestamp: number, cb: () => void) => void;
 }
 
-const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead }): JSX.Element => {
+const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead, fetchedSender }): JSX.Element => {
   const { client } = useClient();
-  const { openMember } = useModal();
+  const { openMember, openUser } = useModal();
   if (messages.length === 0) return <></>;
   const message: Message = messages[0];
   const chat: Chat | undefined = client.user.chats.get(message.chat);
-  const sender: Member | undefined | BannedMember = chat.members.get(message.sender) || (chat instanceof Group && chat.bannedMembers.get(message.sender));
+  const sender: Member | UserPreview | undefined | BannedMember =
+    chat.members.get(message.sender) || (chat instanceof Group && chat.bannedMembers.get(message.sender)) || fetchedSender.find(({ uuid }) => uuid === message.sender);
   const isSelf: boolean = (sender instanceof Member ? sender.user.uuid : sender ? sender.uuid : "") === client.user.uuid;
 
   const getDate = (message: Message): string => {
@@ -147,12 +167,15 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead }): JSX.El
 
   return (
     <section className={style["group-container"]}>
-      <div className={style["avatar-container"]} data-banned={!(sender instanceof Member)} data-self={isSelf}>
+      <div className={style["avatar-container"]} data-banned={!sender || sender instanceof BannedMember} data-self={isSelf}>
         <Avatar
           src={src}
           className={style["avatar"]}
           style={{ backgroundColor: !src && sender && (sender instanceof Member ? sender.user.color : sender.color) }}
-          onClick={() => sender instanceof Member && openMember(sender)}
+          onClick={() => {
+            if (sender instanceof Member) openMember(sender);
+            else if (sender && !(sender instanceof BannedMember)) openUser(sender);
+          }}
         />
       </div>
       <div className={style["content-container"]}>
@@ -166,7 +189,7 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead }): JSX.El
 
 interface MessageProps {
   message: Message;
-  sender: Member | BannedMember | undefined;
+  sender: Member | BannedMember | UserPreview | undefined;
   self: boolean;
   read: boolean;
   first: boolean;
@@ -175,8 +198,9 @@ interface MessageProps {
 }
 
 const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead, date, sender }): JSX.Element => {
-  const { openMember } = useModal();
+  const { openMember, openUser } = useModal();
   const { client } = useClient();
+  const { translation } = useLang();
   const [isRead, setRead] = useState<boolean>(read);
   const ref = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -208,17 +232,22 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
       <div className={style["message"]} data-editing={editing}>
         {first && (
           <h6
-            data-banned={!(sender instanceof Member)}
-            children={sender ? (sender instanceof Member ? sender.user.name : sender.name) : "Unknown Account"}
+            data-banned={!sender || sender instanceof BannedMember}
+            children={sender ? (sender instanceof Member ? sender.user.name : sender.name) : translation.app.chat.unknown_sender}
             className={style["name"]}
-            onClick={() => sender instanceof Member && openMember(sender)}
+            onClick={() => {
+              if (sender instanceof Member) openMember(sender);
+              else if (sender && !(sender instanceof BannedMember)) openUser(sender);
+            }}
           />
         )}
         <div className={style["text"]}>
           <span
+            style={{ overflowWrap: "anywhere" }}
             ref={textRef}
             children={message.text}
             onKeyPress={(event) => {
+              if (message.sender !== client.user.uuid) return;
               if (event.key === "\n") document.execCommand("insertText", false, "\n");
               else if (event.key === "Enter") {
                 event.preventDefault();
@@ -237,20 +266,28 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
           />
           <span className={style["date"]} data-edited={message.edited > 0}>
             <span children={date} />
-            {message.edited > 0 && <span children={`${message.edited}x Edited`} />}
+            {message.edited > 0 && <span children={`${message.edited}x ${translation.app.chat.edited}`} />}
             <span className={style["inner"]}>
               <span children={date} />
-              {message.edited > 0 && <span children={`${message.edited}x Edited`} />}
+              {message.edited > 0 && <span children={`${message.edited}x ${translation.app.chat.edited}`} />}
             </span>
           </span>
         </div>
       </div>
       <Menu keepMounted open={menuPos.x !== null} onClose={handleMenuClose} anchorReference={"anchorPosition"} anchorPosition={menuPos.x === null ? undefined : { left: menuPos.x, top: menuPos.y }}>
-        <MenuItem children={"Profile"} onClick={() => sender instanceof Member && openMember(sender)} autoClose onClose={handleMenuClose} />
-        {message.sender === client.user.uuid && !editing && <MenuItem children={"Edit Message"} onClick={() => setEditing(true)} autoClose onClose={handleMenuClose} />}
+        <MenuItem
+          children={translation.app.chat.profile}
+          onClick={() => {
+            if (sender instanceof Member) openMember(sender);
+            else if (sender && !(sender instanceof BannedMember)) openUser(sender);
+          }}
+          autoClose
+          onClose={handleMenuClose}
+        />
+        {message.sender === client.user.uuid && !editing && <MenuItem children={translation.app.chat.edit_message} onClick={() => setEditing(true)} autoClose onClose={handleMenuClose} />}
         {editing && (
           <MenuItem
-            children={"Stop Editing"}
+            children={translation.app.chat.stop_editing}
             onClick={() => {
               textRef.current.innerText = message.text;
               setEditing(false);
@@ -284,6 +321,7 @@ interface LogProps {
 const Log: React.FC<LogProps> = ({ log, last = false }): JSX.Element => {
   const { client } = useClient();
   const { openUser } = useModal();
+  const { translation } = useLang();
   const [user, setUser] = useState<UserPreview>(null);
   const [fetched, setFetched] = useState<boolean>(false);
 
@@ -310,9 +348,9 @@ const Log: React.FC<LogProps> = ({ log, last = false }): JSX.Element => {
 
   return (
     <>
-      <div className={style["log-container"]} style={{ opacity: fetched ? 1 : 0 }}>
-        {user ? <span children={user.name} className={style["log"]} onClick={() => openUser(user)} /> : "Deleted Account"}
-        {log.joined ? " joined" : " left"}
+      <div className={style["log-container"]} style={{ opacity: !fetched && 0 }}>
+        {user ? <span children={user.name} className={style["log"]} onClick={() => openUser(user)} /> : translation.app.chat.deleted_account}
+        {"" + log.joined ? translation.app.chat.joined : translation.app.chat.left}
       </div>
       {last && <BottomAnchor />}
     </>
@@ -366,7 +404,6 @@ const BottomAnchor: React.FC = (): JSX.Element => {
   const handleMessage = (chatUuid: string, message: Message) => {
     if (chatUuid !== chat.uuid) return;
     if (message.sender === client.user.uuid || visible) ref?.current?.scrollIntoView({ behavior: "smooth" });
-    /*   if (visible && chat && message.sender !== client.user.uuid) chat.readUntil(message.createdAt); */
   };
 
   client.on(ChatSocketEvent.MESSAGE, handleMessage);
