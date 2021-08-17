@@ -5,6 +5,7 @@ import { Admin, Chat, ChatSocketEvent, Group, Member, Owner, PrivateChat, UserSo
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useClient } from "../../../hooks/ClientContext";
+import { useLang } from "../../../hooks/LanguageContext";
 import { useModal } from "../../../hooks/ModalContext";
 import style from "../../../styles/modules/ChatModal.module.scss";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
@@ -18,6 +19,7 @@ interface ChatModalProps extends ModalProps {
 
 const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat, selectedTab = 0, ...rest }) => {
   const { client } = useClient();
+  const { translation } = useLang();
   const [, setUpdate] = useState<number>();
   const router = useRouter();
   const [tab, setTab] = useState<number>(selectedTab);
@@ -65,8 +67,8 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, chat, selectedTab = 0, .
   return (
     <BaseModal group={chat instanceof Group} avatar={avatarURL} hex={color} uuid={uuid} name={name} tag={tag} onClose={onClose} icons={icons} {...rest}>
       <div className={style["tabs"]}>
-        <h6 className={style["tab"]} aria-selected={tab === 0} onClick={() => setTab(0)} children={"Information"} />
-        <h6 className={style["tab"]} aria-selected={tab === 1} onClick={() => setTab(1)} children={"Members"} />
+        <h6 className={style["tab"]} aria-selected={tab === 0} onClick={() => setTab(0)} children={translation.modals.chat.information} />
+        <h6 className={style["tab"]} aria-selected={tab === 1} onClick={() => setTab(1)} children={translation.modals.chat.members} />
       </div>
       <section className={style["content"]}>
         {tab === 0 && <Informations chat={chat} />}
@@ -81,6 +83,7 @@ interface GroupContentProps {
 }
 
 const GroupContent: React.FC<GroupContentProps> = ({ group }): JSX.Element => {
+  const { translation } = useLang();
   const owner: Array<Owner> = group?.members.values().filter((member: Member) => member instanceof Owner) || [];
   const admins: Array<Admin> = (group?.members.values().filter((member: Member) => member instanceof Admin) as any) || [];
   const members: Array<Member> = group?.members.values().filter((member: Member) => !(member instanceof Owner) && !(member instanceof Admin)) || [];
@@ -88,13 +91,13 @@ const GroupContent: React.FC<GroupContentProps> = ({ group }): JSX.Element => {
   return (
     <Scrollbar>
       <div className={style["members"]}>
-        <RoleBorder title={"owner"} />
+        <RoleBorder title={translation.modals.chat.owner} />
         {owner.map((owner: Owner) => (
           <ChatMember chat={group} member={owner} key={owner.user.uuid} />
         ))}
         {admins.length !== 0 && (
           <>
-            <RoleBorder title={"admin"} />
+            <RoleBorder title={translation.modals.chat.admin} />
             {admins.map((admin: Admin) => (
               <ChatMember chat={group} member={admin} key={admin.user.uuid} />
             ))}
@@ -102,7 +105,7 @@ const GroupContent: React.FC<GroupContentProps> = ({ group }): JSX.Element => {
         )}
         {members.length !== 0 && (
           <>
-            <RoleBorder title={"member"} />
+            <RoleBorder title={translation.modals.chat.member} />
             {members.map((member: Member) => (
               <ChatMember chat={group} member={member} key={member.user.uuid} />
             ))}
@@ -151,6 +154,7 @@ interface ChatMemberProps {
 
 const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element => {
   const { client } = useClient();
+  const { translation } = useLang();
   const { openMember, openChat } = useModal();
   const menuRef = useRef<SVGSVGElement>(null);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -176,8 +180,8 @@ const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element =>
         {withMore && <IconButton className={baseStyle["iconbutton"]} children={<MoreIcon ref={menuRef} className={baseStyle["icon"]} />} onClick={() => setMenuOpen(true)} />}
       </div>
       <Menu anchorEl={menuRef.current} open={menuOpen} onClose={() => setMenuOpen(false)}>
-        {chat instanceof Group && chat.canKick && <MenuItem onClick={handleKick} onClose={setMenuOpen} children={"Kick Member"} />}
-        {chat instanceof Group && chat.canBan && <MenuItem onClick={handleBan} onClose={setMenuOpen} children={"Ban Member"} />}
+        {chat instanceof Group && chat.canKick && <MenuItem onClick={handleKick} onClose={setMenuOpen} children={translation.modals.chat.kick_member} />}
+        {chat instanceof Group && chat.canBan && <MenuItem onClick={handleBan} onClose={setMenuOpen} children={translation.modals.chat.ban_member} />}
       </Menu>
     </div>
   );
@@ -188,10 +192,11 @@ interface InformationsProps {
 }
 
 const Informations: React.FC<InformationsProps> = ({ chat }): JSX.Element => {
+  const { translation } = useLang();
   const getTimeString = (date: Date): string => {
-    const getString = (unit: string, times: number): string => {
+    const getString = (unit: { name: string; plural: string }, times: number): string => {
       const isMultiple: boolean = Math.floor(times) > 1;
-      return `${Math.floor(times)} ${unit}${isMultiple ? "s" : ""} ago`;
+      return `${translation.modals.time_prefix + " "}${Math.floor(times)} ${unit.name}${isMultiple ? unit.plural : ""}${" " + translation.modals.time_suffix}`;
     };
 
     const now: Date = new Date();
@@ -202,13 +207,13 @@ const Informations: React.FC<InformationsProps> = ({ chat }): JSX.Element => {
     const week: number = 7 * day;
     const month: number = 4 * week;
     const year: number = 12 * month;
-    if (difference < 5 * minute) return "Just now";
-    else if (difference < hour) return getString("minute", difference / minute);
-    else if (difference < day) return getString("hour", difference / hour);
-    else if (difference < week) return getString("day", difference / day);
-    else if (difference < month) return getString("week", difference / week);
-    else if (difference < year) return getString("month", difference / month);
-    else return getString("year", difference / year);
+    if (difference < 5 * minute) return translation.modals.user.just_now;
+    else if (difference < hour) return getString(translation.modals.minute, difference / minute);
+    else if (difference < day) return getString(translation.modals.hour, difference / hour);
+    else if (difference < week) return getString(translation.modals.day, difference / day);
+    else if (difference < month) return getString(translation.modals.week, difference / week);
+    else if (difference < year) return getString(translation.modals.month, difference / month);
+    else return getString(translation.modals.year, difference / year);
   };
 
   const name: string = chat instanceof Group ? chat.name : chat instanceof PrivateChat ? chat.participant.user.name : "";
@@ -218,11 +223,11 @@ const Informations: React.FC<InformationsProps> = ({ chat }): JSX.Element => {
   return (
     <Scrollbar>
       <section className={style["informations-container"]}>
-        <InformationContainer className={style["name"]} title={"Name"} children={name} />
-        <InformationContainer className={style["tag"]} title={"Tag"} children={`@${tag}`} />
-        <InformationContainer className={style["description"]} title={"Description"} children={description} />
-        <InformationContainer className={style["members"]} title={"Members"} children={chat.members.size} />
-        <InformationContainer className={style["createdat"]} title={"Created"} children={getTimeString(chat.createdAt)} />
+        <InformationContainer className={style["name"]} title={translation.modals.chat.name} children={name} />
+        <InformationContainer className={style["tag"]} title={translation.modals.chat.tag} children={`@${tag}`} />
+        <InformationContainer className={style["description"]} title={translation.modals.chat.description} children={description} />
+        <InformationContainer className={style["members"]} title={translation.modals.chat.members} children={chat.members.size} />
+        <InformationContainer className={style["createdat"]} title={translation.modals.chat.created} children={getTimeString(chat.createdAt)} />
       </section>
     </Scrollbar>
   );

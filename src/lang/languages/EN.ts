@@ -4,6 +4,7 @@ import {
   LandingTranslations,
   LocaleTranslations,
   LoginTranslations,
+  ModalTranslations,
   PasswordResetTranslations,
   RegisterTranslations,
   SignUpTranslations,
@@ -208,6 +209,77 @@ const sites: SiteTitleTranslations = {
   chat: "Chat -",
 };
 
+const modals: ModalTranslations = {
+  minute: {
+    name: "Minute",
+    plural: "s",
+  },
+  hour: {
+    name: "Hour",
+    plural: "s",
+  },
+  day: {
+    name: "Day",
+    plural: "s",
+  },
+  week: {
+    name: "Week",
+    plural: "s",
+  },
+  month: {
+    name: "Month",
+    plural: "s",
+  },
+  year: {
+    name: "Year",
+    plural: "s",
+  },
+  time_prefix: "",
+  time_suffix: "ago",
+  user: {
+    chats: "Chats",
+    information: "Information",
+    create_chat: "Create Chat",
+
+    description: "Description",
+    joined: "Joined",
+    just_now: "Just Now",
+    last_seen: "Last Seen",
+    name: "Name",
+    no_shared: "No Shared Chats",
+    tag: "Tag",
+  },
+  chat_preview: {
+    information: "Information",
+    description: "Description",
+    join_group: "Join Group",
+    members: "Members",
+    name: "Name",
+    online: "Online",
+    tag: "Tag",
+  },
+  chat: {
+    admin: "Admin",
+    ban_member: "Ban Member",
+    information: "Information",
+    kick_member: "Kick Member",
+    member: "Memebr",
+    members: "Memebr",
+    owner: "Owner",
+    created: "Created",
+    description: "Description",
+    tag: "Tag",
+    name: "Name",
+  },
+  change_password: {
+    title: "Change Password",
+    new_password: "New Password",
+    old_password: "Old Password",
+    submit: "Change Password",
+    forgot: "Forgot Password",
+  },
+};
+
 export const English: Translation = {
   landing: landing,
   login: login,
@@ -218,4 +290,5 @@ export const English: Translation = {
   passwordreset: passwordreset,
   locales: locales,
   sites: sites,
+  modals: modals,
 };

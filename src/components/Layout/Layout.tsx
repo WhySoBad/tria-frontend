@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useBurger } from "../../hooks/BurgerContext";
 import { useClient } from "../../hooks/ClientContext";
+import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Layout.module.scss";
 import Burger from "../Burger/Burger";
 import Footer from "../Footer/Footer";
@@ -10,6 +11,7 @@ import Scrollbar from "../Scrollbar/Scrollbar";
 
 const Layout: React.FC = ({ children }): JSX.Element => {
   const matches = useMediaQuery("(min-width: 800px)");
+  const { language, setLanguage } = useLang();
   const ref = useRef<HTMLDivElement>(null);
   const { open, setOpen } = useBurger();
   const { client } = useClient();
@@ -29,6 +31,10 @@ const Layout: React.FC = ({ children }): JSX.Element => {
   useEffect(() => {
     setOpen(!(rendered && !matches && matches !== null));
   }, [matches]);
+
+  useEffect(() => {
+    if (client && language !== client.user.locale) setLanguage(client.user.locale);
+  }, [children]);
 
   if (!client) return <></>;
 

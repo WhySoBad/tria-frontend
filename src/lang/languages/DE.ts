@@ -4,6 +4,7 @@ import {
   LandingTranslations,
   LocaleTranslations,
   LoginTranslations,
+  ModalTranslations,
   PasswordResetTranslations,
   RegisterTranslations,
   SignUpTranslations,
@@ -36,7 +37,7 @@ const login: LoginTranslations = {
   title: "Anmelden",
   mail: "Mail",
   password: "Passwort",
-  forgot: "Passwort vergessen",
+  forgot: "Passwort Vergessen",
   login: "Anmelden",
 };
 
@@ -208,6 +209,77 @@ const sites: SiteTitleTranslations = {
   chat: "Chat -",
 };
 
+const modals: ModalTranslations = {
+  minute: {
+    name: "Minute",
+    plural: "n",
+  },
+  hour: {
+    name: "Stunde",
+    plural: "n",
+  },
+  day: {
+    name: "Tag",
+    plural: "en",
+  },
+  week: {
+    name: "Woche",
+    plural: "n",
+  },
+  month: {
+    name: "Monat",
+    plural: "en",
+  },
+  year: {
+    name: "Jahr",
+    plural: "en",
+  },
+  time_prefix: "Vor",
+  time_suffix: "",
+  user: {
+    chats: "Chats",
+    information: "Informationen",
+    create_chat: "Chat Starten",
+
+    description: "Beschreibung",
+    joined: "Beigetreten",
+    just_now: "Gerade Eben",
+    last_seen: "Zuletzt Gesehen",
+    name: "Name",
+    no_shared: "Keine Gemeinsamen Chats",
+    tag: "Tag",
+  },
+  chat_preview: {
+    information: "Informationen",
+    description: "Beschreibung",
+    join_group: "Gruppe Beitreten",
+    members: "Mitglieder",
+    name: "Name",
+    online: "Online",
+    tag: "Tag",
+  },
+  chat: {
+    admin: "Admin",
+    ban_member: "Mitglied Bannen",
+    information: "Informationen",
+    kick_member: "Mitglied Kicken",
+    member: "Mitglied",
+    members: "Mitglieder",
+    owner: "Owner",
+    created: "Erstellt",
+    description: "Beschreibung",
+    tag: "Tag",
+    name: "Name",
+  },
+  change_password: {
+    title: "Passwort Ändern",
+    new_password: "Neues Passwort",
+    old_password: "Altes Passwort",
+    submit: "Passwort Ändern",
+    forgot: "Passwort Vergessen",
+  },
+};
+
 export const German: Translation = {
   landing: landing,
   login: login,
@@ -218,4 +290,5 @@ export const German: Translation = {
   passwordreset: passwordreset,
   locales: locales,
   sites: sites,
+  modals: modals,
 };

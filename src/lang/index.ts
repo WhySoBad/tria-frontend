@@ -8,6 +8,7 @@ export interface Translation {
   passwordreset: PasswordResetTranslations;
   locales: LocaleTranslations;
   sites: SiteTitleTranslations;
+  modals: ModalTranslations;
 }
 
 export interface LandingTranslations {
@@ -205,4 +206,75 @@ export interface SiteTitleTranslations {
   profile: string;
   signup: string;
   chat: string;
+}
+
+export interface ModalTranslations {
+  minute: {
+    name: string;
+    plural: string;
+  };
+  hour: {
+    name: string;
+    plural: string;
+  };
+  day: {
+    name: string;
+    plural: string;
+  };
+  week: {
+    name: string;
+    plural: string;
+  };
+  month: {
+    name: string;
+    plural: string;
+  };
+  year: {
+    name: string;
+    plural: string;
+  };
+  time_prefix: string;
+  time_suffix: string;
+  user: {
+    create_chat: string;
+    information: string;
+    chats: string;
+    just_now: string;
+
+    last_seen: string;
+    joined: string;
+    name: string;
+    tag: string;
+    description: string;
+    no_shared: string;
+  };
+  chat_preview: {
+    information: string;
+    join_group: string;
+    name: string;
+    tag: string;
+    description: string;
+    members: string;
+    online: string;
+  };
+  chat: {
+    information: string;
+    members: string;
+    owner: string;
+    admin: string;
+    member: string;
+    kick_member: string;
+    ban_member: string;
+    name: string;
+    tag: string;
+    description: string;
+    created: string;
+  };
+  change_password: {
+    title: string;
+    old_password: string;
+    new_password: string;
+    submit: string;
+    forgot: string;
+  };
 }

@@ -9,7 +9,7 @@ import { useClient } from "../../hooks/ClientContext";
 import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
 import style from "../../styles/modules/Explore.module.scss";
-import { debounce } from "../../util";
+import { debounce, hexToHsl } from "../../util";
 import { Searchbar } from "../Input/Input";
 import Menu, { CheckboxMenuItem } from "../Menu/Menu";
 import Scrollbar from "../Scrollbar/Scrollbar";
@@ -100,11 +100,18 @@ interface UserItemProps {
 const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
   const [color, setColor] = useState<string>();
 
-  const { data, loading, error } = usePalette(user.avatarURL, 2, "hex", { quality: 15, crossOrigin: "anonymous" });
+  const { data, loading, error } = usePalette(user.avatarURL, 3, "hex", { quality: 15, crossOrigin: "anonymous" });
 
   useEffect(() => {
     if (error) setColor(user.color);
-    else setColor(Array.isArray(data) ? data[0] : data);
+    else {
+      if (Array.isArray(data)) {
+        const hsl: { h: number; s: number; l: number } = hexToHsl(data[0]);
+        if (hsl.l < 20 && hsl.s !== 0) setColor(data[2]);
+        else if (hsl.s === 0 && hsl.l < 30) setColor("#333333");
+        else setColor(data[0]);
+      } else setColor(data);
+    }
   }, [loading, error]);
 
   const { openUser } = useModal();
@@ -144,11 +151,18 @@ interface ChatItemProps {
 const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
   const [color, setColor] = useState<string>();
 
-  const { data, loading, error } = usePalette(chat.avatarURL, 2, "hex", { quality: 15, crossOrigin: "anonymous" });
+  const { data, loading, error } = usePalette(chat.avatarURL, 3, "hex", { quality: 15, crossOrigin: "anonymous" });
 
   useEffect(() => {
     if (error) setColor(chat.color);
-    else setColor(Array.isArray(data) ? data[0] : data);
+    else {
+      if (Array.isArray(data)) {
+        const hsl: { h: number; s: number; l: number } = hexToHsl(data[0]);
+        if (hsl.l < 20 && hsl.s !== 0) setColor(data[2]);
+        else if (hsl.s === 0 && hsl.l < 30) setColor("#333333");
+        else setColor(data[0]);
+      } else setColor(data);
+    }
   }, [loading, error]);
 
   const { openChatPreview } = useModal();

@@ -1,9 +1,11 @@
 import { IconButton } from "@material-ui/core";
 import { Close as CloseIcon, Visibility as ShownIcon, VisibilityOff as HiddenIcon } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useClient } from "../../../hooks/ClientContext";
+import { useLang } from "../../../hooks/LanguageContext";
 import style from "../../../styles/modules/ChangePasswordModal.module.scss";
 import Button, { TextButton } from "../../Button/Button";
 import Input from "../../Input/Input";
@@ -19,8 +21,10 @@ type Inputs = {
 
 const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ onClose }): JSX.Element => {
   const [snackError, setSnackError] = useState<string>();
+  const { translation } = useLang();
   const [hidden, setHidden] = useState<boolean>(true);
   const [newHidden, setNewHidden] = useState<boolean>(true);
+  const router = useRouter();
   const { client } = useClient();
   const {
     register,
@@ -34,14 +38,14 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ onClose }): J
 
   return (
     <div className={style["container"]}>
-      <h4 children={"Change Password"} className={style["title"]} />
+      <h4 children={translation.modals.change_password.title} className={style["title"]} />
       <div className={style["close-container"]} children={<IconButton className={style["close"]} children={<CloseIcon className={style["icon"]} />} onClick={onClose} />} />
       <div className={style["form-container"]}>
         <form className={style["form"]} onSubmit={handleSubmit(onSubmit)}>
           <div className={style["password-container"]}>
             <Input
               className={style["password"]}
-              placeholder={"Old Password"}
+              placeholder={translation.modals.change_password.old_password}
               {...register("password", { required: true })}
               error={!!errors.password}
               type={hidden ? "password" : "text"}
@@ -51,11 +55,22 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ onClose }): J
                 </IconButton>
               }
             />
-            <span className={style["forgot"]} children={<TextButton children={"Forgot Password"} />} />
+            <span
+              className={style["forgot"]}
+              children={
+                <TextButton
+                  children={translation.modals.change_password.forgot}
+                  onClick={() => {
+                    router.push("/passwordreset");
+                    onClose && onClose();
+                  }}
+                />
+              }
+            />
           </div>
           <Input
             className={style["new-password"]}
-            placeholder={"New Password"}
+            placeholder={translation.modals.change_password.new_password}
             {...register("newPassword", { required: true })}
             error={!!errors.newPassword}
             type={newHidden ? "password" : "text"}
@@ -67,7 +82,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ onClose }): J
           />
 
           <div className={style["button-container"]}>
-            <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={"Change Password"} />
+            <Button type={"submit"} disabled={!(isValid && isDirty) || isSubmitting} children={translation.modals.change_password.submit} />
           </div>
         </form>
       </div>

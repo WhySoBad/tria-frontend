@@ -469,7 +469,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
                 <Button
                   children={translation.app.chat_settings.settings.save}
                   type={"submit"}
-                  disabled={disabled || isSubmitting || url === chat.avatarURL || !(isValid && (isDirty || avatar || (chat.avatarURL && !avatar && !url)))}
+                  disabled={disabled || isSubmitting || (!isDirty && !((chat.avatarURL && !url) || (chat.avatarURL !== url && !!avatar)))}
                 />
               }
             />

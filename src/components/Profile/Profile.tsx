@@ -15,9 +15,7 @@ import Input, { Searchbar, Select } from "../Input/Input";
 import Scrollbar from "../Scrollbar/Scrollbar";
 import Snackbar from "../Snackbar/Snackbar";
 
-interface ProfileProps {}
-
-const Profile: React.FC<ProfileProps> = (): JSX.Element => {
+const Profile: React.FC = (): JSX.Element => {
   const { translation } = useLang();
   const { client } = useClient();
   return (
@@ -286,7 +284,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
                 defaultValue={defaultLocale}
                 render={({ field: { onChange, ...rest } }) => (
                   <Select
-                    onChange={(event) => onChange && onChange(event.target.value)}
+                    onChange={(event) => onChange(event.target.value)}
                     values={[
                       { value: "EN", label: translation.locales.EN },
                       { value: "DE", label: translation.locales.DE },
@@ -307,7 +305,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
                 <Button
                   children={translation.app.profile.settings.save}
                   type={"submit"}
-                  disabled={disabled || isSubmitting || url === client.user.avatarURL || !(isValid && (isDirty || avatar || (client.user.avatarURL && !avatar && !url)))}
+                  disabled={disabled || isSubmitting || (!isDirty && !((client.user.avatarURL && !url) || (client.user.avatarURL !== url && !!avatar)))}
                 />
               }
             />
