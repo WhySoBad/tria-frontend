@@ -63,7 +63,7 @@
   overflow: hidden;
   position: relative;
 
-  &::after {
+  /*   &::after {
     content: "";
     position: absolute;
     height: 100%;
@@ -73,6 +73,27 @@
     clip-path: polygon(0 70%, 100% 25%, 100% 100%, 0% 100%);
     background-color: $darker;
     z-index: -1;
+  } */
+
+  .background-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: -1;
+
+    .background {
+      height: 30vh;
+      background-color: $darker;
+      width: 100%;
+    }
+
+    .section-transition {
+      transform: rotate(180deg);
+      max-height: 150px;
+      .fill {
+        fill: $darker;
+      }
+    }
   }
 
   .form-container {

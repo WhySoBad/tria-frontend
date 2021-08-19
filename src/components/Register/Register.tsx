@@ -57,7 +57,6 @@ const Register: React.FC<RegisterProps> = (): JSX.Element => {
 
   return (
     <>
-      <title children={translation.sites.register} />
       <AnimatedBackground />
       <div className={style["container"]}>
         <h4 children={translation.register.title} className={style["title"]} />

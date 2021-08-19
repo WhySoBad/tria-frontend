@@ -50,7 +50,6 @@ const SignUp: React.FC = (): JSX.Element => {
 
   return (
     <>
-      <title children={translation.sites.signup} />
       <AnimatedBackground />
       <div className={style["container"]}>
         <h4 children={translation.signup.title} className={style["title"]} />

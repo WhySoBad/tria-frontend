@@ -35,7 +35,6 @@ const PasswordReset: React.FC = (): JSX.Element => {
 
   return (
     <>
-      <title children={translation.sites.passwordreset} />
       <AnimatedBackground />
       <div className={style["container"]}>
         <h4 children={translation.passwordreset.title} className={style["title"]} />

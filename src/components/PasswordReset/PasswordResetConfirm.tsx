@@ -39,7 +39,6 @@ const PasswordResetConfirm: React.FC<PasswordResetConfirmProps> = ({ token }): J
 
   return (
     <>
-      <title children={translation.sites.passwordreset_confirm} />
       <AnimatedBackground />
       <div className={style["container"]}>
         <h4 children={"Password Reset"} className={style["title"]} />

@@ -187,3 +187,19 @@
     font-family: $font;
   }
 }
+
+@include smaller {
+  .form-container {
+    .form {
+      grid-template-areas: "name name" "description description" "tag public" "members members" ". buttons" !important;
+    }
+  }
+}
+
+@include smallest {
+  .form-container {
+    .form {
+      grid-template-areas: "name" "description" "tag" " public" "members" "buttons" !important;
+    }
+  }
+}

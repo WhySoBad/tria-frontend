@@ -17,7 +17,6 @@ const Create: React.FC = (): JSX.Element => {
   const { translation } = useLang();
   return (
     <>
-      <title children={translation.sites.create} />
       <div className={style["title-container"]}>
         <h3 className={style["title"]} children={translation.app.create.title} />
       </div>

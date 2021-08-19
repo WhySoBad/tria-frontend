@@ -67,7 +67,6 @@ const ChatTitle: React.FC<ChatTitleProps> = ({ settings = false }): JSX.Element 
 
   return (
     <>
-      <title children={`${translation.sites.chat} ${name}`} />
       <h3 children={name} className={style["title"]} onClick={() => openChat(chat)} />
       <div className={style["icon-container"]}>
         {canEdit && <IconButton className={style["iconbutton"]} onClick={() => redirect()} children={<SettingsIcon className={style["icon"]} />} />}

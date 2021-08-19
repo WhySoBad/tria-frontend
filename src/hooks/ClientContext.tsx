@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Client, validateToken } from "client";
+import { Client, ClientEvent, validateToken } from "client";
 import { NextPage } from "next";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 import { useAuth } from "./AuthContext";
 
 interface ClientContext {
@@ -21,6 +22,7 @@ export const ClientProvider: NextPage = ({ children }): JSX.Element => {
   const { token } = useAuth();
   const [client, setClient] = useState<Client>(null);
   const [isLoading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const fetchClient = (): Promise<void> => {
     return new Promise(async (resolve, reject) => {
@@ -32,6 +34,10 @@ export const ClientProvider: NextPage = ({ children }): JSX.Element => {
       if (!valid) reject("Invalid Token");
       const newClient: Client = new Client({ token: token, log: true });
       await newClient.connect().catch(reject);
+      newClient.on(ClientEvent.DISCONNECT, () => {
+        setClient(null);
+        router.push("/auth");
+      });
       setClient(newClient);
       setLoading(false);
     });

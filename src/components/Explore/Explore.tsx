@@ -53,7 +53,6 @@ const Explore: React.FC = (): JSX.Element => {
 
   return (
     <main className={style["container"]}>
-      <title children={translation.sites.explore} />
       <Scrollbar reference={scrollRef}>
         <section className={style["title-container"]}>
           <div className={style["title-content"]}>

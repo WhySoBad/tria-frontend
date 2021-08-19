@@ -1,19 +1,22 @@
+import { validatePasswordReset } from "client";
 import { NextPage, NextPageContext } from "next";
 import React from "react";
-import { validatePasswordReset } from "client";
 import { FormLayout } from "../../components/Layout/Layout";
+import Meta from "../../components/Meta/Meta";
 import PasswordResetConfirm from "../../components/PasswordReset/PasswordResetConfirm";
+import { useLang } from "../../hooks/LanguageContext";
 
 interface Props {
   token?: string;
 }
 
 const PasswordResetPage: NextPage<Props> = ({ token }): JSX.Element => {
+  const { translation } = useLang();
   return (
-    <>
-      <title>Reset Password</title>
-      <FormLayout children={<PasswordResetConfirm token={token} />} />
-    </>
+    <FormLayout>
+      <PasswordResetConfirm token={token} />
+      <Meta noindex description="Finish your password reset by setting a new password" title={translation.sites.passwordreset_confirm} />
+    </FormLayout>
   );
 };
 

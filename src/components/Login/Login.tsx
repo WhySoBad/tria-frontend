@@ -37,7 +37,6 @@ const Login: React.FC = (): JSX.Element => {
 
   return (
     <>
-      <title children={translation.sites.login} />
       <AnimatedBackground />
       <div className={style["container"]}>
         <h4 children={translation.login.title} className={style["title"]} />

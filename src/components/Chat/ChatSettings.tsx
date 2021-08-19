@@ -1,11 +1,10 @@
 import { Avatar, FormControlLabel, IconButton } from "@material-ui/core";
 import { ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
-import { Admin, BannedMember, Chat, checkGroupTag, ClientEvent, Group, GroupRole, GroupType, Member, Owner, Permission } from "client";
+import { Admin, BannedMember, checkGroupTag, ClientEvent, Group, GroupRole, GroupType, Member, Owner, Permission } from "client";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
 import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Chat.module.scss";
@@ -17,18 +16,13 @@ import Scrollbar from "../Scrollbar/Scrollbar";
 import Snackbar from "../Snackbar/Snackbar";
 import ChatTitle from "./ChatTitle";
 
-const ChatSettings: React.FC = (): JSX.Element => {
-  const { client } = useClient();
-  const { selected } = useChat();
-  const { translation } = useLang();
+interface ChatSettingsProps {
+  chat: Group;
+}
 
-  const chat: Chat | undefined = client.user.chats.get(selected);
-
-  if (!(chat instanceof Group)) return <></>;
-
+const ChatSettings: React.FC<ChatSettingsProps> = ({ chat }): JSX.Element => {
   return (
     <>
-      <title children={`${translation.sites.chat_settings} ${chat.name}`} />
       <div className={style["title-container"]} children={<ChatTitle settings />} />
       <Scrollbar>
         <section className={style["chat-settings-container"]}>
