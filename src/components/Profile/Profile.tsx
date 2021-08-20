@@ -93,7 +93,7 @@ const ChatsListItem: React.FC<ChatsListItemProps> = ({ chat }): JSX.Element => {
   return (
     <div className={style["item-container"]} onClick={() => openChat(chat)}>
       <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={avatarURL} style={{ backgroundColor: !avatarURL && color }} />
+        <Avatar className={style["avatar"]} src={avatarURL} style={{ backgroundColor: !avatarURL && color }} alt={""} />
         <div className={style["title"]}>
           <h6 children={name} />
           {chat instanceof Group && <GroupIcon className={style["icon"]} />}
@@ -208,6 +208,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
               className={style["avatar"]}
               src={url}
               style={{ backgroundColor: !url && client.user.color }}
+              alt={""}
             />
           </a>
         </label>

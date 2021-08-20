@@ -172,7 +172,7 @@ const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element =>
   return (
     <div className={style["item-container"]} data-open={menuOpen}>
       <div className={style["item"]} onClick={() => openMember(member, { withBack: true, onClose: () => openChat(chat, { selectedTab: 1 }) })}>
-        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: !member.user.avatarURL && member.user.color }} />
+        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: !member.user.avatarURL && member.user.color }} alt={""} />
         <h6 children={member.user.name} className={style["title"]} />
         <div children={`@${member.user.tag}`} className={style["tag"]} />
       </div>

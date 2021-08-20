@@ -173,7 +173,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ uuid, user, chat }): JS
   return (
     <div className={style["item-container"]} onClick={() => setCollapsed(!collapsed)}>
       <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: !member.user.avatarURL && member.user.color }} />
+        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: !member.user.avatarURL && member.user.color }} alt={""} />
         <h6 children={member.user.name} className={style["title"]} />
         <div children={member.user.description} className={style["description"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}>
@@ -374,6 +374,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
               className={style["avatar"]}
               src={url}
               style={{ backgroundColor: !url && chat.color }}
+              alt={""}
             />
           </a>
         </label>
@@ -534,7 +535,7 @@ const BannedListItem: React.FC<BannedListItemProps> = ({ member, chat }): JSX.El
   return (
     <div className={style["item-container"]} onClick={() => setCollapsed(!collapsed)}>
       <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={member.avatarURL || ""} style={{ backgroundColor: !member.avatarURL && member.color }} />
+        <Avatar className={style["avatar"]} src={member.avatarURL || ""} style={{ backgroundColor: !member.avatarURL && member.color }} alt={""} />
         <h6 children={member.name} className={style["title"]} />
         <div children={member.description} className={style["description"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}>

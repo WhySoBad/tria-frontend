@@ -1,28 +1,9 @@
 User-agent: *
 Allow: /
-
-User-agent: *
 Disallow: /profile
-
-
-User-agent: *
 Disallow: /Auth
-
-User-agent: *
 Disallow: /500
-
-
-User-agent: *
 Disallow: /404
-
-
-User-agent: *
 Disallow: /register/
-
-
-User-agent: *
-Disallow: /passwordreset/
-
-
-User-agent: *
+Disallow: /passwordreset/*
 Disallow: /chat/

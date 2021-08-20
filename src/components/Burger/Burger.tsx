@@ -164,7 +164,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element
               data-online={chat instanceof PrivateChat && chat.participant.user.online}
               data-group={chat instanceof Group}
             >
-              <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: !src && color, width: "2rem", height: "2rem" }} />
+              <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: !src && color, width: "2rem", height: "2rem" }} alt={""} />
             </Badge>
           </div>
           <div className={style["burger-text-container"]} data-open={open}>

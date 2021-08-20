@@ -14,7 +14,7 @@ interface Props {
 }
 
 const ChatPage: NextPage<Props> = ({ uuid }): JSX.Element => {
-  const { setSelected, selected } = useChat();
+  const { setSelected } = useChat();
   const { client } = useClient();
   const { translation } = useLang();
   const router = useRouter();
@@ -23,16 +23,15 @@ const ChatPage: NextPage<Props> = ({ uuid }): JSX.Element => {
     setSelected(uuid);
   }, [uuid]);
 
-  const chat: Chat | undefined = client.user.chats.get(uuid);
-  if (!chat) return <></>;
-
-  if (selected !== uuid) router.push("/app");
+  const chat: Chat | undefined = client?.user?.chats?.get(uuid);
+  if (!chat) router.push("/app");
 
   const name: string = chat instanceof PrivateChat ? chat.participant.user.name : chat instanceof Group ? chat.name : "";
+  const avatar: string | null = chat instanceof PrivateChat ? chat.participant.user.avatarURL : chat instanceof Group ? chat.avatarURL : null;
 
   return (
     <Layout>
-      <Meta noindex description="A chat to write with other people" title={`${translation.sites.chat} ${name}`} />
+      <Meta noindex description="A chat to write with other people" title={`${translation.sites.chat} ${name}`} image={avatar} />
       <ChatComponent />
     </Layout>
   );

@@ -11,13 +11,13 @@ const Auth: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     if (url && typeof url === "string") router.push("/auth", undefined, { shallow: true });
-    else if (client || (!client && !isLoading && !url)) router.push("/app");
-    else router.push("/");
+    else if (client && !url && !isLoading) router.push("/app");
     if (!client && !isLoading) fetchClient().catch(() => router.push("/"));
   }, []);
 
   useEffect(() => {
     if (client && url) router.push(url);
+    else if (client && !url) router.push("/app");
   }, [client]);
 
   return <main className={style["container"]} children={<CircularProgress classes={{ root: style["loader"] }} />} />;

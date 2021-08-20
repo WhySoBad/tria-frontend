@@ -27,7 +27,7 @@ const ChatSettingsPage: NextPage<Props> = ({ chat }): JSX.Element => {
   return (
     <Layout>
       <ChatSettings chat={group} />
-      <Meta noindex description="Edit a group or manage its members" title={`${translation.sites.chat_settings} ${group.name}`} />
+      <Meta noindex description="Edit a group or manage its members" title={`${translation.sites.chat_settings} ${group.name}`} image={group.avatarURL} />
     </Layout>
   );
 };

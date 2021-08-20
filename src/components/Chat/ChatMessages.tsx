@@ -38,6 +38,8 @@ const Messages: React.FC = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
+    let mounted: boolean = true;
+
     if (!chat) return;
     const unknownUsers: Array<string> = [];
 
@@ -48,9 +50,13 @@ const Messages: React.FC = (): JSX.Element => {
     unknownUsers.forEach((uuid: string) => {
       if (users.find((preview: UserPreview) => preview.uuid === uuid)) return;
       getUserPreview(uuid)
-        .then((user: UserPreview) => setUsers([...users, user]))
+        .then((user: UserPreview) => mounted && setUsers([...users, user]))
         .catch(() => client.error(`Failed Prefetching Account "${uuid}"`));
     });
+
+    return () => {
+      mounted = false;
+    };
   }, [selected, chat?.messages?.size]);
 
   useEffect(() => {
@@ -170,6 +176,7 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead, fetchedSe
       <div className={style["avatar-container"]} data-banned={!sender || sender instanceof BannedMember} data-self={isSelf}>
         <Avatar
           src={src}
+          alt={""}
           className={style["avatar"]}
           style={{ backgroundColor: !src && sender && (sender instanceof Member ? sender.user.color : sender.color) }}
           onClick={() => {

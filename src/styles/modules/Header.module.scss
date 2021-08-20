@@ -39,3 +39,12 @@
     }
   }
 }
+
+.logo {
+  fill: none;
+  stroke: $white;
+  stroke-miterlimit: 10;
+  stroke-width: 6px;
+  z-index: 1000;
+  cursor: pointer;
+}

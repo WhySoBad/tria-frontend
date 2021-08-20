@@ -34,12 +34,14 @@ export const ClientProvider: NextPage = ({ children }): JSX.Element => {
       if (!valid) reject("Invalid Token");
       const newClient: Client = new Client({ token: token, log: true });
       await newClient.connect().catch(reject);
-      newClient.on(ClientEvent.DISCONNECT, () => {
-        setClient(null);
-        router.push("/auth");
-      });
-      setClient(newClient);
-      setLoading(false);
+      if (newClient.connected) {
+        newClient.on(ClientEvent.DISCONNECT, () => {
+          setClient(null);
+          router.push("/auth");
+        });
+        setClient(newClient);
+        setLoading(false);
+      } else setLoading(false);
     });
   };
 

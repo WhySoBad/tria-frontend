@@ -206,7 +206,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, user }): JSX.Element => {
     <div id={chat.uuid} className={style["item-container"]} onContextMenu={handleRightClick}>
       <Link href={`/chat/${chat.uuid}`}>
         <div className={style["item"]} onClick={close}>
-          <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: color }} />
+          <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: color }} alt={""} />
           <div className={style["name"]}>
             <h6 children={name} />
             {chat instanceof Group && <GroupIcon className={style["icon"]} />}

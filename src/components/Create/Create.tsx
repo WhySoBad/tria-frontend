@@ -210,7 +210,7 @@ const MemberItem: React.FC<MemberItemProps> = ({ user, onChange }): JSX.Element 
         <span className={style["checkbox"]}>
           <Checkbox checked={checked} />
         </span>
-        <Avatar className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} />
+        <Avatar className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} alt={""} />
         <div className={style["title"]}>
           <h6 children={user.name} />
         </div>
