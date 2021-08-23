@@ -39,3 +39,7 @@ npm run build && npm run start
 
 Open [localhost at port 3000](http://localhost:3000) in your browser
 
+## License 
+
+© [WhySoBad](https://github.com/WhySoBad)
+
