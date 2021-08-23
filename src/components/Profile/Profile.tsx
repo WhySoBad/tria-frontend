@@ -1,4 +1,3 @@
-import { Avatar } from "@material-ui/core";
 import { Group as GroupIcon } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { Chat, ChatSocketEvent, checkGroupTag, Group, Locale, PrivateChat } from "client";
@@ -10,6 +9,7 @@ import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
 import style from "../../styles/modules/Profile.module.scss";
 import { debouncedPromise } from "../../util";
+import Avatar from "../Avatar/Avatar";
 import Button, { TextButton } from "../Button/Button";
 import Input, { Searchbar, Select } from "../Input/Input";
 import Scrollbar from "../Scrollbar/Scrollbar";
@@ -93,7 +93,7 @@ const ChatsListItem: React.FC<ChatsListItemProps> = ({ chat }): JSX.Element => {
   return (
     <div className={style["item-container"]} onClick={() => openChat(chat)}>
       <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={avatarURL} style={{ backgroundColor: !avatarURL && color }} alt={""} />
+        <Avatar className={style["avatar"]} src={avatarURL} color={color} />
         <div className={style["title"]}>
           <h6 children={name} />
           {chat instanceof Group && <GroupIcon className={style["icon"]} />}
@@ -202,14 +202,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
       <div className={style["avatar-container"]}>
         <label htmlFor={"upload-avatar"}>
           <a>
-            <Avatar
-              aria-disabled={disabled || isSubmitting}
-              data-content={translation.app.profile.settings.upload_avatar}
-              className={style["avatar"]}
-              src={url}
-              style={{ backgroundColor: !url && client.user.color }}
-              alt={""}
-            />
+            <Avatar aria-disabled={disabled || isSubmitting} data-content={translation.app.profile.settings.upload_avatar} className={style["avatar"]} src={url} color={client.user.color} />
           </a>
         </label>
         <input

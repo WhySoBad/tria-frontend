@@ -8,6 +8,7 @@ interface AuthContext {
   validate: () => Promise<boolean>;
   isLoggedIn: boolean;
   token: string;
+  validated: boolean;
 }
 
 const defaultValue: AuthContext = {
@@ -15,6 +16,7 @@ const defaultValue: AuthContext = {
   validate: () => new Promise(() => {}),
   isLoggedIn: false,
   token: null,
+  validated: false,
 };
 
 export const AuthContext = React.createContext<AuthContext>(defaultValue);
@@ -24,6 +26,7 @@ export const AuthProvider: NextPage = ({ children }): JSX.Element => {
   const tokenCookie: string | undefined = cookies.token;
   const [token, setToken] = useState<string>(tokenCookie);
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
+  const [validated, setValidated] = useState<boolean>(false);
 
   useEffect(() => {
     if (token) {
@@ -51,6 +54,7 @@ export const AuthProvider: NextPage = ({ children }): JSX.Element => {
       validateToken(token)
         .then((valid: boolean) => {
           if (!valid) setToken(undefined);
+          else setValidated(true);
           resolve(valid);
         })
         .catch(reject);
@@ -64,6 +68,7 @@ export const AuthProvider: NextPage = ({ children }): JSX.Element => {
         login: login,
         validate: validate,
         token: token,
+        validated: validated,
       }}
       children={children}
     />

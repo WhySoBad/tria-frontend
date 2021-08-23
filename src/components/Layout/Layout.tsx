@@ -7,6 +7,7 @@ import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Layout.module.scss";
 import Burger from "../Burger/Burger";
 import Footer from "../Footer/Footer";
+import Header from "../Header/Header";
 import Scrollbar from "../Scrollbar/Scrollbar";
 
 const Layout: React.FC = ({ children }): JSX.Element => {
@@ -60,6 +61,7 @@ interface FormLayoutProps {
 export const FormLayout: React.FC<FormLayoutProps> = ({ children, small = false }): JSX.Element => {
   return (
     <main>
+      <Header />
       <Scrollbar style={{ height: "100vh" }}>
         <main className={style["form-layout-container"]}>
           <section className={style["form-container"]}>

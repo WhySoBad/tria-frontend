@@ -1,4 +1,4 @@
-import { Avatar, FormControlLabel } from "@material-ui/core";
+import { FormControlLabel } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { checkGroupTag, GroupRole, GroupType, Locale, SearchOptions, UserPreview } from "client";
 import { useRouter } from "next/router";
@@ -8,6 +8,7 @@ import { useClient } from "../../hooks/ClientContext";
 import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Create.module.scss";
 import { debounce, debouncedPromise } from "../../util";
+import Avatar from "../Avatar/Avatar";
 import Button from "../Button/Button";
 import Input, { Checkbox, Searchbar } from "../Input/Input";
 import Scrollbar from "../Scrollbar/Scrollbar";
@@ -210,7 +211,7 @@ const MemberItem: React.FC<MemberItemProps> = ({ user, onChange }): JSX.Element 
         <span className={style["checkbox"]}>
           <Checkbox checked={checked} />
         </span>
-        <Avatar className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} alt={""} />
+        <Avatar className={style["avatar"]} src={user.avatarURL} color={user.color} />
         <div className={style["title"]}>
           <h6 children={user.name} />
         </div>

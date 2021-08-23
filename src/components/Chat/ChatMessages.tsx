@@ -1,4 +1,4 @@
-import { Avatar, CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import { BannedMember, Chat, ChatSocketEvent, ChatType, getUserPreview, Group, Member, MemberLog, Message, UserPreview } from "client";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
@@ -8,6 +8,7 @@ import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
 import style from "../../styles/modules/Chat.module.scss";
 import { debouncedPromise } from "../../util";
+import Avatar from "../Avatar/Avatar";
 import Menu, { MenuItem } from "../Menu/Menu";
 import Scrollbar from "../Scrollbar/Scrollbar";
 
@@ -176,9 +177,8 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead, fetchedSe
       <div className={style["avatar-container"]} data-banned={!sender || sender instanceof BannedMember} data-self={isSelf}>
         <Avatar
           src={src}
-          alt={""}
           className={style["avatar"]}
-          style={{ backgroundColor: !src && sender && (sender instanceof Member ? sender.user.color : sender.color) }}
+          color={sender && (sender instanceof Member ? sender.user.color : sender.color) || undefined}
           onClick={() => {
             if (sender instanceof Member) openMember(sender);
             else if (sender && !(sender instanceof BannedMember)) openUser(sender);

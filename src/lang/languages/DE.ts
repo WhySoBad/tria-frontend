@@ -9,7 +9,7 @@ import {
   RegisterTranslations,
   SignUpTranslations,
   SiteTitleTranslations,
-  Translation,
+  Translation
 } from "..";
 
 const landing: LandingTranslations = {
@@ -19,17 +19,18 @@ const landing: LandingTranslations = {
   },
   modern: {
     title: "Modern",
-    description: "NAME ist mit modernen Frameworks erstellt worden um die bestmögliche Erfahrung zu bieten",
+    description: "Tria wurde mit modernen Frameworks erstellt, um die bestmögliche Erfahrung zu bieten",
   },
   secure: {
     title: "Sicher",
-    description: "NAME ist mit TLS verschlüsselt und zusätzlich ist der komplette Quellcode auf GitHub einzusehen",
+    description: "Tria ist mit einem TLS-Protokoll verschlüsselt und zusätzlich ist der komplette Quellcode auf GitHub einzusehen",
   },
   quicknav: {
     title: "Schnellnavigation",
-    login: "Anmelden",
+    login: "Login",
     signup: "Registrieren",
     to_app: "Zur App",
+    home: "Home",
   },
 };
 

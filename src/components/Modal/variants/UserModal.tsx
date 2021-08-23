@@ -1,4 +1,4 @@
-import { Avatar, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { AddBox as AddChatIcon, Chat as ChatIcon, Group as GroupIcon, Person as ProfileIcon } from "@material-ui/icons";
 import cn from "classnames";
 import { Chat, ChatSocketEvent, Group, PrivateChat, User, UserPreview, UserSocketEvent } from "client";
@@ -11,6 +11,7 @@ import { useLang } from "../../../hooks/LanguageContext";
 import { useModal } from "../../../hooks/ModalContext";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
 import style from "../../../styles/modules/UserModal.module.scss";
+import Avatar from "../../Avatar/Avatar";
 import Button from "../../Button/Button";
 import Menu, { MenuItem } from "../../Menu/Menu";
 import Scrollbar from "../../Scrollbar/Scrollbar";
@@ -206,7 +207,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, user }): JSX.Element => {
     <div id={chat.uuid} className={style["item-container"]} onContextMenu={handleRightClick}>
       <Link href={`/chat/${chat.uuid}`}>
         <div className={style["item"]} onClick={close}>
-          <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: color }} alt={""} />
+          <Avatar className={style["avatar"]} src={src} color={color} />
           <div className={style["name"]}>
             <h6 children={name} />
             {chat instanceof Group && <GroupIcon className={style["icon"]} />}

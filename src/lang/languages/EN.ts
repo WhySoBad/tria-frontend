@@ -19,17 +19,18 @@ const landing: LandingTranslations = {
   },
   modern: {
     title: "Modern",
-    description: "NAME is built with latest frameworks to provide the best experience",
+    description: "Tria is built with latest frameworks to provide the best experience",
   },
   secure: {
     title: "Secure",
-    description: "NAME is encrypted over TLS and the whole source code is public visible on GitHub",
+    description: "Tria is encrypted over a TLS protocol and the whole source code is public visible on GitHub",
   },
   quicknav: {
     title: "Quick Navigation",
     login: "Login",
     signup: "Sign Up",
     to_app: "To App",
+    home: "Home",
   },
 };
 

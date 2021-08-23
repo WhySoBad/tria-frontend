@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.9.7",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,7 +15,7 @@
     "@types/classnames": "^2.2.11",
     "@types/crypto-js": "^4.0.1",
     "classnames": "^2.3.1",
-    "client": "git+https://github.com/messenger-matura/client.git",
+    "client": "github:WhySoBad/tria-client",
     "color-thief-react": "^2.0.12",
     "crypto-js": "^4.0.0",
     "fs": "0.0.1-security",

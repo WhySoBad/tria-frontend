@@ -1,4 +1,3 @@
-import { Avatar } from "@material-ui/core";
 import { Group as GroupIcon, ViewList as ViewListIcon, ViewModule as ViewModuleIcon } from "@material-ui/icons";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { ChatPreview, SearchOptions, UserPreview } from "client";
@@ -10,6 +9,7 @@ import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
 import style from "../../styles/modules/Explore.module.scss";
 import { debounce, hexToHsl } from "../../util";
+import Avatar from "../Avatar/Avatar";
 import { Searchbar } from "../Input/Input";
 import Menu, { CheckboxMenuItem } from "../Menu/Menu";
 import Scrollbar from "../Scrollbar/Scrollbar";
@@ -119,7 +119,7 @@ const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
       <div className={style["grid-item"]} onClick={() => openUser(user)}>
         <div className={style["content"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
           <div className={style["background"]} />
-          <Avatar variant={"rounded"} className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL && user.color }} alt={""} />
+          <Avatar variant={"rounded"} className={style["avatar"]} src={user.avatarURL} color={user.color} />
           <div className={style["text-container"]}>
             <div className={style["name"]}>
               <h4 children={user.name} />
@@ -132,7 +132,7 @@ const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
   } else if (view === "list") {
     return (
       <div className={style["list-item"]} onClick={() => openUser(user)}>
-        <Avatar className={style["avatar"]} src={user.avatarURL} style={{ backgroundColor: !user.avatarURL ? user.color : color }} alt={""} />
+        <Avatar className={style["avatar"]} src={user.avatarURL} color={user.color} />
         <div className={style["title"]}>
           <h6 children={user.name} />
         </div>
@@ -170,7 +170,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
       <div className={style["grid-item"]} onClick={() => openChatPreview(chat)}>
         <div className={style["content"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
           <div className={style["background"]} />
-          <Avatar variant={"rounded"} className={style["avatar"]} src={chat.avatarURL} style={{ backgroundColor: !chat.avatarURL && chat.color }} alt={""} />
+          <Avatar variant={"rounded"} className={style["avatar"]} src={chat.avatarURL} color={chat.color} />
           <div className={style["text-container"]}>
             <div className={style["name"]}>
               <h4 children={chat.name} />
@@ -184,7 +184,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
   } else if (view === "list") {
     return (
       <div className={style["list-item"]} onClick={() => openChatPreview(chat)}>
-        <Avatar className={style["avatar"]} src={chat.avatarURL} style={{ backgroundColor: !chat.avatarURL ? chat.color : color }} alt={""} />
+        <Avatar className={style["avatar"]} src={chat.avatarURL} color={chat.color} />
         <div className={style["title"]}>
           <h6 children={chat.name} />
           <GroupIcon className={style["icon"]} />

@@ -1,4 +1,4 @@
-import { Avatar, FormControlLabel, IconButton } from "@material-ui/core";
+import { FormControlLabel, IconButton } from "@material-ui/core";
 import { ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { Admin, BannedMember, checkGroupTag, ClientEvent, Group, GroupRole, GroupType, Member, Owner, Permission } from "client";
@@ -10,6 +10,7 @@ import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Chat.module.scss";
 import baseStyle from "../../styles/modules/Modal.module.scss";
 import { debouncedPromise } from "../../util";
+import Avatar from "../Avatar/Avatar";
 import Button, { TextButton } from "../Button/Button";
 import Input, { Checkbox, Searchbar, Select } from "../Input/Input";
 import Scrollbar from "../Scrollbar/Scrollbar";
@@ -173,7 +174,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ uuid, user, chat }): JS
   return (
     <div className={style["item-container"]} onClick={() => setCollapsed(!collapsed)}>
       <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: !member.user.avatarURL && member.user.color }} alt={""} />
+        <Avatar className={style["avatar"]} src={member.user.avatarURL} color={member.user.color} />
         <h6 children={member.user.name} className={style["title"]} />
         <div children={member.user.description} className={style["description"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}>
@@ -368,14 +369,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
       <div className={style["avatar-container"]}>
         <label htmlFor={"upload-avatar"}>
           <a>
-            <Avatar
-              aria-disabled={disabled}
-              data-content={translation.app.chat_settings.settings.upload_avatar}
-              className={style["avatar"]}
-              src={url}
-              style={{ backgroundColor: !url && chat.color }}
-              alt={""}
-            />
+            <Avatar aria-disabled={disabled} data-content={translation.app.chat_settings.settings.upload_avatar} className={style["avatar"]} src={url} color={chat.color} />
           </a>
         </label>
         <input
@@ -535,7 +529,7 @@ const BannedListItem: React.FC<BannedListItemProps> = ({ member, chat }): JSX.El
   return (
     <div className={style["item-container"]} onClick={() => setCollapsed(!collapsed)}>
       <div className={style["item"]}>
-        <Avatar className={style["avatar"]} src={member.avatarURL || ""} style={{ backgroundColor: !member.avatarURL && member.color }} alt={""} />
+        <Avatar className={style["avatar"]} src={member.avatarURL || ""} color={member.color} />
         <h6 children={member.name} className={style["title"]} />
         <div children={member.description} className={style["description"]} />
         <div className={style["options-container"]} data-collapsed={collapsed} onClick={(event) => event.stopPropagation()}>

@@ -41,10 +41,10 @@
 }
 
 .logo {
-  fill: none;
+  fill: transparent;
   stroke: $white;
   stroke-miterlimit: 10;
-  stroke-width: 6px;
+  stroke-width: 7px;
   z-index: 1000;
   cursor: pointer;
 }

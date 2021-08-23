@@ -1,4 +1,4 @@
-import { Avatar, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { MoreVert as MoreIcon, Settings as SettingsIcon } from "@material-ui/icons";
 import cn from "classnames";
 import { Admin, Chat, ChatSocketEvent, Group, Member, Owner, PrivateChat, UserSocketEvent } from "client";
@@ -9,6 +9,7 @@ import { useLang } from "../../../hooks/LanguageContext";
 import { useModal } from "../../../hooks/ModalContext";
 import style from "../../../styles/modules/ChatModal.module.scss";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
+import Avatar from "../../Avatar/Avatar";
 import Menu, { MenuItem } from "../../Menu/Menu";
 import Scrollbar from "../../Scrollbar/Scrollbar";
 import { BaseModal, ModalProps } from "../Modal";
@@ -172,7 +173,7 @@ const ChatMember: React.FC<ChatMemberProps> = ({ member, chat }): JSX.Element =>
   return (
     <div className={style["item-container"]} data-open={menuOpen}>
       <div className={style["item"]} onClick={() => openMember(member, { withBack: true, onClose: () => openChat(chat, { selectedTab: 1 }) })}>
-        <Avatar className={style["avatar"]} src={member.user.avatarURL || ""} style={{ backgroundColor: !member.user.avatarURL && member.user.color }} alt={""} />
+        <Avatar className={style["avatar"]} src={member.user.avatarURL} color={member.user.color} />
         <h6 children={member.user.name} className={style["title"]} />
         <div children={`@${member.user.tag}`} className={style["tag"]} />
       </div>

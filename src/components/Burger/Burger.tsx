@@ -1,4 +1,4 @@
-import { Avatar, Badge } from "@material-ui/core";
+import { Badge } from "@material-ui/core";
 import { AddBox as AddIcon, ExitToApp as LogoutIcon, Group as GroupIcon, Menu as MenuIcon, Person as ProfileIcon, Search as ExploreIcon } from "@material-ui/icons";
 import cn from "classnames";
 import { Admin, Chat, ChatSocketEvent, Group, Owner, PrivateChat, UserSocketEvent } from "client";
@@ -10,6 +10,7 @@ import { useClient } from "../../hooks/ClientContext";
 import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
 import style from "../../styles/modules/Burger.module.scss";
+import Avatar from "../Avatar/Avatar";
 import Menu, { MenuItem } from "../Menu/Menu";
 import Scrollbar from "../Scrollbar/Scrollbar";
 
@@ -164,7 +165,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element
               data-online={chat instanceof PrivateChat && chat.participant.user.online}
               data-group={chat instanceof Group}
             >
-              <Avatar className={style["avatar"]} src={src} style={{ backgroundColor: !src && color, width: "2rem", height: "2rem" }} alt={""} />
+              <Avatar color={color} className={style["avatar"]} src={src} style={{ height: "2rem", width: "2rem" }} />
             </Badge>
           </div>
           <div className={style["burger-text-container"]} data-open={open}>

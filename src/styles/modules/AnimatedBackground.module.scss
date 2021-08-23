@@ -8,9 +8,11 @@
   bottom: 0;
   position: fixed;
   overflow: hidden;
-  background: linear-gradient(159deg, rgba(50, 160, 226, 1) 22%, rgba(41, 105, 214, 1) 85%);
+  //background: linear-gradient(159deg, rgba(50, 160, 226, 1) 22%, rgba(41, 105, 214, 1) 85%);
+  background-color: $black;
 }
 
 .animatedbackground {
-  background: linear-gradient(159deg, rgba(50, 160, 226, 1) 22%, rgba(41, 105, 214, 1) 85%);
+  background-color: $black;
+  //background: linear-gradient(159deg, rgba(50, 160, 226, 1) 22%, rgba(41, 105, 214, 1) 85%);
 }

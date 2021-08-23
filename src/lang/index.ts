@@ -29,6 +29,7 @@ export interface LandingTranslations {
     login: string;
     signup: string;
     to_app: string;
+    home: string;
   };
 }
 

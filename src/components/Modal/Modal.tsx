@@ -1,10 +1,11 @@
-import { Avatar, Backdrop, Fade, IconButton, Modal } from "@material-ui/core";
+import { Backdrop, Fade, IconButton, Modal } from "@material-ui/core";
 import { ChevronLeft as BackIcon, Close as CloseIcon, Group as GroupIcon } from "@material-ui/icons";
 import cn from "classnames";
 import { usePalette } from "color-thief-react";
 import React, { useEffect, useState } from "react";
 import style from "../../styles/modules/Modal.module.scss";
 import { hexToHsl } from "../../util";
+import Avatar from "../Avatar/Avatar";
 
 export interface ModalProps {
   open?: boolean;
@@ -64,7 +65,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({ onClose, withBack, name, t
     <>
       <div className={style["head"]} style={{ background: `linear-gradient(176deg, ${color} 29%, rgba(0,0,0,0.3) 100%)` }}>
         <div className={style["background"]} />
-        <Avatar variant={"rounded"} className={style["avatar"]} src={avatar} style={{ backgroundColor: !avatar && color }} alt={""} />
+        <Avatar variant={"rounded"} className={style["avatar"]} src={avatar} color={color} />
         <div className={style["text-container"]}>
           <div className={style["name"]}>
             <h3 children={name} />

@@ -39,7 +39,7 @@ ChatSettingsPage.getInitialProps = async (context: NextPageContext) => {
     return { chat: uuid };
   } else {
     context.res.writeHead(301, {
-      Location: "/passwordreset",
+      Location: "/app",
     });
     context.res.end();
   }

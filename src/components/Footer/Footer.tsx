@@ -1,20 +1,24 @@
 import { Locale } from "client";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { FC } from "react";
+import { useAuth } from "../../hooks/AuthContext";
 import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Footer.module.scss";
 import { Select } from "../Input/Input";
 
 const Footer: FC = (): JSX.Element => {
   const { translation, language, setLanguage } = useLang();
-
+  const { validated } = useAuth();
+  const router = useRouter();
   return (
     <footer className={style["container"]}>
       <Section>
         <div className={style["quick-nav"]}>
           <div className={style["title"]} children={translation.landing.quicknav.title} />
           <div className={style["columns"]}>
-            <Column links={[{ name: translation.landing.quicknav.to_app, url: "/app" }]} />
+            {validated && <Column links={[{ name: translation.landing.quicknav.to_app, url: "/app" }]} />}
+            {router.pathname !== "/" && <Column links={[{ name: translation.landing.quicknav.home, url: "/" }]} />}
             <Column links={[{ name: translation.landing.quicknav.signup, url: "/signup" }]} />
             <Column links={[{ name: translation.landing.quicknav.login, url: "/login" }]} />
           </div>
