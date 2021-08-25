@@ -13,6 +13,7 @@ const Meta: React.FC<MetaProps> = ({ description, title, noindex, image }) => {
   const router = useRouter();
 
   const hostname: string = typeof window !== "undefined" ? window.location.origin : router.asPath;
+  const https: boolean = hostname.startsWith("https");
 
   return (
     <Head>
@@ -20,7 +21,11 @@ const Meta: React.FC<MetaProps> = ({ description, title, noindex, image }) => {
       {title && <meta property="og:title" content={title} key="ogtitle" />}
       {description && <meta name="description" content={description} />}
       {description && <meta property="og:description" content={description} key="ogdesc" />}
-      <meta property="og:image" content={`${hostname}/banner.png`} />
+      {https && <meta property="og:image:secure_url" content={`${hostname}/banner.png`} />}
+      {!https && <meta property="og:image" content={`${hostname}/banner.png`} />}
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1920" />
+      <meta property="og:image:height" content="1080" />
       <meta property="og:url" content={hostname} key="ogurl" />
       <meta name="robots" content={noindex ? "noindex" : "index"} />
     </Head>
