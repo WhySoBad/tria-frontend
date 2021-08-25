@@ -11,14 +11,17 @@ interface MetaProps {
 
 const Meta: React.FC<MetaProps> = ({ description, title, noindex, image }) => {
   const router = useRouter();
+
+  const hostname: string = typeof window !== "undefined" ? window.location.origin : router.asPath;
+
   return (
     <Head>
       {title && <title children={title} />}
       {title && <meta property="og:title" content={title} key="ogtitle" />}
       {description && <meta name="description" content={description} />}
       {description && <meta property="og:description" content={description} key="ogdesc" />}
-      {image && <meta property="og:image" content={image} />}
-      <meta property="og:url" content={router.asPath} key="ogurl" />
+      <meta property="og:image" content={`${hostname}/banner.png`} />
+      <meta property="og:url" content={hostname} key="ogurl" />
       <meta name="robots" content={noindex ? "noindex" : "index"} />
     </Head>
   );

@@ -9,7 +9,7 @@ import {
   RegisterTranslations,
   SignUpTranslations,
   SiteTitleTranslations,
-  Translation
+  Translation,
 } from "..";
 
 const landing: LandingTranslations = {
@@ -52,7 +52,7 @@ const signup: SignUpTranslations = {
 
 const register: RegisterTranslations = {
   title: "Registrierung Abschliessen",
-  form_description: "Schliesse die Registerierung deines Accounts ab indem du die folgenden Felder ausfüllst.",
+  form_description: "Schliesse die Registerierung deines Accounts ab, indem du die folgenden Felder ausfüllst.",
   description: "Beschreibung",
   finish: "Fertigstellen",
   tag: "Tag",
@@ -65,8 +65,8 @@ const passwordreset: PasswordResetTranslations = {
   send_mail: "Mail senden",
   finish: "Fertigstellen",
   password: "Passwort",
-  description: "Geben Sie die Mail Adresse an, mit welcher ihr Account erstellt wurde. Sie werden ein Mail mit einem Link erhalten, um das Passwort zurückzusetzen.",
-  confirm_description: "To finish the password reset enter a new password in the field below.",
+  description: "Gib die Mail Adresse an, mit welcher dein Account erstellt wurde. Anschliessend wirst du ein Mail erhalten, um das Passwort zurückzusetzen.",
+  confirm_description: "Setze ein neues Passwort, um die Zurücksetzung abzuschliessen",
 };
 
 const error: ErrorTranslations = {

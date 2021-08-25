@@ -10,7 +10,7 @@ const PasswordResetPage: NextPage = (): JSX.Element => {
   return (
     <FormLayout>
       <PasswordReset />
-      <Meta description="You have forgotten your password? Reset it and continue chatting" title={translation.sites.passwordreset} />
+      <Meta description="Reset your password" title={translation.sites.passwordreset} />
     </FormLayout>
   );
 };
