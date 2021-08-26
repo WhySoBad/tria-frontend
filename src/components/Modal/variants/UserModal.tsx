@@ -91,7 +91,7 @@ const UserModal: React.FC<UserModalProps> = ({ onClose, user, selectedTab = 0, .
   else if (privateChat && !isSelf) icons.push(<IconButton className={baseStyle["iconbutton"]} children={<ChatIcon className={baseStyle["icon"]} />} onClick={openChat} />);
 
   return (
-    <BaseModal onClose={onClose} avatar={user instanceof User ? user.avatarURL : ""} hex={user.color} uuid={user.uuid} name={user.name} tag={user.tag} icons={icons} {...rest}>
+    <BaseModal onClose={onClose} avatar={user.avatarURL} hex={user.color} uuid={user.uuid} name={user.name} tag={user.tag} icons={icons} {...rest}>
       <div className={style["tabs"]}>
         <h6 className={style["tab"]} aria-selected={tab === 0} onClick={() => setTab(0)} children={translation.modals.user.information} />
         <h6 className={style["tab"]} aria-selected={tab === 1} onClick={() => setTab(1)} children={translation.modals.user.chats} />

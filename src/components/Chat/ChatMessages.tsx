@@ -61,10 +61,15 @@ const Messages: React.FC = (): JSX.Element => {
   }, [selected, chat?.messages?.size]);
 
   useEffect(() => {
+    let mounted: boolean = true;
     const messages: Array<Message> = chat.messages.values().filter(({ createdAt, sender }) => {
       return sender !== client.user.uuid && createdAt.getTime() > chat.lastRead.getTime();
     });
-    setLastRead(messages.length > 0 ? chat.lastRead : null);
+    mounted && setLastRead(messages.length > 0 ? chat.lastRead : null);
+
+    return () => {
+      mounted = false;
+    };
   }, [selected]);
 
   const handleRead = debouncedPromise(async (timestamp: number, cb: () => void) => {
@@ -143,7 +148,7 @@ const Messages: React.FC = (): JSX.Element => {
           </React.Fragment>
         );
       })}
-      <BottomAnchor />
+      <BottomAnchor reference={ref} />
     </Scrollbar>
   );
 };
@@ -178,7 +183,7 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead, fetchedSe
         <Avatar
           src={src}
           className={style["avatar"]}
-          color={sender && (sender instanceof Member ? sender.user.color : sender.color) || undefined}
+          color={(sender && (sender instanceof Member ? sender.user.color : sender.color)) || undefined}
           onClick={() => {
             if (sender instanceof Member) openMember(sender);
             else if (sender && !(sender instanceof BannedMember)) openUser(sender);
@@ -215,11 +220,13 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
   const [menuPos, setMenuPos] = useState<{ x: number | null; y: number | null }>({ x: null, y: null });
 
   useEffect(() => {
+    let mounted: boolean = true;
     const observer = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
-      if (entries[0].isIntersecting && !isRead) onRead(message.createdAt.getTime(), () => setRead(true));
+      if (entries[0].isIntersecting && !isRead && message.sender !== client.user.uuid) onRead(message.createdAt.getTime(), () => mounted && setRead(true));
     });
     observer.observe(ref.current);
     return () => {
+      mounted = false;
       observer.disconnect();
     };
   }, []);
@@ -322,10 +329,9 @@ const DateEl: React.FC<DateProps> = ({ date }): JSX.Element => {
 
 interface LogProps {
   log: MemberLog;
-  last?: boolean;
 }
 
-const Log: React.FC<LogProps> = ({ log, last = false }): JSX.Element => {
+const Log: React.FC<LogProps> = ({ log }): JSX.Element => {
   const { client } = useClient();
   const { openUser } = useModal();
   const { translation } = useLang();
@@ -354,13 +360,10 @@ const Log: React.FC<LogProps> = ({ log, last = false }): JSX.Element => {
   }, []);
 
   return (
-    <>
-      <div className={style["log-container"]} style={{ opacity: !fetched && 0 }}>
-        {user ? <span children={user.name} className={style["log"]} onClick={() => openUser(user)} /> : translation.app.chat.deleted_account}
-        {"" + log.joined ? translation.app.chat.joined : translation.app.chat.left}
-      </div>
-      {last && <BottomAnchor />}
-    </>
+    <div className={style["log-container"]} style={{ opacity: !fetched && 0 }}>
+      {user ? <span children={user.name} className={style["log"]} onClick={() => openUser(user)} /> : translation.app.chat.deleted_account}
+      {"" + log.joined ? translation.app.chat.joined : translation.app.chat.left}
+    </div>
   );
 };
 
@@ -401,29 +404,30 @@ const MessageLoader: React.FC<MessageLoaderProps> = ({ reference }): JSX.Element
   );
 };
 
-const BottomAnchor: React.FC = (): JSX.Element => {
+interface BottomAnchorProps {
+  reference: MutableRefObject<Scrollbars>;
+}
+
+const BottomAnchor: React.FC<BottomAnchorProps> = ({ reference }): JSX.Element => {
   const ref = useRef<HTMLInputElement>(null);
-  const [visible, setVisible] = useState<boolean>(false);
   const { client } = useClient();
   const { selected } = useChat();
   const chat: Chat | undefined = client.user.chats.get(selected);
 
   const handleMessage = (chatUuid: string, message: Message) => {
     if (chatUuid !== chat.uuid) return;
-    if (message.sender === client.user.uuid || visible) ref?.current?.scrollIntoView({ behavior: "smooth" });
+    if (message.sender === client.user.uuid || reference.current.getClientHeight() - reference.current.getScrollTop() < 100) {
+      chat.readUntil(message.createdAt).catch(client.error);
+      setTimeout(() => {
+        ref.current.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
   };
 
-  client.on(ChatSocketEvent.MESSAGE, handleMessage);
-
   useEffect(() => {
-    const observer = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
-      setVisible(entries[0].isIntersecting);
-    });
-
-    observer.observe(ref.current);
+    client.on(ChatSocketEvent.MESSAGE, handleMessage);
 
     return () => {
-      observer.disconnect();
       client.off(ChatSocketEvent.MESSAGE, handleMessage);
     };
   }, []);

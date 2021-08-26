@@ -15,7 +15,7 @@
     "@types/classnames": "^2.2.11",
     "@types/crypto-js": "^4.0.1",
     "classnames": "^2.3.1",
-    "client": "github:WhySoBad/tria-client",
+    "client": "github:whysobad/tria-client",
     "color-thief-react": "^2.0.12",
     "crypto-js": "^4.0.0",
     "fs": "0.0.1-security",

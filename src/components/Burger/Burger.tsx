@@ -36,6 +36,7 @@ const Burger: React.FC<BurgerProps> = ({ onClick }): JSX.Element => {
     client.on(ChatSocketEvent.CHAT_EDIT, handleUpdate);
     client.on(UserSocketEvent.USER_EDIT, handleUpdate);
     client.on(UserSocketEvent.USER_DELETE, handleUpdate);
+    client.on(UserSocketEvent.MESSAGE_READ, handleUpdate);
     return () => {
       client.off(ChatSocketEvent.MEMBER_ONLINE, handleUpdate);
       client.off(ChatSocketEvent.MEMBER_OFFLINE, handleUpdate);
@@ -46,6 +47,7 @@ const Burger: React.FC<BurgerProps> = ({ onClick }): JSX.Element => {
       client.off(ChatSocketEvent.CHAT_EDIT, handleUpdate);
       client.off(UserSocketEvent.USER_EDIT, handleUpdate);
       client.off(UserSocketEvent.USER_DELETE, handleUpdate);
+      client.off(UserSocketEvent.MESSAGE_READ, handleUpdate);
     };
   }, []);
 

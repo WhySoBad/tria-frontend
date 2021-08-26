@@ -1,6 +1,5 @@
 import { Chat, Group, PrivateChat } from "client";
 import { NextPage, NextPageContext } from "next";
-import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import ChatComponent from "../../../components/Chat/Chat";
 import Layout from "../../../components/Layout/Layout";
@@ -17,22 +16,19 @@ const ChatPage: NextPage<Props> = ({ uuid }): JSX.Element => {
   const { setSelected } = useChat();
   const { client } = useClient();
   const { translation } = useLang();
-  const router = useRouter();
 
   useEffect(() => {
     setSelected(uuid);
   }, [uuid]);
 
   const chat: Chat | undefined = client?.user?.chats?.get(uuid);
-  if (!chat && router) router.push("/app");
-
   const name: string = chat instanceof PrivateChat ? chat.participant.user.name : chat instanceof Group ? chat.name : "";
   const avatar: string | null = chat instanceof PrivateChat ? chat.participant.user.avatarURL : chat instanceof Group ? chat.avatarURL : null;
 
   return (
     <Layout>
       <Meta noindex description="A chat to write with other people" title={`${translation.sites.chat} ${name}`} image={avatar} />
-      <ChatComponent />
+      <ChatComponent uuid={uuid} />
     </Layout>
   );
 };

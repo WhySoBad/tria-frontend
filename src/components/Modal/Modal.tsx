@@ -1,7 +1,7 @@
 import { Backdrop, Fade, IconButton, Modal } from "@material-ui/core";
 import { ChevronLeft as BackIcon, Close as CloseIcon, Group as GroupIcon } from "@material-ui/icons";
 import cn from "classnames";
-import { usePalette } from "color-thief-react";
+import { getPalette } from "color-thief-react";
 import React, { useEffect, useState } from "react";
 import style from "../../styles/modules/Modal.module.scss";
 import { hexToHsl } from "../../util";
@@ -47,19 +47,21 @@ interface BaseModalProps extends ModalProps {
 export const BaseModal: React.FC<BaseModalProps> = ({ onClose, withBack, name, tag, uuid, children, group = false, avatar, hex, icons = [] }): JSX.Element => {
   const [color, setColor] = useState<string>();
 
-  const { data, loading, error } = usePalette(avatar, 3, "hex", { quality: 15, crossOrigin: "anonymous" });
-
   useEffect(() => {
-    if (error) setColor(hex);
+    let mounted: boolean = true;
+    if (!avatar) setColor(hex);
     else {
-      if (Array.isArray(data)) {
-        const hsl: { h: number; s: number; l: number } = hexToHsl(data[0]);
-        if (hsl.l < 20 && hsl.s !== 0) setColor(data[2]);
-        else if (hsl.s === 0 && hsl.l < 30) setColor("#333333");
-        else setColor(data[0]);
-      } else setColor(data);
+      getPalette(avatar, 3, "hex", "anonymous", 15).then((colors: Array<string>) => {
+        const hsl: { h: number; s: number; l: number } = hexToHsl(colors[0]);
+        if (hsl.l < 20 && hsl.s !== 0) mounted && setColor(colors[2]);
+        else if (hsl.s === 0 && hsl.l < 30) mounted && setColor("#333333");
+        else mounted && setColor(colors[0]);
+      });
     }
-  }, [loading, error]);
+    return () => {
+      mounted = false;
+    };
+  }, [avatar, hex]);
 
   return (
     <>

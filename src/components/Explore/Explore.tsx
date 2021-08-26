@@ -1,7 +1,7 @@
 import { Group as GroupIcon, ViewList as ViewListIcon, ViewModule as ViewModuleIcon } from "@material-ui/icons";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { ChatPreview, SearchOptions, UserPreview } from "client";
-import { usePalette } from "color-thief-react";
+import { getPalette } from "color-thief-react";
 import React, { useEffect, useRef, useState } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
 import { useClient } from "../../hooks/ClientContext";
@@ -99,19 +99,21 @@ interface UserItemProps {
 const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
   const [color, setColor] = useState<string>();
 
-  const { data, loading, error } = usePalette(user.avatarURL, 3, "hex", { quality: 15, crossOrigin: "anonymous" });
-
   useEffect(() => {
-    if (error) setColor(user.color);
+    let mounted: boolean = true;
+    if (!user.avatarURL) setColor(user.color);
     else {
-      if (Array.isArray(data)) {
-        const hsl: { h: number; s: number; l: number } = hexToHsl(data[0]);
-        if (hsl.l < 20 && hsl.s !== 0) setColor(data[2]);
-        else if (hsl.s === 0 && hsl.l < 30) setColor("#333333");
-        else setColor(data[0]);
-      } else setColor(data);
+      getPalette(user.avatarURL, 3, "hex", "anonymous", 15).then((colors: Array<string>) => {
+        const hsl: { h: number; s: number; l: number } = hexToHsl(colors[0]);
+        if (hsl.l < 20 && hsl.s !== 0) mounted && setColor(colors[2]);
+        else if (hsl.s === 0 && hsl.l < 30) mounted && setColor("#333333");
+        else mounted && setColor(colors[0]);
+      });
     }
-  }, [loading, error]);
+    return () => {
+      mounted = false;
+    };
+  }, [user]);
 
   const { openUser } = useModal();
   if (view === "grid") {
@@ -150,19 +152,21 @@ interface ChatItemProps {
 const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
   const [color, setColor] = useState<string>();
 
-  const { data, loading, error } = usePalette(chat.avatarURL, 3, "hex", { quality: 15, crossOrigin: "anonymous" });
-
   useEffect(() => {
-    if (error) setColor(chat.color);
+    let mounted: boolean = true;
+    if (!chat.avatarURL) setColor(chat.color);
     else {
-      if (Array.isArray(data)) {
-        const hsl: { h: number; s: number; l: number } = hexToHsl(data[0]);
-        if (hsl.l < 20 && hsl.s !== 0) setColor(data[2]);
-        else if (hsl.s === 0 && hsl.l < 30) setColor("#333333");
-        else setColor(data[0]);
-      } else setColor(data);
+      getPalette(chat.avatarURL, 3, "hex", "anonymous", 15).then((colors: Array<string>) => {
+        const hsl: { h: number; s: number; l: number } = hexToHsl(colors[0]);
+        if (hsl.l < 20 && hsl.s !== 0) mounted && setColor(colors[2]);
+        else if (hsl.s === 0 && hsl.l < 30) mounted && setColor("#333333");
+        else mounted && setColor(colors[0]);
+      });
     }
-  }, [loading, error]);
+    return () => {
+      mounted = false;
+    };
+  }, [chat]);
 
   const { openChatPreview } = useModal();
   if (view === "grid") {

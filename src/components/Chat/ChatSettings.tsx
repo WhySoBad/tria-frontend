@@ -1,10 +1,11 @@
 import { FormControlLabel, IconButton } from "@material-ui/core";
 import { ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
-import { Admin, BannedMember, checkGroupTag, ClientEvent, Group, GroupRole, GroupType, Member, Owner, Permission } from "client";
+import { Admin, BannedMember, Chat, checkGroupTag, ClientEvent, Group, GroupRole, GroupType, Member, Owner, Permission } from "client";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useChat } from "../../hooks/ChatContext";
 import { useClient } from "../../hooks/ClientContext";
 import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Chat.module.scss";
@@ -18,10 +19,22 @@ import Snackbar from "../Snackbar/Snackbar";
 import ChatTitle from "./ChatTitle";
 
 interface ChatSettingsProps {
-  chat: Group;
+  uuid: string;
 }
 
-const ChatSettings: React.FC<ChatSettingsProps> = ({ chat }): JSX.Element => {
+const ChatSettings: React.FC<ChatSettingsProps> = ({ uuid }): JSX.Element => {
+  const { selected } = useChat();
+  const { client } = useClient();
+  const router = useRouter();
+
+  const chat: Chat | undefined = client.user.chats.get(selected);
+
+  if (selected !== uuid) return <></>;
+  if (!chat || !(chat instanceof Group)) {
+    router.push("/app");
+    return <></>;
+  }
+
   return (
     <>
       <div className={style["title-container"]} children={<ChatTitle settings />} />
