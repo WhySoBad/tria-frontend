@@ -8,16 +8,13 @@
  * @returns any
  */
 
-export const debounce = (handler: (...args: any[]) => any, delay: number): any => {
-  let timeout: NodeJS.Timeout;
-  return function (...args: Array<any>) {
-    const context = this;
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      timeout = null;
-      handler.apply(context, args);
-    }, delay);
-  };
+export const debounce = <F extends (...args: any[]) => void>(handler: F, delay?: number) => {
+  delay = delay || 100;
+  let timeoutID: any = null;
+  return function (this: any, ...args: Parameters<F>) {
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => handler.apply(this, args), delay);
+  } as F;
 };
 
 /**
@@ -30,20 +27,17 @@ export const debounce = (handler: (...args: any[]) => any, delay: number): any =
  * @returns Promise<any>
  */
 
-export const debouncedPromise = (handler: (...args: any[]) => Promise<any>, delay: number): (() => ReturnType<typeof handler>) => {
-  let timeout: NodeJS.Timeout;
-  let resolves: Array<(value?: unknown) => void> = [];
+export const debouncedPromise = <F extends (...args: any[]) => Promise<any>>(handler: F, delay?: number) => {
+  const debounced = debounce((resolve: any, reject: any, args: Parameters<F>) => {
+    handler(...args)
+      .then(resolve)
+      .catch(reject);
+  }, delay);
 
-  return async (...args: unknown[]) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      const result = handler(...args);
-      resolves.forEach((resolve) => resolve(result));
-      resolves = [];
-    }, delay);
-
-    return new Promise((resolve) => resolves.push(resolve));
-  };
+  return (...args: Parameters<F>): ReturnType<F> =>
+    new Promise((resolve, reject) => {
+      debounced(resolve, reject, args);
+    }) as ReturnType<F>;
 };
 
 /**

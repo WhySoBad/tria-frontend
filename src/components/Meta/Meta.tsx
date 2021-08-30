@@ -7,13 +7,18 @@ interface MetaProps {
   title?: string;
   noindex?: boolean;
   image?: string;
+  keywords?: Array<string> | string;
 }
 
-const Meta: React.FC<MetaProps> = ({ description, title, noindex, image }) => {
+const Meta: React.FC<MetaProps> = ({ description, title, noindex, image, keywords }) => {
   const router = useRouter();
 
   const hostname: string = typeof window !== "undefined" ? window.location.origin : router.asPath;
   const https: boolean = hostname.startsWith("https");
+
+  const allKeywords: Array<string> = ["messenger", "chat", "tria"];
+  if (typeof keywords === "string") allKeywords.push(keywords);
+  else if (Array.isArray(keywords)) allKeywords.push(...keywords);
 
   return (
     <Head>
@@ -21,8 +26,10 @@ const Meta: React.FC<MetaProps> = ({ description, title, noindex, image }) => {
       {title && <meta property="og:title" content={title} key="ogtitle" />}
       {description && <meta name="description" content={description} />}
       {description && <meta property="og:description" content={description} key="ogdesc" />}
+      {keywords && <meta name="keywords" content={Array.isArray(keywords) ? keywords.join(", ") : keywords} />}
       {https && <meta property="og:image:secure_url" content={`${hostname}/banner.png`} />}
-      {!https && <meta property="og:image" content={`${hostname}/banner.png`} />}
+      <meta property="og:image" content={`${hostname}/banner.png`} />
+      <meta name="keywords" content={allKeywords.join(", ")} />
       <meta property="og:image:type" content="image/png" />
       <meta property="og:image:width" content="1920" />
       <meta property="og:image:height" content="1080" />

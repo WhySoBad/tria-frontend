@@ -9,7 +9,7 @@ const LoginPage: NextPage = (): JSX.Element => {
   const { translation } = useLang();
   return (
     <FormLayout small>
-      <Meta description="Login to start chatting" title={translation.sites.login} />
+      <Meta description="Login to start chatting" title={translation.sites.login} keywords={["login"]} />
       <Login />
     </FormLayout>
   );

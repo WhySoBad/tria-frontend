@@ -10,7 +10,7 @@ const SignUpPage: NextPage = (): JSX.Element => {
   return (
     <FormLayout small>
       <SignUp />
-      <Meta description="Create an account to start chatting with other people all over the world" title={translation.sites.signup} />
+      <Meta description="Create an account to start chatting with other people all over the world" title={translation.sites.signup} keywords={["register", "new account", "signup"]} />
     </FormLayout>
   );
 };
