@@ -31,6 +31,11 @@ export interface LandingTranslations {
     to_app: string;
     home: string;
   };
+  api: {
+    title: string;
+    api: string;
+    docs: string;
+  };
 }
 
 export interface LoginTranslations {

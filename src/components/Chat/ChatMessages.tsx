@@ -417,16 +417,13 @@ const BottomAnchor: React.FC<BottomAnchorProps> = ({ reference }): JSX.Element =
   const handleMessage = (chatUuid: string, message: Message) => {
     if (chatUuid !== chat.uuid) return;
     if (message.sender === client.user.uuid || reference.current.getClientHeight() - reference.current.getScrollTop() < 100) {
+      reference.current.scrollToBottom();
       chat.readUntil(message.createdAt).catch(client.error);
-      setTimeout(() => {
-        ref.current.scrollIntoView({ behavior: "smooth" });
-      }, 100);
     }
   };
 
   useEffect(() => {
     client.on(ChatSocketEvent.MESSAGE, handleMessage);
-
     return () => {
       client.off(ChatSocketEvent.MESSAGE, handleMessage);
     };

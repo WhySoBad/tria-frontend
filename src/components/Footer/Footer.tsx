@@ -25,6 +25,15 @@ const Footer: FC = (): JSX.Element => {
         </div>
       </Section>
       <Section>
+        <div className={style["quick-nav"]}>
+          <div className={style["title"]} children={translation.landing.api.title} />
+          <div className={style["columns"]}>
+            <Column links={[{ name: translation.landing.api.api, url: "https://api.tria.chat" }]} />
+            <Column links={[{ name: translation.landing.api.docs, url: "https://github.com/WhySoBad/tria-backend#api" }]} />
+          </div>
+        </div>
+      </Section>
+      <Section>
         <div className={style["footer-content"]}>
           <Select
             onChange={(event) => setLanguage(event.target.value as Locale)}
@@ -51,9 +60,10 @@ interface ColumnProps {
 const Column: FC<ColumnProps> = ({ links }): JSX.Element => {
   return (
     <section className={style["column"]}>
-      {links.map(({ name, url }, index: number) => (
-        <Link children={name} href={url} key={index} />
-      ))}
+      {links.map(({ name, url }, index: number) => {
+        if (url.startsWith("/")) return <Link children={name} href={url} key={index} />;
+        else return <a children={name} href={url} key={index} target={"_blank"} />;
+      })}
     </section>
   );
 };

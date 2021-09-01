@@ -2,7 +2,6 @@ import { IconButton } from "@material-ui/core";
 import { Visibility as HiddenIcon, VisibilityOff as ShownIcon } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { checkUserMail, registerUser } from "client";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLang } from "../../hooks/LanguageContext";
@@ -24,9 +23,9 @@ const SignUp: React.FC = (): JSX.Element => {
   const [snackError, setSnackError] = useState<string>();
   const [snackSuccess, setSnackSuccess] = useState<string>();
   const [checkedMail, setCheckedMail] = useState<{ mail: string; valid: boolean }>();
-  const router = useRouter();
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors, isDirty, isValid, isSubmitting },
   } = useForm<Inputs>({ mode: "onChange" });
@@ -34,8 +33,8 @@ const SignUp: React.FC = (): JSX.Element => {
   const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
     registerUser(data)
       .then(() => {
-        router.push("/");
         setSnackSuccess("Verification Mail Sent");
+        reset({ password: "", username: "" });
       })
       .catch(setSnackError);
   };

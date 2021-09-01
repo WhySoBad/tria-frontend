@@ -32,6 +32,11 @@ const landing: LandingTranslations = {
     to_app: "Zur App",
     home: "Home",
   },
+  api: {
+    title: "API",
+    api: "API",
+    docs: "Dokumentation",
+  },
 };
 
 const login: LoginTranslations = {
