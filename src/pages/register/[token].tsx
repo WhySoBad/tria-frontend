@@ -21,7 +21,7 @@ RegisterPage.getInitialProps = async (context: NextPageContext) => {
   const valid: boolean = await validateRegister(token);
   if (!valid) {
     context.res.writeHead(301, {
-      Location: "/",
+      Location: "/404",
     });
     context.res.end();
   }
