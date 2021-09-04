@@ -23,6 +23,7 @@ const Header = (): JSX.Element => {
     <header className={style["container"]}>
       <div className={style["logo-container"]} children={<Link href={"/"} children={<div children={<Logo />} />} />} />
       <div className={style["navigation-container"]}>
+        {router.pathname !== "/" && <Link href={"/"} children={<h6 className={style["nav-link"]} children={translation.landing.quicknav.home} />} />}
         {router.pathname !== "/login" && <Link href={"/login"} children={<h6 className={style["nav-link"]} children={translation.landing.quicknav.login} />} />}
         {router.pathname !== "/signup" && <Link href={"/signup"} children={<h6 className={style["nav-link"]} children={translation.landing.quicknav.signup} />} />}
         {canLogin && <Link href={"/app"} children={<h6 className={style["nav-link"]} children={translation.landing.quicknav.to_app} />} />}
