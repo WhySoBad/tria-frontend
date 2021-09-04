@@ -5,30 +5,24 @@
     <loc>https://tria.chat/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-    <lastmod>2021-08-30</lastmod>
+    <lastmod>2021-09-04</lastmod>
   </url>
   <url>
-    <loc>https://tria.chat/create/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-    <lastmod>2021-08-30</lastmod>
-  </url>
-  <url>
-    <loc>https://tria.chat/explore/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-    <lastmod>2021-08-30</lastmod>
-  </url>
-  <url>
-    <loc>https://tria.chat/login/</loc>
+    <loc>https://tria.chat/login</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2021-08-30</lastmod>
+    <lastmod>2021-09-04</lastmod>
   </url>
   <url>
-    <loc>https://tria.chat/signup/</loc>
+    <loc>https://tria.chat/signup</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2021-08-30</lastmod>
+    <lastmod>2021-09-04</lastmod>
+  </url>
+    <url>
+    <loc>https://tria.chat/passwordreset</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <lastmod>2021-09-04</lastmod>
   </url>
 </urlset>

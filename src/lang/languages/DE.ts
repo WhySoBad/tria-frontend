@@ -198,20 +198,20 @@ const locales: LocaleTranslations = {
 };
 
 const sites: SiteTitleTranslations = {
-  404: "Fehler - Seite Nicht Gefunden",
-  500: "Fehler - Serverseitiger Fehler",
-  app: "App",
-  auth: "Auth",
+  404: "Tria - Seite Nicht Gefunden",
+  500: "Tria - Serverseitiger Fehler",
+  app: "Tria",
+  auth: "Tria - Authentifizierung",
   chat_settings: "Einstellungen -",
   create: "Chat Erstellen",
   explore: "Erkunden",
-  home: "Home",
-  login: "Anmelden",
-  passwordreset: "Passwort Zurücksetzen",
-  passwordreset_confirm: "Passwort Zurücksetzen",
+  home: "Tria - Ein Messenger um mit der Welt zu kommunizieren",
+  login: "Tria - Anmelden",
+  passwordreset: "Tria - Passwort Zurücksetzen",
+  passwordreset_confirm: "Tria - Passwort Zurücksetzen",
   profile: "Profil -",
-  register: "Registrierung Fertigstellen",
-  signup: "Registrieren",
+  register: "Tria - Registrierung Fertigstellen",
+  signup: "Tria - Erstelle einen Account",
   chat: "Chat -",
 };
 

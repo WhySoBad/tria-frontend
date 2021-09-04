@@ -1,9 +1,11 @@
 User-agent: *
 Allow: /
 Disallow: /profile
-Disallow: /Auth
+Disallow: /auth
 Disallow: /500
 Disallow: /404
-Disallow: /register/
+Disallow: /register/*
 Disallow: /passwordreset/*
 Disallow: /chat/
+Disallow: /create
+Disallow: /explore

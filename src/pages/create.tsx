@@ -9,7 +9,7 @@ const CreatePage: NextPage = (): JSX.Element => {
   const { translation } = useLang();
   return (
     <Layout>
-      <Meta description="Create a new group to chat with other people" title={translation.sites.create} />
+      <Meta noindex description="Create a new group to chat with other people" title={translation.sites.create} />
       <Create />
     </Layout>
   );

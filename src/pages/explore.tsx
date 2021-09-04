@@ -9,7 +9,7 @@ const ExplorePage: NextPage = (): JSX.Element => {
   const { translation } = useLang();
   return (
     <Layout>
-      <Meta description="Find new users and groups to chat" title={translation.sites.explore} />
+      <Meta noindex description="Find new users and groups to chat" title={translation.sites.explore} />
       <Explore />
     </Layout>
   );
