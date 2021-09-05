@@ -241,6 +241,29 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
 
   const handleMenuClose = () => setMenuPos({ x: null, y: null });
 
+  const getText = () => {
+    const pattern: RegExp =
+      /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+    const matches: Array<string> = message.text.match(pattern);
+    const parts: Array<string> = message.text.split(pattern);
+
+    if (!matches) return message.text;
+    return parts.map((part: string, index: number) => (
+      <React.Fragment
+        key={part + index}
+        children={
+          matches.includes(part) ? (
+            <a className={style["link"]} target="_blank" href={part}>
+              {part}
+            </a>
+          ) : (
+            part
+          )
+        }
+      />
+    ));
+  };
+
   return (
     <div ref={ref} id={message.uuid} className={style["message-container"]} data-self={self} onContextMenu={handleRightClick}>
       <div className={style["message"]} data-editing={editing}>
@@ -259,7 +282,7 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
           <span
             style={{ overflowWrap: "anywhere" }}
             ref={textRef}
-            children={message.text}
+            children={getText()}
             onKeyPress={(event) => {
               if (message.sender !== client.user.uuid) return;
               if (event.key === "\n") document.execCommand("insertText", false, "\n");

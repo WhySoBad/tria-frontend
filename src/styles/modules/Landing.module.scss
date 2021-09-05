@@ -84,6 +84,12 @@
       text-align: center;
       grid-area: content;
       max-width: 300px;
+
+      .link {
+        color: $gray-text;
+        cursor: pointer;
+        position: relative;
+      }
     }
   }
 }

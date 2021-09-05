@@ -36,6 +36,12 @@ export interface LandingTranslations {
     api: string;
     docs: string;
   };
+  source: {
+    title: string;
+    backend: string;
+    frontend: string;
+    client: string;
+  };
 }
 
 export interface LoginTranslations {

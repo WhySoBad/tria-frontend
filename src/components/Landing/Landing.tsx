@@ -46,7 +46,7 @@ const About: React.FC<AboutProps> = (): JSX.Element => {
   const { translation } = useLang();
   return (
     <section className={style["about-container"]}>
-      <AboutSection {...translation.landing.secure} />
+      <AboutSection replace={[{ title: "GitHub", scrollId: "github" }]} {...translation.landing.secure} />
       <AboutSection {...translation.landing.modern} />
       <AboutSection {...translation.landing.free} />
     </section>
@@ -56,13 +56,43 @@ const About: React.FC<AboutProps> = (): JSX.Element => {
 interface AboutSectionProps {
   title: string;
   description: string;
+  replace?: Array<{ title: string; href?: string; scrollId?: string }>;
 }
 
-const AboutSection: React.FC<AboutSectionProps> = ({ title, description }): JSX.Element => {
+const AboutSection: React.FC<AboutSectionProps> = ({ title, description, replace = [] }): JSX.Element => {
+  const interpolate = (text: string, values: { [key: string]: JSX.Element }) => {
+    const pattern: RegExp = /(%[a-zA-Z]+%)/g;
+    const matches: Array<string> = text.match(pattern);
+    const parts: Array<string> = text.split(pattern);
+
+    if (!matches) return text;
+    return parts.map((part: string, index: number) => <React.Fragment key={part + index} children={matches.includes(part) ? values[part] : part} />);
+  };
+
+  const getElementForPattern = (patterns: Array<{ title: string; href?: string; scrollId?: string }>): { [key: string]: JSX.Element } => {
+    const obj: { [key: string]: JSX.Element } = {};
+
+    patterns.map(({ title, href, scrollId }) => {
+      const linkEl: JSX.Element = <a className={style["link"]} href={href} children={title} />;
+      const scrollEl: JSX.Element = (
+        <span
+          className={style["link"]}
+          onClick={() => {
+            const el = document.getElementById(scrollId + "");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+          children={title}
+        />
+      );
+      obj[`%${title}%`] = href ? linkEl : scrollId ? scrollEl : <>{title}</>;
+    });
+    return obj;
+  };
+
   return (
     <div className={style["topic-container"]}>
       <h5 className={style["title"]} children={title} />
-      <div className={style["text"]} children={description} />
+      <div className={style["text"]} children={interpolate(description, getElementForPattern(replace))} />
     </div>
   );
 };

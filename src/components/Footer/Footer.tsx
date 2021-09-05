@@ -34,6 +34,16 @@ const Footer: FC = (): JSX.Element => {
         </div>
       </Section>
       <Section>
+        <div className={style["quick-nav"]}>
+          <div className={style["title"]} children={translation.landing.source.title} id="github" />
+          <div className={style["columns"]}>
+            <Column links={[{ name: translation.landing.source.frontend, url: "https://github.com/WhySoBad/tria-frontend" }]} />
+            <Column links={[{ name: translation.landing.source.backend, url: "https://github.com/WhySoBad/tria-backend" }]} />
+            <Column links={[{ name: translation.landing.source.client, url: "https://github.com/WhySoBad/tria-client" }]} />
+          </div>
+        </div>
+      </Section>
+      <Section>
         <div className={style["footer-content"]}>
           <Select
             onChange={(event) => setLanguage(event.target.value as Locale)}

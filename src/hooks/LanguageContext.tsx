@@ -1,6 +1,7 @@
 import { Locale } from "client";
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 import { Translation } from "../lang";
 import { German } from "../lang/languages/DE";
 import { English } from "../lang/languages/EN";
@@ -22,6 +23,7 @@ export const LanguageContext = React.createContext<LanguageContext>(defaultValue
 
 export const LanguageProvider: NextPage = ({ children }): JSX.Element => {
   const { client } = useClient();
+  const [cookies, setCookie] = useCookies();
   const [language, setLanguage] = useState<Locale>("EN");
   const translations: { [key: string]: Translation } = {
     EN: English,
@@ -31,12 +33,20 @@ export const LanguageProvider: NextPage = ({ children }): JSX.Element => {
 
   useEffect(() => {
     const lang: string = navigator.language.length > 2 ? navigator.language.split("-")[0].toUpperCase() : navigator.language;
-    setLanguage(lang === "DE" ? "DE" : lang === "FR" ? "EN" : "EN");
+    if (cookies.language) setLanguage(cookies.language);
+    else setLanguage(lang === "DE" ? "DE" : lang === "FR" ? "EN" : "EN");
   }, []);
 
   useEffect(() => {
     if (client) setLanguage(client.user.locale);
   }, [client]);
+
+  useEffect(() => {
+    setCookie("language", language, {
+      expires: new Date(Date.now() + 100 * 86400000),
+      path: "/",
+    });
+  }, [language]);
 
   return <LanguageContext.Provider value={{ language: language, setLanguage: setLanguage, translation: translations[language] }} children={children} />;
 };

@@ -23,7 +23,7 @@ const landing: LandingTranslations = {
   },
   secure: {
     title: "Secure",
-    description: "Tria is encrypted over a TLS protocol and the whole source code is public available on GitHub",
+    description: "Tria is encrypted over a TLS protocol and the whole source code is public available on %GitHub%",
   },
   quicknav: {
     title: "Quick Navigation",
@@ -36,6 +36,12 @@ const landing: LandingTranslations = {
     title: "API",
     api: "API",
     docs: "Documentation",
+  },
+  source: {
+    title: "Source Code",
+    frontend: "Frontend",
+    backend: "Backend",
+    client: "Client",
   },
 };
 
