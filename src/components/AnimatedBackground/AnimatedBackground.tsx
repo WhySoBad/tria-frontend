@@ -134,7 +134,8 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({}): JSX.Element 
 
   const handleResize = debounce(() => {
     for (let i = 0; i < ids.length; i++) cancelAnimationFrame(ids[i]);
-    setDimensions({ width: ref.current?.clientWidth || width, height: ref.current?.clientHeight || height });
+    if (!canvas || !ref.current) return;
+    setDimensions({ width: canvas.current.offsetWidth || width, height: canvas.current.offsetHeight || height });
   }, 100);
 
   let last: number = Date.now();
