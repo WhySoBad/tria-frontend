@@ -134,16 +134,16 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({}): JSX.Element 
 
   const handleResize = debounce(() => {
     for (let i = 0; i < ids.length; i++) cancelAnimationFrame(ids[i]);
-    if (!canvas || !ref.current) return;
-    setDimensions({ width: canvas.current.offsetWidth || width, height: canvas.current.offsetHeight || height });
-  }, 100);
+    if (!canvas || canvas.current.offsetWidth === 0 || canvas.current.offsetHeight === 0) return handleResize();
+    else setDimensions({ width: canvas.current.offsetWidth, height: canvas.current.offsetHeight });
+  }, 50);
 
   let last: number = Date.now();
   let now: number = 0;
   let fpsInterval: number = 1000 / 60;
 
   useEffect(() => {
-    setTimeout(handleResize, 100);
+    handleResize();
   }, [ref.current]);
 
   const handleLoad = () => {
