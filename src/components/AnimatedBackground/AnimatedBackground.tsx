@@ -142,7 +142,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({}): JSX.Element 
   let fpsInterval: number = 1000 / 60;
 
   useEffect(() => {
-    handleResize();
+    setTimeout(handleResize, 100);
   }, [ref.current]);
 
   const handleLoad = () => {
