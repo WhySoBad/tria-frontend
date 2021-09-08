@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import React from "react";
-import Explore from "../components/Explore/Explore";
-import Layout from "../components/Layout/Layout";
-import Meta from "../components/Meta/Meta";
+import Explore from "../components/Explore";
+import Layout from "../components/Layout";
+import Meta from "../components/Meta";
 import { useLang } from "../hooks/LanguageContext";
 
 const ExplorePage: NextPage = (): JSX.Element => {

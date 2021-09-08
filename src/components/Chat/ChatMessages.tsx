@@ -8,9 +8,9 @@ import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
 import style from "../../styles/modules/Chat.module.scss";
 import { debouncedPromise } from "../../util";
-import Avatar from "../Avatar/Avatar";
-import Menu, { MenuItem } from "../Menu/Menu";
-import Scrollbar from "../Scrollbar/Scrollbar";
+import Avatar from "../Avatar";
+import Menu, { MenuItem } from "../Menu";
+import Scrollbar from "../Scrollbar";
 
 const Messages: React.FC = (): JSX.Element => {
   const { client } = useClient();

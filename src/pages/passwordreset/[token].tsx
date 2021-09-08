@@ -1,9 +1,9 @@
 import { validatePasswordReset } from "client";
 import { NextPage, NextPageContext } from "next";
 import React from "react";
-import { FormLayout } from "../../components/Layout/Layout";
-import Meta from "../../components/Meta/Meta";
-import PasswordResetConfirm from "../../components/PasswordReset/PasswordResetConfirm";
+import { FormLayout } from "../../components/Layout";
+import Meta from "../../components/Meta";
+import PasswordResetConfirm from "../../components/PasswordResetConfirm";
 import { useLang } from "../../hooks/LanguageContext";
 
 interface Props {

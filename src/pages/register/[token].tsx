@@ -1,9 +1,9 @@
 import { validateRegister } from "client";
 import { NextPage, NextPageContext } from "next";
 import React from "react";
-import { FormLayout } from "../../components/Layout/Layout";
-import Meta from "../../components/Meta/Meta";
-import Register from "../../components/Register/Register";
+import { FormLayout } from "../../components/Layout";
+import Meta from "../../components/Meta";
+import Register from "../../components/Register";
 import { useLang } from "../../hooks/LanguageContext";
 
 const RegisterPage: NextPage = (): JSX.Element => {

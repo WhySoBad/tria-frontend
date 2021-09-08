@@ -5,8 +5,8 @@ import React, { useState } from "react";
 import { useClient } from "../../../hooks/ClientContext";
 import { useLang } from "../../../hooks/LanguageContext";
 import style from "../../../styles/modules/ChatPreview.module.scss";
-import Button from "../../Button/Button";
-import Scrollbar from "../../Scrollbar/Scrollbar";
+import Button from "../../Button";
+import Scrollbar from "../../Scrollbar";
 import { BaseModal, ModalProps } from "../Modal";
 
 interface ChatPreviewModalProps extends ModalProps {

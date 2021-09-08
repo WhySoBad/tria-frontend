@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import React from "react";
-import { FormLayout } from "../components/Layout/Layout";
-import Login from "../components/Login/Login";
-import Meta from "../components/Meta/Meta";
+import { FormLayout } from "../components/Layout";
+import Login from "../components/Login";
+import Meta from "../components/Meta";
 import { useLang } from "../hooks/LanguageContext";
 
 const LoginPage: NextPage = (): JSX.Element => {

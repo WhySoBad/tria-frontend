@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import Landing from "../components/Landing/Landing";
-import Meta from "../components/Meta/Meta";
+import Landing from "../components/Landing";
+import Meta from "../components/Meta";
 import { useLang } from "../hooks/LanguageContext";
 
 const HomePage: NextPage = (): JSX.Element => {

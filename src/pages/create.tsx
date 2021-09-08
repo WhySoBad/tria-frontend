@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import React from "react";
-import Create from "../components/Create/Create";
-import Layout from "../components/Layout/Layout";
-import Meta from "../components/Meta/Meta";
+import Create from "../components/Create";
+import Layout from "../components/Layout";
+import Meta from "../components/Meta";
 import { useLang } from "../hooks/LanguageContext";
 
 const CreatePage: NextPage = (): JSX.Element => {

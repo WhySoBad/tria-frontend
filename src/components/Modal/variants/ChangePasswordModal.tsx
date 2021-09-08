@@ -7,9 +7,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useClient } from "../../../hooks/ClientContext";
 import { useLang } from "../../../hooks/LanguageContext";
 import style from "../../../styles/modules/ChangePasswordModal.module.scss";
-import Button, { TextButton } from "../../Button/Button";
-import Input from "../../Input/Input";
-import Snackbar from "../../Snackbar/Snackbar";
+import Button, { TextButton } from "../../Button";
+import Input from "../../Input";
+import Snackbar from "../../Snackbar";
 import { ModalProps } from "../Modal";
 
 interface ChangePasswordModalProps extends ModalProps {}

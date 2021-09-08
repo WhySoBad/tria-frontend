@@ -1,14 +1,14 @@
 import { useMediaQuery } from "@material-ui/core";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
-import { useBurger } from "../../hooks/BurgerContext";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
+import { useBurger } from "../hooks/BurgerContext";
+import { useClient } from "../hooks/ClientContext";
+import { useLang } from "../hooks/LanguageContext";
 import style from "../../styles/modules/Layout.module.scss";
-import Burger from "../Burger/Burger";
-import Footer from "../Footer/Footer";
-import Header from "../Header/Header";
-import Scrollbar from "../Scrollbar/Scrollbar";
+import Burger from "./Burger";
+import Footer from "./Footer";
+import Header from "./Header";
+import Scrollbar from "./Scrollbar";
 
 const Layout: React.FC = ({ children }): JSX.Element => {
   const matches = useMediaQuery("(min-width: 800px)");

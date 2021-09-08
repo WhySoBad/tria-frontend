@@ -5,12 +5,12 @@ import { confirmPasswordReset } from "client";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useLang } from "../../hooks/LanguageContext";
+import { useLang } from "../hooks/LanguageContext";
 import style from "../../styles/modules/PasswordReset.module.scss";
-import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
-import Button from "../Button/Button";
-import Input from "../Input/Input";
-import Snackbar from "../Snackbar/Snackbar";
+import AnimatedBackground from "./AnimatedBackground";
+import Button from "./Button";
+import Input from "./Input";
+import Snackbar from "./Snackbar";
 
 interface PasswordResetConfirmProps {
   token: string;

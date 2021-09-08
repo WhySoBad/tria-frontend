@@ -2,10 +2,10 @@ import { Locale } from "client";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FC } from "react";
-import { useAuth } from "../../hooks/AuthContext";
-import { useLang } from "../../hooks/LanguageContext";
+import { useAuth } from "../hooks/AuthContext";
+import { useLang } from "../hooks/LanguageContext";
 import style from "../../styles/modules/Footer.module.scss";
-import { Select } from "../Input/Input";
+import { Select } from "./Input";
 
 const Footer: FC = (): JSX.Element => {
   const { translation, language, setLanguage } = useLang();

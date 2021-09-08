@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import Layout from "../components/Layout/Layout";
-import Meta from "../components/Meta/Meta";
+import Layout from "../components/Layout";
+import Meta from "../components/Meta";
 import { useLang } from "../hooks/LanguageContext";
 
 const AppPage: NextPage = (): JSX.Element => {

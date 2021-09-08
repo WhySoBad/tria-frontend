@@ -5,14 +5,14 @@ import { Admin, Chat, ChatSocketEvent, Group, Owner, PrivateChat, UserSocketEven
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useBurger } from "../../hooks/BurgerContext";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
-import { useModal } from "../../hooks/ModalContext";
+import { useBurger } from "../hooks/BurgerContext";
+import { useClient } from "../hooks/ClientContext";
+import { useLang } from "../hooks/LanguageContext";
+import { useModal } from "../hooks/ModalContext";
 import style from "../../styles/modules/Burger.module.scss";
-import Avatar from "../Avatar/Avatar";
-import Menu, { MenuItem } from "../Menu/Menu";
-import Scrollbar from "../Scrollbar/Scrollbar";
+import Avatar from "./Avatar";
+import Menu, { MenuItem } from "./Menu";
+import Scrollbar from "./Scrollbar";
 
 interface BurgerProps {
   onClick?: () => void;

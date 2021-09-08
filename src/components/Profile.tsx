@@ -4,16 +4,16 @@ import { Chat, ChatSocketEvent, checkGroupTag, Group, Locale, PrivateChat } from
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
-import { useModal } from "../../hooks/ModalContext";
 import style from "../../styles/modules/Profile.module.scss";
-import { debouncedPromise } from "../../util";
-import Avatar from "../Avatar/Avatar";
-import Button, { TextButton } from "../Button/Button";
-import Input, { Searchbar, Select } from "../Input/Input";
-import Scrollbar from "../Scrollbar/Scrollbar";
-import Snackbar from "../Snackbar/Snackbar";
+import { useClient } from "../hooks/ClientContext";
+import { useLang } from "../hooks/LanguageContext";
+import { useModal } from "../hooks/ModalContext";
+import { debouncedPromise } from "../util";
+import Avatar from "./Avatar";
+import Button, { TextButton } from "./Button";
+import Input, { Searchbar, Select } from "./Input";
+import Scrollbar from "./Scrollbar";
+import Snackbar from "./Snackbar";
 
 const Profile: React.FC = (): JSX.Element => {
   const { translation } = useLang();

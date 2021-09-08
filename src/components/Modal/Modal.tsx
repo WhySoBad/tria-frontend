@@ -5,7 +5,7 @@ import { getPalette } from "color-thief-react";
 import React, { useEffect, useState } from "react";
 import style from "../../styles/modules/Modal.module.scss";
 import { hexToHsl } from "../../util";
-import Avatar from "../Avatar/Avatar";
+import Avatar from "../Avatar";
 
 export interface ModalProps {
   open?: boolean;

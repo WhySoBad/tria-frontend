@@ -9,9 +9,9 @@ import { useLang } from "../../../hooks/LanguageContext";
 import { useModal } from "../../../hooks/ModalContext";
 import style from "../../../styles/modules/ChatModal.module.scss";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
-import Avatar from "../../Avatar/Avatar";
-import Menu, { MenuItem } from "../../Menu/Menu";
-import Scrollbar from "../../Scrollbar/Scrollbar";
+import Avatar from "../../Avatar";
+import Menu, { MenuItem } from "../../Menu";
+import Scrollbar from "../../Scrollbar";
 import { BaseModal, ModalProps } from "../Modal";
 
 interface ChatModalProps extends ModalProps {

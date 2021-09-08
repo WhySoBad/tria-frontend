@@ -3,13 +3,13 @@ import { checkUserTag, Locale, verifyRegister } from "client";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useLang } from "../../hooks/LanguageContext";
+import { useLang } from "../hooks/LanguageContext";
 import style from "../../styles/modules/Register.module.scss";
-import { debouncedPromise } from "../../util";
-import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
-import Button from "../Button/Button";
-import Input, { Select } from "../Input/Input";
-import Snackbar from "../Snackbar/Snackbar";
+import { debouncedPromise } from "../util";
+import AnimatedBackground from "./AnimatedBackground";
+import Button from "./Button";
+import Input, { Select } from "./Input";
+import Snackbar from "./Snackbar";
 
 interface RegisterProps {}
 

@@ -11,11 +11,11 @@ import { useLang } from "../../hooks/LanguageContext";
 import style from "../../styles/modules/Chat.module.scss";
 import baseStyle from "../../styles/modules/Modal.module.scss";
 import { debouncedPromise } from "../../util";
-import Avatar from "../Avatar/Avatar";
-import Button, { TextButton } from "../Button/Button";
-import Input, { Checkbox, Searchbar, Select } from "../Input/Input";
-import Scrollbar from "../Scrollbar/Scrollbar";
-import Snackbar from "../Snackbar/Snackbar";
+import Avatar from "../Avatar";
+import Button, { TextButton } from "../Button";
+import Input, { Checkbox, Searchbar, Select } from "../Input";
+import Scrollbar from "../Scrollbar";
+import Snackbar from "../Snackbar";
 import ChatTitle from "./ChatTitle";
 
 interface ChatSettingsProps {

@@ -11,10 +11,10 @@ import { useLang } from "../../../hooks/LanguageContext";
 import { useModal } from "../../../hooks/ModalContext";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
 import style from "../../../styles/modules/UserModal.module.scss";
-import Avatar from "../../Avatar/Avatar";
-import Button from "../../Button/Button";
-import Menu, { MenuItem } from "../../Menu/Menu";
-import Scrollbar from "../../Scrollbar/Scrollbar";
+import Avatar from "../../Avatar";
+import Button from "../../Button";
+import Menu, { MenuItem } from "../../Menu";
+import Scrollbar from "../../Scrollbar";
 import { BaseModal, ModalProps } from "../Modal";
 
 interface UserModalProps extends ModalProps {

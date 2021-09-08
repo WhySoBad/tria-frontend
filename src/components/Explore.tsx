@@ -4,15 +4,15 @@ import { ChatPreview, SearchOptions, UserPreview } from "client";
 import { getPalette } from "color-thief-react";
 import React, { useEffect, useRef, useState } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
-import { useModal } from "../../hooks/ModalContext";
+import { useClient } from "../hooks/ClientContext";
+import { useLang } from "../hooks/LanguageContext";
+import { useModal } from "../hooks/ModalContext";
 import style from "../../styles/modules/Explore.module.scss";
-import { debounce, hexToHsl } from "../../util";
-import Avatar from "../Avatar/Avatar";
-import { Searchbar } from "../Input/Input";
-import Menu, { CheckboxMenuItem } from "../Menu/Menu";
-import Scrollbar from "../Scrollbar/Scrollbar";
+import { debounce, hexToHsl } from "../util";
+import Avatar from "./Avatar";
+import { Searchbar } from "./Input";
+import Menu, { CheckboxMenuItem } from "./Menu";
+import Scrollbar from "./Scrollbar";
 
 const Explore: React.FC = (): JSX.Element => {
   const { client } = useClient();

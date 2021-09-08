@@ -7,7 +7,7 @@ import { useClient } from "../../hooks/ClientContext";
 import { useLang } from "../../hooks/LanguageContext";
 import { useModal } from "../../hooks/ModalContext";
 import style from "../../styles/modules/Chat.module.scss";
-import Menu, { MenuItem } from "../Menu/Menu";
+import Menu, { MenuItem } from "../Menu";
 
 interface ChatTitleProps {
   settings?: boolean;

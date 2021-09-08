@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../hooks/AuthContext";
-import { useLang } from "../../hooks/LanguageContext";
+import { useAuth } from "../hooks/AuthContext";
+import { useLang } from "../hooks/LanguageContext";
 import style from "../../styles/modules/Header.module.scss";
 
 const Header = (): JSX.Element => {

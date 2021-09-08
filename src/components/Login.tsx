@@ -4,13 +4,13 @@ import { Alert } from "@material-ui/lab";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useAuth } from "../../hooks/AuthContext";
-import { useLang } from "../../hooks/LanguageContext";
+import { useAuth } from "../hooks/AuthContext";
+import { useLang } from "../hooks/LanguageContext";
 import style from "../../styles/modules/Login.module.scss";
-import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
-import Button, { TextButton } from "../Button/Button";
-import Input from "../Input/Input";
-import Snackbar from "../Snackbar/Snackbar";
+import AnimatedBackground from "./AnimatedBackground";
+import Button, { TextButton } from "./Button";
+import Input from "./Input";
+import Snackbar from "./Snackbar";
 
 type Inputs = {
   username: string;

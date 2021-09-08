@@ -1,10 +1,10 @@
 import React from "react";
-import { useLang } from "../../hooks/LanguageContext";
+import { useLang } from "../hooks/LanguageContext";
 import style from "../../styles/modules/Landing.module.scss";
-import AnimatedBackground from "../AnimatedBackground/AnimatedBackground";
-import Footer from "../Footer/Footer";
-import Header from "../Header/Header";
-import Scrollbar from "../Scrollbar/Scrollbar";
+import AnimatedBackground from "./AnimatedBackground";
+import Footer from "./Footer";
+import Header from "./Header";
+import Scrollbar from "./Scrollbar";
 
 const Landing = (): JSX.Element => {
   return (

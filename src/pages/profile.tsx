@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import React from "react";
-import Layout from "../components/Layout/Layout";
-import Meta from "../components/Meta/Meta";
-import Profile from "../components/Profile/Profile";
+import Layout from "../components/Layout";
+import Meta from "../components/Meta";
+import Profile from "../components/Profile";
 import { useClient } from "../hooks/ClientContext";
 import { useLang } from "../hooks/LanguageContext";
 

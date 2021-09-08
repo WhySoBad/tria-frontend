@@ -1,6 +1,6 @@
 import { Avatar as MuiAvatar, AvatarProps as MuiAvatarProps } from "@material-ui/core";
 import React from "react";
-import { hexToHsl } from "../../util";
+import { hexToHsl } from "../util";
 
 interface AvatarProps extends MuiAvatarProps {
   color?: string;

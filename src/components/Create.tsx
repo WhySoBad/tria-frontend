@@ -4,15 +4,15 @@ import { checkGroupTag, GroupRole, GroupType, Locale, SearchOptions, UserPreview
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
+import { useClient } from "../hooks/ClientContext";
+import { useLang } from "../hooks/LanguageContext";
 import style from "../../styles/modules/Create.module.scss";
-import { debounce, debouncedPromise } from "../../util";
-import Avatar from "../Avatar/Avatar";
-import Button from "../Button/Button";
-import Input, { Checkbox, Searchbar } from "../Input/Input";
-import Scrollbar from "../Scrollbar/Scrollbar";
-import Snackbar from "../Snackbar/Snackbar";
+import { debounce, debouncedPromise } from "../util";
+import Avatar from "./Avatar";
+import Button from "./Button";
+import Input, { Checkbox, Searchbar } from "./Input";
+import Scrollbar from "./Scrollbar";
+import Snackbar from "./Snackbar";
 
 const Create: React.FC = (): JSX.Element => {
   const { translation } = useLang();
