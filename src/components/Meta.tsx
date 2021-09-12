@@ -23,8 +23,10 @@ const Meta: React.FC<MetaProps> = ({ description, title, noindex, image, keyword
     <Head>
       {title && <title children={title} />}
       {title && <meta property="og:title" content={title} key="ogtitle" />}
+      {title && <meta name="twitter:title" content={title} />}
       {description && <meta name="description" content={description} />}
       {description && <meta property="og:description" content={description} key="ogdesc" />}
+      {description && <meta name="twitter:description" content={description} />}
       {keywords && <meta name="keywords" content={Array.isArray(keywords) ? keywords.join(", ") : keywords} />}
       <meta property="og:image" content={`${hostname}/banner.png`} />
       <meta property="og:image:secure_url" content={`${hostname}/banner.png`} />
@@ -34,8 +36,6 @@ const Meta: React.FC<MetaProps> = ({ description, title, noindex, image, keyword
       <meta property="og:url" content={hostname} key="ogurl" />
       <meta name="robots" content={noindex ? "noindex" : "index"} />
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
       <meta name="twitter:image:src" content={hostname} />
     </Head>
   );

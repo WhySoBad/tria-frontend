@@ -12,7 +12,7 @@ import Scrollbar from "./Scrollbar";
 
 const Layout: React.FC = ({ children }): JSX.Element => {
   const matches = useMediaQuery("(min-width: 800px)");
-  const { language, setLanguage } = useLang();
+  const { language, setLanguage, translation } = useLang();
   const ref = useRef<HTMLDivElement>(null);
   const { open, setOpen } = useBurger();
   const { client } = useClient();
@@ -39,6 +39,8 @@ const Layout: React.FC = ({ children }): JSX.Element => {
 
   if (!client) return <></>;
 
+  const defaultChildren = <code className={style["default-children"]} children={translation.app.app.select} />;
+
   return (
     <main className={style["container"]} data-open={open} ref={ref} onContextMenu={(event) => event.preventDefault()}>
       {typeof open !== "undefined" && (
@@ -49,7 +51,7 @@ const Layout: React.FC = ({ children }): JSX.Element => {
           children={<Burger onClick={() => ref?.current?.clientWidth <= 800 && open && setOpen(false)} />}
         />
       )}
-      <section className={style["content-container"]} children={children} data-overflow={rendered && !matches && matches !== null} />
+      <section className={style["content-container"]} children={router.pathname === "/app" ? defaultChildren : children} data-overflow={rendered && !matches && matches !== null} />
     </main>
   );
 };

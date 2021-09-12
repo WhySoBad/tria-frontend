@@ -92,6 +92,9 @@ export interface ErrorTranslations {
 }
 
 export interface AppTranslations {
+  app: {
+    select: string;
+  };
   profile: {
     title: string;
     burger_title: string;

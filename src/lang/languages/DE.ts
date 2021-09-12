@@ -93,6 +93,7 @@ const error: ErrorTranslations = {
 };
 
 const app: AppTranslations = {
+  app: { select: "Wähle or erstelle einen Chat" },
   profile: {
     title: "Profil",
     burger_title: "Profil",
