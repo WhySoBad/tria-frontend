@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import style from "../../styles/modules/AnimatedBackground.module.scss";
+import style from "../styles/modules/AnimatedBackground.module.scss";
 import { debounce } from "../util";
 
 const colors: Array<string> = ["#CAF0F8", "#ADE8F4", "#90E0EF", "#48CAE4", "#00B4D8", "#0096C7", "#0077B6", "#023E8A", "#03045E"];

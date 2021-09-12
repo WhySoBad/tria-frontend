@@ -1,7 +1,6 @@
-import React from "react";
-import style from "../../styles/modules/Button.module.scss";
 import { Button as MuiButton, ButtonProps } from "@material-ui/core";
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
+import style from "../styles/modules/Button.module.scss";
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ ...rest }: ButtonProps, ref): JSX.Element => {
   return <MuiButton disableElevation disableRipple ref={ref} variant={"contained"} size={"large"} classes={{ root: style["button"] }} {...rest} />;

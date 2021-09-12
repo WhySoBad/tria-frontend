@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React, { FC } from "react";
 import { useAuth } from "../hooks/AuthContext";
 import { useLang } from "../hooks/LanguageContext";
-import style from "../../styles/modules/Footer.module.scss";
+import style from "../styles/modules/Footer.module.scss";
 import { Select } from "./Input";
 
 const Footer: FC = (): JSX.Element => {

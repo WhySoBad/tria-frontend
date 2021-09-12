@@ -5,7 +5,7 @@ import { checkUserMail, registerUser } from "client";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLang } from "../hooks/LanguageContext";
-import style from "../../styles/modules/SignUp.module.scss";
+import style from "../styles/modules/SignUp.module.scss";
 import { debouncedPromise } from "../util";
 import AnimatedBackground from "./AnimatedBackground";
 import Button from "./Button";

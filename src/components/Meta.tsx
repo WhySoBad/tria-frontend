@@ -13,8 +13,8 @@ interface MetaProps {
 const Meta: React.FC<MetaProps> = ({ description, title, noindex, image, keywords }) => {
   const router = useRouter();
 
-  const hostname: string = typeof window !== "undefined" ? window.location.origin : router.asPath;
-
+  //const hostname: string = typeof window !== "undefined" ? window.location.origin : router.asPath;
+  const hostname: string = "https://tria.chat";
   const allKeywords: Array<string> = ["messenger", "chat", "tria"];
   if (typeof keywords === "string") allKeywords.push(keywords);
   else if (Array.isArray(keywords)) allKeywords.push(...keywords);
@@ -29,7 +29,6 @@ const Meta: React.FC<MetaProps> = ({ description, title, noindex, image, keyword
       <meta property="og:image" content={`${hostname}/banner.png`} />
       <meta property="og:image:secure_url" content={`${hostname}/banner.png`} />
       <meta name="keywords" content={allKeywords.join(", ")} />
-      <meta property="og:image:type" content="image/png" />
       <meta property="og:image:width" content="1920" />
       <meta property="og:image:height" content="1080" />
       <meta property="og:url" content={hostname} key="ogurl" />

@@ -1,6 +1,6 @@
 import React, { MutableRefObject } from "react";
 import Scrollbars, { ScrollbarProps as Props } from "react-custom-scrollbars-2";
-import style from "../../styles/modules/Layout.module.scss";
+import style from "../styles/modules/Layout.module.scss";
 
 interface ScrollbarProps extends Props {
   reference?: MutableRefObject<Scrollbars>;

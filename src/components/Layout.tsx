@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useBurger } from "../hooks/BurgerContext";
 import { useClient } from "../hooks/ClientContext";
 import { useLang } from "../hooks/LanguageContext";
-import style from "../../styles/modules/Layout.module.scss";
+import style from "../styles/modules/Layout.module.scss";
 import Burger from "./Burger";
 import Footer from "./Footer";
 import Header from "./Header";

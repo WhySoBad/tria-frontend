@@ -4,10 +4,10 @@ import { Chat, ChatSocketEvent, checkGroupTag, Group, Locale, PrivateChat } from
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import style from "../../styles/modules/Profile.module.scss";
 import { useClient } from "../hooks/ClientContext";
 import { useLang } from "../hooks/LanguageContext";
 import { useModal } from "../hooks/ModalContext";
+import style from "../styles/modules/Profile.module.scss";
 import { debouncedPromise } from "../util";
 import Avatar from "./Avatar";
 import Button, { TextButton } from "./Button";

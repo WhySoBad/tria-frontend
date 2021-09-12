@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useClient } from "../hooks/ClientContext";
 import { useLang } from "../hooks/LanguageContext";
-import style from "../../styles/modules/Create.module.scss";
+import style from "../styles/modules/Create.module.scss";
 import { debounce, debouncedPromise } from "../util";
 import Avatar from "./Avatar";
 import Button from "./Button";

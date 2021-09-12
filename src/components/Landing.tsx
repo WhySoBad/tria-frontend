@@ -1,6 +1,6 @@
 import React from "react";
 import { useLang } from "../hooks/LanguageContext";
-import style from "../../styles/modules/Landing.module.scss";
+import style from "../styles/modules/Landing.module.scss";
 import AnimatedBackground from "./AnimatedBackground";
 import Footer from "./Footer";
 import Header from "./Header";

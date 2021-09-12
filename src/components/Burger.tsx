@@ -9,7 +9,7 @@ import { useBurger } from "../hooks/BurgerContext";
 import { useClient } from "../hooks/ClientContext";
 import { useLang } from "../hooks/LanguageContext";
 import { useModal } from "../hooks/ModalContext";
-import style from "../../styles/modules/Burger.module.scss";
+import style from "../styles/modules/Burger.module.scss";
 import Avatar from "./Avatar";
 import Menu, { MenuItem } from "./Menu";
 import Scrollbar from "./Scrollbar";

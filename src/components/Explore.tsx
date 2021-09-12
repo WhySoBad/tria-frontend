@@ -7,7 +7,7 @@ import Scrollbars from "react-custom-scrollbars-2";
 import { useClient } from "../hooks/ClientContext";
 import { useLang } from "../hooks/LanguageContext";
 import { useModal } from "../hooks/ModalContext";
-import style from "../../styles/modules/Explore.module.scss";
+import style from "../styles/modules/Explore.module.scss";
 import { debounce, hexToHsl } from "../util";
 import Avatar from "./Avatar";
 import { Searchbar } from "./Input";

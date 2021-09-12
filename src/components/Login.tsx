@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "../hooks/AuthContext";
 import { useLang } from "../hooks/LanguageContext";
-import style from "../../styles/modules/Login.module.scss";
+import style from "../styles/modules/Login.module.scss";
 import AnimatedBackground from "./AnimatedBackground";
 import Button, { TextButton } from "./Button";
 import Input from "./Input";

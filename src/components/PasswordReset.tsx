@@ -3,7 +3,7 @@ import { requestPasswordReset } from "client";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLang } from "../hooks/LanguageContext";
-import style from "../../styles/modules/PasswordReset.module.scss";
+import style from "../styles/modules/PasswordReset.module.scss";
 import AnimatedBackground from "./AnimatedBackground";
 import Button from "./Button";
 import Input from "./Input";

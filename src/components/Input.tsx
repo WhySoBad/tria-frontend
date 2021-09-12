@@ -1,8 +1,7 @@
-import React, { forwardRef, useState } from "react";
-import style from "../../styles/modules/Input.module.scss";
-import { InputBase, InputBaseProps, InputAdornment, IconButton, Checkbox as MuiCheckbox, CheckboxProps, SelectProps as MuiSelectProps, Select as MuiSelect, MenuItem } from "@material-ui/core";
+import { Checkbox as MuiCheckbox, CheckboxProps, IconButton, InputAdornment, InputBase, InputBaseProps, MenuItem, Select as MuiSelect, SelectProps as MuiSelectProps } from "@material-ui/core";
 import { Tune as TuneIcon } from "@material-ui/icons";
-import { useEffect } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
+import style from "../styles/modules/Input.module.scss";
 
 export const Input = forwardRef<HTMLInputElement, InputBaseProps>(({ ...rest }, ref): JSX.Element => {
   return <InputBase spellCheck={false} ref={ref} classes={{ root: style["input"], error: style["error"], disabled: style["disabled"], focused: style["focus"] }} {...rest} />;

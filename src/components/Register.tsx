@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useLang } from "../hooks/LanguageContext";
-import style from "../../styles/modules/Register.module.scss";
+import style from "../styles/modules/Register.module.scss";
 import { debouncedPromise } from "../util";
 import AnimatedBackground from "./AnimatedBackground";
 import Button from "./Button";

@@ -1,8 +1,6 @@
-import React, { forwardRef } from "react";
-import style from "../../styles/modules/Menu.module.scss";
 import { FormControlLabel, Menu as BaseMenu, MenuProps as BaseMenuProps } from "@material-ui/core";
-import { useState } from "react";
-import { useRef } from "react";
+import React, { forwardRef, useRef, useState } from "react";
+import style from "../styles/modules/Menu.module.scss";
 import { debounce } from "../util";
 import { Checkbox } from "./Input";
 
