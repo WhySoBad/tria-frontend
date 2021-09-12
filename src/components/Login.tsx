@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "../hooks/AuthContext";
+import { useClient } from "../hooks/ClientContext";
 import { useLang } from "../hooks/LanguageContext";
 import style from "../styles/modules/Login.module.scss";
 import AnimatedBackground from "./AnimatedBackground";
@@ -18,6 +19,7 @@ type Inputs = {
 };
 
 const Login: React.FC = (): JSX.Element => {
+  const { client, resetClient } = useClient();
   const [hidden, setHidden] = useState<boolean>(true);
   const { login } = useAuth();
   const { translation } = useLang();
@@ -30,9 +32,14 @@ const Login: React.FC = (): JSX.Element => {
   } = useForm<Inputs>({ mode: "onChange" });
 
   const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
-    login(data)
-      .then(() => router.push("/app"))
-      .catch(setSnackError);
+    const same: boolean = client?.user?.mail.toLowerCase() == data.username.toLowerCase();
+    if (same) router.push("/app");
+    else {
+      login(data)
+        .then(resetClient)
+        .then(() => router.push("/app"))
+        .catch(setSnackError);
+    }
   };
 
   return (

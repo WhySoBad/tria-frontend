@@ -166,7 +166,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({}): JSX.Element 
       context.lineTo(size * Math.cos((i * 2 * Math.PI) / sides), size * Math.sin((i * 2 * Math.PI) / sides));
     }
     context.closePath();
-    context.fillStyle = "#000000";
+    context.fillStyle = "#0a0a0a";
     context.strokeStyle = color;
     context.lineWidth = strokeWidth;
     context.stroke();
@@ -191,7 +191,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({}): JSX.Element 
           if (particle.sides === true) {
             context.arc(particle.x, particle.y, particle.size, 0, 2 * Math.PI);
             context.strokeStyle = particle.color;
-            context.fillStyle = "#000000";
+            context.fillStyle = "#0a0a0a";
             context.lineWidth = 2;
             context.stroke();
             context.fill();

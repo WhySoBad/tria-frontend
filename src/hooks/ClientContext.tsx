@@ -8,12 +8,14 @@ interface ClientContext {
   client: Client;
   isLoading: boolean;
   fetchClient: () => Promise<void>;
+  resetClient: () => void;
 }
 
 const defaultValue: ClientContext = {
   client: null,
   isLoading: false,
   fetchClient: async () => {},
+  resetClient: () => {},
 };
 
 export const ClientContext = React.createContext<ClientContext>(defaultValue);
@@ -59,6 +61,7 @@ export const ClientProvider: NextPage = ({ children }): JSX.Element => {
         client: client,
         isLoading: isLoading,
         fetchClient: fetchClient,
+        resetClient: () => setClient(null),
       }}
       children={children}
     />

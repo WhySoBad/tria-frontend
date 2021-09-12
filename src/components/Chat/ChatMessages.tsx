@@ -44,7 +44,7 @@ const Messages: React.FC = (): JSX.Element => {
     if (!chat) return;
     const unknownUsers: Array<string> = [];
 
-    chat.messages.values().forEach((message: Message) => {
+    (chat.messages?.values() || []).forEach((message: Message) => {
       if (!chat.members.keys().includes(message.sender) && !unknownUsers.includes(message.sender)) unknownUsers.push(message.sender);
     });
 
@@ -62,7 +62,7 @@ const Messages: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     let mounted: boolean = true;
-    const messages: Array<Message> = chat.messages.values().filter(({ createdAt, sender }) => {
+    const messages: Array<Message> = (chat.messages.values() || []).filter(({ createdAt, sender }) => {
       return sender !== client.user.uuid && createdAt.getTime() > chat.lastRead.getTime();
     });
     mounted && setLastRead(messages.length > 0 ? chat.lastRead : null);
@@ -83,7 +83,7 @@ const Messages: React.FC = (): JSX.Element => {
 
   if (!chat) return <></>;
 
-  const sorted: Array<Message | MemberLog> = [...(chat?.messages.values() || []), ...(chat?.memberLog.values() || [])].sort((a, b) => {
+  const sorted: Array<Message | MemberLog> = [...(chat?.messages?.values() || []), ...(chat?.memberLog?.values() || [])].sort((a, b) => {
     const dateA: Date = a instanceof Message ? a.createdAt : a.timestamp;
     const dateB: Date = b instanceof Message ? b.createdAt : b.timestamp;
     return dateA.getTime() - dateB.getTime();
