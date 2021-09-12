@@ -41,5 +41,5 @@ Open [localhost at port 3000](http://localhost:3000) in your browser
 
 ## License 
 
-© [WhySoBad](https://github.com/WhySoBad)
+AGPL © [WhySoBad](https://github.com/WhySoBad)
 
