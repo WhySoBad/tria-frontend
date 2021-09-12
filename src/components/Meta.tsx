@@ -29,8 +29,8 @@ const Meta: React.FC<MetaProps> = ({ description, title, noindex, image, keyword
       <meta property="og:image" content={`${hostname}/banner.png`} />
       <meta property="og:image:secure_url" content={`${hostname}/banner.png`} />
       <meta name="keywords" content={allKeywords.join(", ")} />
-      <meta property="og:image:width" content="1920" />
-      <meta property="og:image:height" content="1080" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="627" />
       <meta property="og:url" content={hostname} key="ogurl" />
       <meta name="robots" content={noindex ? "noindex" : "index"} />
     </Head>
