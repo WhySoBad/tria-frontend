@@ -33,6 +33,10 @@ const Meta: React.FC<MetaProps> = ({ description, title, noindex, image, keyword
       <meta property="og:image:height" content="627" />
       <meta property="og:url" content={hostname} key="ogurl" />
       <meta name="robots" content={noindex ? "noindex" : "index"} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image:src" content={hostname} />
     </Head>
   );
 };
