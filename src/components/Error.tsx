@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React from "react";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 import style from "../styles/modules/Error.module.scss";
 import AnimatedBackground from "./AnimatedBackground";
 import Button from "./Button";

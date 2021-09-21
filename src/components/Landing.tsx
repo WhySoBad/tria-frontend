@@ -1,5 +1,5 @@
 import React from "react";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 import style from "../styles/modules/Landing.module.scss";
 import AnimatedBackground from "./AnimatedBackground";
 import Footer from "./Footer";

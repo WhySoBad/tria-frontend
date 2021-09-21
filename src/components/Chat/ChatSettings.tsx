@@ -5,9 +5,7 @@ import { Admin, BannedMember, Chat, checkGroupTag, ClientEvent, Group, GroupRole
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useChat } from "../../hooks/ChatContext";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
+import { useChat, useClient, useLang } from "../../hooks";
 import style from "../../styles/modules/Chat.module.scss";
 import baseStyle from "../../styles/modules/Modal.module.scss";
 import { debouncedPromise } from "../../util";
@@ -27,7 +25,7 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({ uuid }): JSX.Element => {
   const { client } = useClient();
   const router = useRouter();
 
-  const chat: Chat | undefined = client.user.chats.get(selected);
+  const chat: Chat | undefined = client.user.chats.get(selected); //currently selected chat
 
   if (selected !== uuid) return <></>;
   if (!chat || !(chat instanceof Group)) {
@@ -54,7 +52,7 @@ interface MemberListProps {
 }
 
 const MemberList: React.FC<MemberListProps> = ({ chat }): JSX.Element => {
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>(""); //member query text
   const { client } = useClient();
   const { translation } = useLang();
   const [, setUpdate] = useState<number>(0);
@@ -72,7 +70,7 @@ const MemberList: React.FC<MemberListProps> = ({ chat }): JSX.Element => {
     };
   }, []);
 
-  const user: Member = chat.members.get(client.user.uuid);
+  const user: Member = chat.members.get(client.user.uuid); //member instance of the logged in user
 
   return (
     <div className={style["member-container"]}>
@@ -111,13 +109,13 @@ type MemberItemInputs = {
 };
 
 const MemberListItem: React.FC<MemberListItemProps> = ({ uuid, user, chat }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState<boolean>(true);
+  const [collapsed, setCollapsed] = useState<boolean>(true); //boolean whether the member options are hidden or not
   const [snackError, setSnackError] = useState<string>();
   const { translation } = useLang();
-  const member: Member = chat.members.get(uuid);
-  const [role, setRole] = useState<GroupRole>(member.role);
+  const member: Member = chat.members.get(uuid); //member to be displayed
+  const [role, setRole] = useState<GroupRole>(member.role); //role of the member
   const { client } = useClient();
-  const admin: Admin | undefined = member instanceof Admin ? member : undefined;
+  const admin: Admin | undefined = member instanceof Admin ? member : undefined; //check whether the member has admin role
 
   const {
     control,
@@ -174,15 +172,10 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ uuid, user, chat }): JS
     }
   };
 
-  const handleKick = () => {
-    if (chat.canKick) chat.kickMember(member).catch(setSnackError);
-  };
+  const handleKick = () => chat.canKick && chat.kickMember(member).catch(setSnackError);
+  const handleBan = () => chat.canBan && chat.banMember(member).catch(setSnackError);
 
-  const handleBan = () => {
-    if (chat.canBan) chat.banMember(member).catch(setSnackError);
-  };
-
-  const disabled: boolean = member.user.uuid === client.user.uuid || !chat.canEditMembers || member instanceof Owner;
+  const disabled: boolean = member.user.uuid === client.user.uuid || !chat.canEditMembers || member instanceof Owner; //boolean whether the submit button is disabled
 
   return (
     <div className={style["item-container"]} onClick={() => setCollapsed(!collapsed)}>
@@ -321,13 +314,13 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
   const [snackError, setSnackError] = useState<string>();
   const router = useRouter();
   const { translation } = useLang();
-  const [url, setUrl] = useState<string>(chat.avatarURL);
-  const [avatar, setAvatar] = useState<File>(null);
+  const [url, setUrl] = useState<string>(chat.avatarURL); //url to the chat avatar
+  const [avatar, setAvatar] = useState<File>(null); //avatar file to upload
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isValid, isDirty, dirtyFields, isSubmitting },
+    formState: { errors, isDirty, dirtyFields, isSubmitting },
   } = useForm<Inputs>({
     defaultValues: {
       description: chat.description,
@@ -488,7 +481,7 @@ interface BannedMemberListProps {
 }
 
 const BannedMemberList: React.FC<BannedMemberListProps> = ({ chat }): JSX.Element => {
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>(""); //banned member query text
   const { client } = useClient();
   const { translation } = useLang();
   const [, setUpdate] = useState<number>(0);
@@ -531,7 +524,7 @@ interface BannedListItemProps {
 }
 
 const BannedListItem: React.FC<BannedListItemProps> = ({ member, chat }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState<boolean>(true);
+  const [collapsed, setCollapsed] = useState<boolean>(true); //boolean whether the banned member options are hidden or not
   const [snackError, setSnackError] = useState<string>();
   const { translation } = useLang();
 

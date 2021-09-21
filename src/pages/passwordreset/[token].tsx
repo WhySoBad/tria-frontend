@@ -4,7 +4,7 @@ import React from "react";
 import { FormLayout } from "../../components/Layout";
 import Meta from "../../components/Meta";
 import PasswordResetConfirm from "../../components/PasswordResetConfirm";
-import { useLang } from "../../hooks/LanguageContext";
+import { useLang } from "../../hooks";
 
 interface Props {
   token?: string;
@@ -24,9 +24,7 @@ PasswordResetPage.getInitialProps = async (context: NextPageContext) => {
   const token: string = (context.query?.token as string) || "";
   const valid: boolean = await validatePasswordReset(token);
   if (!valid) {
-    context.res.writeHead(301, {
-      Location: "/passwordreset",
-    });
+    context.res.writeHead(301, { Location: "/passwordreset" });
     context.res.end();
   } else return { token: token };
 };

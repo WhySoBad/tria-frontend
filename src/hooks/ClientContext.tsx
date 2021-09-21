@@ -31,6 +31,10 @@ export const ClientProvider: NextPage = ({ children }): JSX.Element => {
     setClient(null);
   };
 
+  const handleConnect = () => {
+    if (router.pathname === "/") router.push("/app");
+  };
+
   const fetchClient = (): Promise<void> => {
     return new Promise(async (resolve, reject) => {
       if (client) resolve();
@@ -43,6 +47,7 @@ export const ClientProvider: NextPage = ({ children }): JSX.Element => {
       await newClient.connect().catch(reject);
       if (newClient.connected) {
         newClient.on(ClientEvent.DISCONNECT, handleDisconnect);
+        newClient.on(ClientEvent.CONNECT, handleConnect);
         setClient(newClient);
         setLoading(false);
       } else setLoading(false);
@@ -52,6 +57,7 @@ export const ClientProvider: NextPage = ({ children }): JSX.Element => {
   useEffect(() => {
     return () => {
       if (client) client.off(ClientEvent.DISCONNECT, handleDisconnect);
+      if (client) client.off(ClientEvent.CONNECT, handleConnect);
     };
   }, []);
 

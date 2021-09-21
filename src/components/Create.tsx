@@ -1,11 +1,10 @@
 import { FormControlLabel } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { checkGroupTag, GroupRole, GroupType, Locale, SearchOptions, UserPreview } from "client";
+import { checkGroupTag, GroupRole, GroupType, SearchOptions, UserPreview } from "client";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useClient } from "../hooks/ClientContext";
-import { useLang } from "../hooks/LanguageContext";
+import { useClient, useLang } from "../hooks";
 import style from "../styles/modules/Create.module.scss";
 import { debounce, debouncedPromise } from "../util";
 import Avatar from "./Avatar";
@@ -45,9 +44,9 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
   const { client } = useClient();
   const { translation } = useLang();
   const [snackError, setSnackError] = useState<string>();
-  const [text, setText] = useState<string>("");
-  const [results, setResults] = useState<Array<UserPreview>>([]);
-  const [selected, setSelected] = useState<Array<UserPreview>>([]);
+  const [text, setText] = useState<string>(""); //text to query search
+  const [results, setResults] = useState<Array<UserPreview>>([]); //results of the search
+  const [selected, setSelected] = useState<Array<UserPreview>>([]); //results which are selected to be part of the chat
   const [checkedTag, setCheckedTag] = useState<{ tag: string; valid: boolean }>();
   const {
     control,
@@ -64,8 +63,6 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
   const router = useRouter();
 
   const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
-    const changes: Map<string, string | Locale> = new Map<string, string | Locale>();
-    Object.keys(dirtyFields).forEach((key: string) => changes.set(key, data[key]));
     client
       .createGroupChat({ ...data, type: data.public ? GroupType.GROUP : GroupType.PRIVATE_GROUP, avatar: null, members: selected.map(({ uuid }) => ({ uuid: uuid, role: GroupRole.MEMBER })) })
       .then((uuid: string) => router.push(`/chat/${uuid}`))
@@ -73,20 +70,20 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
   };
 
   const isValidTag = debouncedPromise(async (tag: string): Promise<boolean> => {
-    if (checkedTag?.tag === tag) return checkedTag?.valid;
-    if (tag === client.user.tag) return true;
-    const exists: boolean = await checkGroupTag(tag);
+    if (checkedTag?.tag === tag) return checkedTag?.valid; //check whether this tag has already been checked
+    const exists: boolean = await checkGroupTag(tag); //boolean whether the chat tag exists
     if (exists) setSnackError("Tag Has To Be Unique");
     setCheckedTag({ tag: tag, valid: !exists });
     return !exists;
   }, 250);
 
+  const options: SearchOptions = { text: "", checkUser: true, checkName: true, checkTag: true }; //search options with all search parameters
+
   useEffect(() => {
     let rendered: boolean = true;
     if (client) {
-      const options: SearchOptions = { text: text, checkUser: true, checkName: true, checkTag: true };
       client
-        .search(options)
+        .search({ ...options, text: text })
         .catch(client.error)
         .then((results: Array<UserPreview>) => {
           if (rendered) setResults(results);
@@ -106,7 +103,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
 
   const handleSearch = debounce((event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     client
-      .search({ text: event.target.value, checkUser: true, checkName: true, checkTag: true })
+      .search({ ...options, text: event.target.value })
       .then(setResults as any)
       .catch(client.error);
   }, 250);

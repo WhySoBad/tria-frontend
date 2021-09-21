@@ -5,15 +5,11 @@ import React, { useState } from "react";
 interface ChatContext {
   selected: string;
   setSelected: (chat: string) => void;
-  update: () => void;
-  updated: number;
 }
 
 const defaultValue: ChatContext = {
   selected: "",
   setSelected: () => {},
-  update: () => {},
-  updated: 0,
 };
 
 export const ChatContext = React.createContext<ChatContext>(defaultValue);
@@ -21,19 +17,12 @@ export const ChatContext = React.createContext<ChatContext>(defaultValue);
 export const ChatProvider: NextPage = ({ children }): JSX.Element => {
   const router = useRouter();
   const [chat, setChat] = useState<string>(router.query.uuid as string);
-  const [updated, setUpdate] = useState<number>();
-
-  const update: () => void = (): void => {
-    setUpdate(Date.now());
-  };
 
   return (
     <ChatContext.Provider
       value={{
         setSelected: setChat,
-        update: update,
         selected: chat,
-        updated: updated,
       }}
     >
       {children}

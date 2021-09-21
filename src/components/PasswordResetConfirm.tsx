@@ -5,7 +5,7 @@ import { confirmPasswordReset } from "client";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 import style from "../styles/modules/PasswordReset.module.scss";
 import AnimatedBackground from "./AnimatedBackground";
 import Button from "./Button";

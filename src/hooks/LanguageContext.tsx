@@ -43,7 +43,7 @@ export const LanguageProvider: NextPage = ({ children }): JSX.Element => {
 
   useEffect(() => {
     setCookie("language", language, {
-      expires: new Date(Date.now() + 100 * 86400000),
+      expires: new Date(Date.now() + 365 * 86400000 * 10), //set cookie for 10 years
       path: "/",
     });
   }, [language]);

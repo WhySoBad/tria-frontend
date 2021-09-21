@@ -19,15 +19,65 @@ class Particle {
   private _mouseX: number;
   private _mouseY: number;
   private _rotation: number;
+
+  /**
+   * Size of the particle
+   */
+
   public readonly size: number;
+
+  /**
+   * Hex color of the particle
+   */
+
   public readonly color: string;
+
+  /**
+   * Velocity of the particle
+   */
+
   public readonly velocity: number;
+
+  /**
+   * X-Axis movement speed
+   */
+
   public readonly movementX: number;
+
+  /**
+   * Y-Axis movement speed
+   */
+
   public readonly movementY: number;
+
+  /**
+   * Staticity of the particle
+   */
+
   public readonly staticity: number;
+
+  /**
+   * Magnetism of the particle
+   */
+
   public readonly magnetism: number;
+
+  /**
+   * Smooth factor of the particle
+   */
+
   public readonly smoothFactor: number;
+
+  /**
+   * Rotation speed of the particle
+   */
+
   public readonly rotationSpeed: number;
+
+  /**
+   * Amount of sides of the particle
+   */
+
   public readonly sides: number | true;
 
   constructor({ width, height }: ParticleProps) {
@@ -79,68 +129,108 @@ class Particle {
     this._rotation += this.rotationSpeed;
   }
 
+  /**
+   * X-Offset to the X-Translation in the canvas
+   */
+
   public get x(): number {
     return this._x;
   }
+
+  /**
+   * Y-Offset to the Y-Translation in the canvas
+   */
 
   public get y(): number {
     return this._y;
   }
 
+  /**
+   * X-Translation of the particle position
+   */
+
   public get translateX(): number {
     return this._translateX;
   }
+
+  /**
+   * Y-Translation of the particle position
+   */
 
   public get translateY(): number {
     return this._translateY;
   }
 
+  /**
+   * Function to update the height of the canvas on resize
+   *
+   * @param height new height
+   *
+   * @returns void
+   */
+
   public setHeight(height: number): void {
     this._height = height;
   }
+
+  /**
+   * Function to update the width of the canvas on resize
+   *
+   * @param width new width
+   *
+   * @returns void
+   */
 
   public setWidth(width: number): void {
     this._width = width;
   }
 
+  /**
+   * X-Position of the mouse
+   */
+
   public get mouseX(): number {
     return this._mouseX;
   }
 
+  /**
+   * Y-Position of the mouse
+   */
+
   public get mouseY(): number {
     return this._mouseY;
   }
+
+  /**
+   * Rotation of the particle
+   */
 
   public get rotation(): number {
     return this._rotation;
   }
 }
 
-interface AnimatedBackgroundProps {
-  amount?: number;
-}
+const ids: Array<number> = []; //all animationframe id's [used to cancel the frames on reset]
 
-const ids: Array<number> = [];
-
-const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({}): JSX.Element => {
+const AnimatedBackground: React.FC = (): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const context: CanvasRenderingContext2D = canvas.current?.getContext("2d");
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
-  let particles: Array<Particle> = [];
   const { width, height } = dimensions;
-  let id: undefined | number;
   const amount: number = Math.floor((width / 100) * (height / 100) * 0.8) > 20 ? Math.floor((width / 100) * (height / 100) * 0.8) : 20;
+
+  let particles: Array<Particle> = []; //array with all particles
+  let id: undefined | number; //current animationframe id
+  let last: number = Date.now(); //timestamp of last frame
+  let now: number = 0; //current timestamp
+  let fpsInterval: number = 1000 / 60; //milliseconds between two frames
 
   const handleResize = debounce(() => {
     for (let i = 0; i < ids.length; i++) cancelAnimationFrame(ids[i]);
     if (!canvas || canvas.current.offsetWidth === 0 || canvas.current.offsetHeight === 0) return handleResize();
     else setDimensions({ width: canvas.current.offsetWidth, height: canvas.current.offsetHeight });
   }, 50);
-
-  let last: number = Date.now();
-  let now: number = 0;
-  let fpsInterval: number = 1000 / 60;
 
   useEffect(() => {
     handleResize();

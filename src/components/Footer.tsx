@@ -2,8 +2,7 @@ import { Locale } from "client";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FC } from "react";
-import { useAuth } from "../hooks/AuthContext";
-import { useLang } from "../hooks/LanguageContext";
+import { useAuth, useLang } from "../hooks";
 import style from "../styles/modules/Footer.module.scss";
 import { Select } from "./Input";
 

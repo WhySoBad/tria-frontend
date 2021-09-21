@@ -4,7 +4,7 @@ import { Alert } from "@material-ui/lab";
 import { checkUserMail, registerUser } from "client";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 import style from "../styles/modules/SignUp.module.scss";
 import { debouncedPromise } from "../util";
 import AnimatedBackground from "./AnimatedBackground";
@@ -22,7 +22,7 @@ const SignUp: React.FC = (): JSX.Element => {
   const [hidden, setHidden] = useState<boolean>(true);
   const [snackError, setSnackError] = useState<string>();
   const [snackSuccess, setSnackSuccess] = useState<string>();
-  const [checkedMail, setCheckedMail] = useState<{ mail: string; valid: boolean }>();
+  const [checkedMail, setCheckedMail] = useState<{ mail: string; valid: boolean }>(); //last checked mail adress
   const {
     register,
     reset,
@@ -40,8 +40,8 @@ const SignUp: React.FC = (): JSX.Element => {
   };
 
   const isValidMail = debouncedPromise(async (mail: string): Promise<boolean> => {
-    if (checkedMail?.mail === mail) return checkedMail.valid;
-    const exists: boolean = await checkUserMail(mail);
+    if (checkedMail?.mail === mail) return checkedMail.valid; //check whether the mail has already been checked
+    const exists: boolean = await checkUserMail(mail); //boolean whether the mail already exists
     if (exists) setSnackError("Mail Has To Be Unique");
     setCheckedMail({ mail: mail, valid: !exists });
     return !exists;

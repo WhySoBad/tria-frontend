@@ -5,10 +5,7 @@ import { Admin, Chat, ChatSocketEvent, Group, Owner, PrivateChat, UserSocketEven
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useBurger } from "../hooks/BurgerContext";
-import { useClient } from "../hooks/ClientContext";
-import { useLang } from "../hooks/LanguageContext";
-import { useModal } from "../hooks/ModalContext";
+import { useBurger, useClient, useLang, useModal } from "../hooks";
 import style from "../styles/modules/Burger.module.scss";
 import Avatar from "./Avatar";
 import Menu, { MenuItem } from "./Menu";
@@ -105,7 +102,7 @@ interface ItemProps {
 
 const Item: React.FC<ItemProps> = ({ href, icon, text, onClick, open }): JSX.Element => {
   const router = useRouter();
-  const selected: boolean = href?.toLowerCase() === router.pathname.toLowerCase();
+  const selected: boolean = href?.toLowerCase() === router.pathname.toLowerCase(); //boolean whether this is the select burger item
 
   const content: JSX.Element = (
     <div onClick={onClick} className={style["burger-item"]} aria-selected={selected}>
@@ -129,16 +126,16 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element
   const { openChat } = useModal();
   const [, setUpdate] = useState<number>();
   const { translation } = useLang();
-  const href: string = `/chat/${chat.uuid}`;
-  const name: string = getChatName(chat);
-  const src: string = chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : "";
-  const color: string = chat instanceof Group ? chat.color : chat instanceof PrivateChat ? chat.participant.user.color : "";
+  const href: string = `/chat/${chat.uuid}`; //url to the chat
+  const name: string = getChatName(chat); //name of the chat
+  const src: string = chat instanceof Group ? chat.avatarURL : chat instanceof PrivateChat ? chat.participant.user.avatarURL : ""; //url of the chat avatar
+  const color: string = chat instanceof Group ? chat.color : chat instanceof PrivateChat ? chat.participant.user.color : ""; //color of the chat
   const [menuPos, setMenuPos] = useState<{ x: number | null; y: number | null }>({ x: null, y: null });
 
   const router = useRouter();
-  const selected: string = router.query.uuid as string;
-  const unread: number = chat.messages.values().filter(({ createdAt, sender }) => sender !== client.user.uuid && createdAt.getTime() > chat.lastRead.getTime()).length;
-  const canManage: boolean = chat instanceof Group && (chat.members.get(client.user.uuid) instanceof Admin || chat.members.get(client.user.uuid) instanceof Owner);
+  const selected: string = router.query.uuid as string; //uuid of the currently selected chat
+  const unread: number = chat.messages.values().filter(({ createdAt, sender }) => sender !== client.user.uuid && createdAt.getTime() > chat.lastRead.getTime()).length; //amount of unread messages
+  const canManage: boolean = chat instanceof Group && (chat.members.get(client.user.uuid) instanceof Admin || chat.members.get(client.user.uuid) instanceof Owner); //boolean whether the logged in user can manage this chat
 
   const handleRightClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     setMenuPos({ x: event.clientX, y: event.clientY });
@@ -187,6 +184,14 @@ const ChatItem: React.FC<ChatItemProps> = ({ chat, open, onClick }): JSX.Element
     </>
   );
 };
+
+/**
+ * Function to get the name for a chat
+ *
+ * @param chat chat to get name for
+ *
+ * @returns string
+ */
 
 const getChatName: (chat: Chat) => string = (chat: Chat): string => {
   if (chat instanceof Group) return chat.name;

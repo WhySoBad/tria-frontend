@@ -2,7 +2,7 @@ import { Chat, ChatPreview, Member, User, UserPreview } from "client";
 import { NextPage } from "next";
 import React, { useState } from "react";
 import { ModalContainer, ModalProps } from "../components/Modal/Modal";
-import { ChatPreviewModal, ChatModal, MemberModal, UserModal } from "../components/Modal/variants";
+import { ChatModal, ChatPreviewModal, MemberModal, UserModal } from "../components/Modal/variants";
 import ChangePasswordModal from "../components/Modal/variants/ChangePasswordModal";
 
 interface ModalContext {

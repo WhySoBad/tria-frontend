@@ -1,9 +1,7 @@
 import { useMediaQuery } from "@material-ui/core";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
-import { useBurger } from "../hooks/BurgerContext";
-import { useClient } from "../hooks/ClientContext";
-import { useLang } from "../hooks/LanguageContext";
+import { useBurger, useClient, useLang } from "../hooks";
 import style from "../styles/modules/Layout.module.scss";
 import Burger from "./Burger";
 import Footer from "./Footer";
@@ -17,13 +15,14 @@ const Layout: React.FC = ({ children }): JSX.Element => {
   const { open, setOpen } = useBurger();
   const { client } = useClient();
   const router = useRouter();
-  const [rendered, setRendered] = useState<boolean>(false);
+  const [rendered, setRendered] = useState<boolean>(false); //boolean whether the layout element is mounted or not
 
   useEffect(() => {
-    if (!client) router.push({ pathname: "/auth", query: `url=${router.asPath}` });
+    if (!client) router.push({ pathname: "/auth", query: `url=${router.asPath}` }); //redirect to auth page
   }, []);
 
   useEffect(() => {
+    //set burger depending on clientWidth
     if (ref?.current?.clientWidth <= 800) setOpen(false);
     else if (open === undefined) setOpen(true);
     setRendered(true);
@@ -34,7 +33,7 @@ const Layout: React.FC = ({ children }): JSX.Element => {
   }, [matches]);
 
   useEffect(() => {
-    if (client && language !== client.user.locale) setLanguage(client.user.locale);
+    if (client && language !== client.user.locale) setLanguage(client.user.locale); //set the logged in users prefered langugage as language
   }, [children]);
 
   if (!client) return <></>;
@@ -51,7 +50,15 @@ const Layout: React.FC = ({ children }): JSX.Element => {
           children={<Burger onClick={() => ref?.current?.clientWidth <= 800 && open && setOpen(false)} />}
         />
       )}
-      <section className={style["content-container"]} children={router.pathname === "/app" ? defaultChildren : children} data-overflow={rendered && !matches && matches !== null} />
+      <section
+        className={style["content-container"]}
+        children={
+          <>
+            {children} {router.pathname === "/app" && defaultChildren}{" "}
+          </>
+        }
+        data-overflow={rendered && !matches && matches !== null}
+      />
     </main>
   );
 };

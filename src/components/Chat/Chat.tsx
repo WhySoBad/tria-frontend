@@ -1,8 +1,7 @@
 import { Chat } from "client";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef } from "react";
-import { useChat } from "../../hooks/ChatContext";
-import { useClient } from "../../hooks/ClientContext";
+import { useChat, useClient } from "../../hooks";
 import style from "../../styles/modules/Chat.module.scss";
 import ChatInput from "./ChatInput";
 import Messages from "./ChatMessages";
@@ -16,7 +15,7 @@ const ChatComponent: React.FC<ChatProps> = ({ uuid }): JSX.Element => {
   const { selected } = useChat();
   const { client } = useClient();
   const ref = useRef<HTMLInputElement>(null);
-  const chat: Chat | undefined = client.user.chats.get(selected);
+  const chat: Chat | undefined = client.user.chats.get(selected); //selected chat
   const router = useRouter();
 
   useEffect(() => {

@@ -31,14 +31,14 @@ export const AuthProvider: NextPage = ({ children }): JSX.Element => {
   useEffect(() => {
     if (token) {
       setCookie("token", token, {
-        expires: new Date(Date.now() + 100 * 86400000),
+        expires: new Date(Date.now() + 100 * 86400000), //expires after 100 days
         path: "/",
       });
     }
   }, [token]);
 
   const login = (credentials: Credentials): Promise<string> => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       loginUser(credentials)
         .then((token: string) => {
           setToken(token);

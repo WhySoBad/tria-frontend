@@ -1,12 +1,10 @@
 import { Group as GroupIcon } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
-import { Chat, ChatSocketEvent, checkGroupTag, Group, Locale, PrivateChat } from "client";
+import { Chat, ChatSocketEvent, checkUserTag, Group, Locale, PrivateChat } from "client";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useClient } from "../hooks/ClientContext";
-import { useLang } from "../hooks/LanguageContext";
-import { useModal } from "../hooks/ModalContext";
+import { useClient, useLang, useModal } from "../hooks";
 import style from "../styles/modules/Profile.module.scss";
 import { debouncedPromise } from "../util";
 import Avatar from "./Avatar";
@@ -35,7 +33,7 @@ const Profile: React.FC = (): JSX.Element => {
 };
 
 const ChatsList: React.FC = (): JSX.Element => {
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>(""); //chat query text
   const { client } = useClient();
   const { translation } = useLang();
   const [, setUpdate] = useState<number>(0);
@@ -85,10 +83,10 @@ const ChatsListItem: React.FC<ChatsListItemProps> = ({ chat }): JSX.Element => {
   const [snackError, setSnackError] = useState<string>();
   const { openChat } = useModal();
 
-  const name: string = chat instanceof PrivateChat ? chat.participant.user.name : chat instanceof Group ? chat.name : "";
-  const avatarURL: string | null = chat instanceof PrivateChat ? chat.participant.user.avatarURL : chat instanceof Group ? chat.avatarURL : null;
-  const color: string = chat instanceof PrivateChat ? chat.participant.user.color : chat instanceof Group ? chat.color : "";
-  const tag: string = chat instanceof PrivateChat ? chat.participant.user.tag : chat instanceof Group ? chat.tag : "";
+  const name: string = chat instanceof PrivateChat ? chat.participant.user.name : chat instanceof Group ? chat.name : ""; //name of the chat
+  const avatarURL: string | null = chat instanceof PrivateChat ? chat.participant.user.avatarURL : chat instanceof Group ? chat.avatarURL : null; //avatar url of the chat
+  const color: string = chat instanceof PrivateChat ? chat.participant.user.color : chat instanceof Group ? chat.color : ""; //color of the chat
+  const tag: string = chat instanceof PrivateChat ? chat.participant.user.tag : chat instanceof Group ? chat.tag : ""; //tag of the chat
 
   return (
     <div className={style["item-container"]} onClick={() => openChat(chat)}>
@@ -121,17 +119,17 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
   const { client } = useClient();
   const { translation, setLanguage } = useLang();
   const { openPasswordChange } = useModal();
-  const [defaultLocale, setDefaultLocale] = useState<Locale>();
+  const [defaultLocale] = useState<Locale>(client.user.locale); //default locale before possibly changing
   const [snackError, setSnackError] = useState<string>();
-  const [url, setUrl] = useState<string>(client.user.avatarURL);
-  const [defaultAvatar, setDefaultAvatar] = useState<boolean>(!!client.user.avatarURL);
-  const [avatar, setAvatar] = useState<File>(null);
+  const [url, setUrl] = useState<string>(client.user.avatarURL); //new avatar url
+  const [defaultAvatar, setDefaultAvatar] = useState<boolean>(!!client.user.avatarURL); //boolean whether it's the default avatar
+  const [avatar, setAvatar] = useState<File>(null); //uploaded avatar
   const router = useRouter();
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isValid, isDirty, dirtyFields, isSubmitting },
+    formState: { errors, isDirty, dirtyFields, isSubmitting },
   } = useForm<Inputs>({
     defaultValues: {
       description: client.user.description,
@@ -151,11 +149,6 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
       tag: client.user.tag,
     });
   };
-
-  useEffect(() => {
-    const lang: string = navigator.language.length > 2 ? navigator.language.split("-")[1] : navigator.language;
-    setDefaultLocale(lang === "DE" ? "DE" : lang === "FR" ? "FR" : "EN");
-  }, []);
 
   const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
     const changes: Map<string, string | Locale> = new Map<string, string | Locale>();
@@ -185,7 +178,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
 
   const isValidTag = debouncedPromise(async (tag: string): Promise<boolean> => {
     if (tag === client.user.tag) return true;
-    const exists: boolean = await checkGroupTag(tag);
+    const exists: boolean = await checkUserTag(tag); //boolean whether the usertag exsists
     return !exists;
   }, 250);
 

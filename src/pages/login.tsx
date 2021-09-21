@@ -3,7 +3,7 @@ import React from "react";
 import { FormLayout } from "../components/Layout";
 import Login from "../components/Login";
 import Meta from "../components/Meta";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 
 const LoginPage: NextPage = (): JSX.Element => {
   const { translation } = useLang();

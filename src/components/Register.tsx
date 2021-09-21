@@ -3,15 +3,13 @@ import { checkUserTag, Locale, verifyRegister } from "client";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 import style from "../styles/modules/Register.module.scss";
 import { debouncedPromise } from "../util";
 import AnimatedBackground from "./AnimatedBackground";
 import Button from "./Button";
 import Input, { Select } from "./Input";
 import Snackbar from "./Snackbar";
-
-interface RegisterProps {}
 
 type Inputs = {
   name: string;
@@ -20,7 +18,7 @@ type Inputs = {
   locale: Locale;
 };
 
-const Register: React.FC<RegisterProps> = (): JSX.Element => {
+const Register: React.FC = (): JSX.Element => {
   const [defaultLocale, setDefaultLocale] = useState<Locale>();
   const { translation } = useLang();
   const [snackError, setSnackError] = useState<string>();

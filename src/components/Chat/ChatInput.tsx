@@ -2,16 +2,13 @@ import { IconButton, InputBase, useMediaQuery } from "@material-ui/core";
 import { Send as SendIcon } from "@material-ui/icons";
 import { Chat } from "client";
 import React, { useEffect, useRef, useState } from "react";
-import { useBurger } from "../../hooks/BurgerContext";
-import { useChat } from "../../hooks/ChatContext";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
+import { useBurger, useChat, useClient, useLang } from "../../hooks";
 import style from "../../styles/modules/Chat.module.scss";
 
 const ChatInput: React.FC = (): JSX.Element => {
   const [text, setText] = useState<string>("");
   const { open } = useBurger();
-  const matches = useMediaQuery("(min-width: 800px)");
+  const matches = useMediaQuery("(min-width: 800px)"); //check whether the resolution is lower than 800px wide
   const { client } = useClient();
   const { selected } = useChat();
   const { translation } = useLang();

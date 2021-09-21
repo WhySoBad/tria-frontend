@@ -2,10 +2,7 @@ import { CircularProgress } from "@material-ui/core";
 import { BannedMember, Chat, ChatSocketEvent, ChatType, getUserPreview, Group, Member, MemberLog, Message, UserPreview } from "client";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
-import { useChat } from "../../hooks/ChatContext";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
-import { useModal } from "../../hooks/ModalContext";
+import { useChat, useClient, useLang, useModal } from "../../hooks";
 import style from "../../styles/modules/Chat.module.scss";
 import { debouncedPromise } from "../../util";
 import Avatar from "../Avatar";
@@ -17,11 +14,11 @@ const Messages: React.FC = (): JSX.Element => {
   const { selected } = useChat();
   const { translation } = useLang();
   const ref = useRef<Scrollbars>(null);
-  const chat: Chat | undefined = client?.user.chats.get(selected);
-  const [lastRead, setLastRead] = useState<Date>(chat?.lastRead);
-  const [reading, setReading] = useState<boolean>(false);
+  const chat: Chat | undefined = client?.user.chats.get(selected); //currently selected chat
+  const [lastRead, setLastRead] = useState<Date>(chat?.lastRead); //date when the chat was last read
+  const [reading, setReading] = useState<boolean>(false); //boolean whether messages are currently being read
   const [, setUpdate] = useState<number>();
-  const [users, setUsers] = useState<Array<UserPreview>>([]);
+  const [users, setUsers] = useState<Array<UserPreview>>([]); //prefetched users which aren't in this chat anymore but have sent messages
 
   const handleUpdate = (chatUuid: string) => chatUuid === selected && setUpdate(Date.now());
 
@@ -76,7 +73,7 @@ const Messages: React.FC = (): JSX.Element => {
     if (timestamp > chat.lastRead.getTime() && !reading) {
       setReading(true);
       await chat.readUntil(timestamp).catch(client.error);
-      cb();
+      cb(); //use deprecated callbacks to prevet from listening to events in every message component [causes lag]
       setReading(false);
     }
   }, 250);
@@ -89,9 +86,9 @@ const Messages: React.FC = (): JSX.Element => {
     return dateA.getTime() - dateB.getTime();
   });
 
-  const dates: Array<number> = [];
+  const dates: Array<number> = []; //all different dates when messages were sent
 
-  const groups: Array<Array<Message> | number> = [];
+  const groups: Array<Array<Message> | number> = []; //all message sorted in groups
 
   sorted.forEach((message: Message | MemberLog, index: number, arr: Array<Message | MemberLog>) => {
     if (message instanceof MemberLog) return;
@@ -163,11 +160,11 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead, fetchedSe
   const { client } = useClient();
   const { openMember, openUser } = useModal();
   if (messages.length === 0) return <></>;
-  const message: Message = messages[0];
-  const chat: Chat | undefined = client.user.chats.get(message.chat);
+  const message: Message = messages[0]; //first message of the group
+  const chat: Chat | undefined = client.user.chats.get(message.chat); //currently selected chat
   const sender: Member | UserPreview | undefined | BannedMember =
     chat.members.get(message.sender) || (chat instanceof Group && chat.bannedMembers.get(message.sender)) || fetchedSender.find(({ uuid }) => uuid === message.sender);
-  const isSelf: boolean = (sender instanceof Member ? sender.user.uuid : sender ? sender.uuid : "") === client.user.uuid;
+  const isSelf: boolean = (sender instanceof Member ? sender.user.uuid : sender ? sender.uuid : "") === client.user.uuid; //boolean whether the logged in user sent this message
 
   const getDate = (message: Message): string => {
     const hours: number = message.createdAt.getHours() % 12 === 0 ? 12 : message.createdAt.getHours() % 12;
@@ -175,7 +172,7 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ messages, onRead, fetchedSe
     return `${hours < 10 ? "0" + hours : hours}:${minutes < 10 ? "0" + minutes : minutes} ${message.createdAt.getHours() > 12 ? "PM" : "AM"}`;
   };
 
-  const src: string | boolean = sender && (sender instanceof Member ? sender.user.avatarURL : sender.avatarURL);
+  const src: string | boolean = sender && (sender instanceof Member ? sender.user.avatarURL : sender.avatarURL); //url to the avatar of the sender
 
   return (
     <section className={style["group-container"]}>
@@ -213,10 +210,10 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
   const { openMember, openUser } = useModal();
   const { client } = useClient();
   const { translation } = useLang();
-  const [isRead, setRead] = useState<boolean>(read);
+  const [isRead, setRead] = useState<boolean>(read); //boolean whether the message has been read
   const ref = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
-  const [editing, setEditing] = useState<boolean>(false);
+  const [editing, setEditing] = useState<boolean>(false); //boolean whether the message is in editing mode
   const [menuPos, setMenuPos] = useState<{ x: number | null; y: number | null }>({ x: null, y: null });
 
   useEffect(() => {
@@ -241,7 +238,13 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
 
   const handleMenuClose = () => setMenuPos({ x: null, y: null });
 
-  const getText = () => {
+  /**
+   * Function to get the text with hyperlink markdown
+   *
+   * @returns string | Array<JSX.Element>
+   */
+
+  const getText = (): Array<JSX.Element> | string => {
     const pattern: RegExp =
       /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
     const matches: Array<string> = message.text.match(pattern);
@@ -284,7 +287,7 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
             ref={textRef}
             children={getText()}
             onKeyPress={(event) => {
-              if (message.sender !== client.user.uuid) return;
+              if (message.sender !== client.user.uuid || !editing) return;
               if (event.key === "\n") document.execCommand("insertText", false, "\n");
               else if (event.key === "Enter") {
                 event.preventDefault();
@@ -294,6 +297,9 @@ const MessageEl: React.FC<MessageProps> = ({ message, self, read, first, onRead,
                     .then(() => setEditing(false))
                     .catch(client.error);
                 } else setEditing(false);
+              } else if (event.key === "Escape") {
+                event.preventDefault();
+                setEditing(false);
               }
             }}
             contentEditable={editing}
@@ -358,8 +364,8 @@ const Log: React.FC<LogProps> = ({ log }): JSX.Element => {
   const { client } = useClient();
   const { openUser } = useModal();
   const { translation } = useLang();
-  const [user, setUser] = useState<UserPreview>(null);
-  const [fetched, setFetched] = useState<boolean>(false);
+  const [user, setUser] = useState<UserPreview>(null); //user who joined/left the chat
+  const [fetched, setFetched] = useState<boolean>(false); //boolean whether the user preview has already been fetched
 
   useEffect(() => {
     let mounted = true;
@@ -397,8 +403,9 @@ interface MessageLoaderProps {
 const MessageLoader: React.FC<MessageLoaderProps> = ({ reference }): JSX.Element => {
   const loaderRef = useRef<HTMLInputElement>(null);
   const { client } = useClient();
-  const { update, selected } = useChat();
-  const chat: Chat | undefined = client?.user.chats.get(selected);
+  const [, setUpdate] = useState<number>();
+  const { selected } = useChat();
+  const chat: Chat | undefined = client?.user.chats.get(selected); //currently selected chat
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
@@ -406,11 +413,11 @@ const MessageLoader: React.FC<MessageLoaderProps> = ({ reference }): JSX.Element
         const oldest: Message = chat.messages.values().sort((a, b) => a?.createdAt.getTime() - b?.createdAt.getTime())[0];
         if (oldest && !chat.lastFetched) {
           chat
-            .fetchMessages(oldest.createdAt.getTime(), 25)
+            .fetchMessages(oldest.createdAt.getTime(), 25) //fetch more messages
             .then(() => {
               const start: number = reference.current.getScrollHeight();
-              update();
-              reference.current.scrollTop(reference.current.getScrollHeight() - start);
+              setUpdate(Date.now());
+              reference.current.scrollTop(reference.current.getScrollHeight() - start); //scroll to the latest scroll point
             })
             .catch(client.error);
         }
@@ -432,16 +439,16 @@ interface BottomAnchorProps {
 }
 
 const BottomAnchor: React.FC<BottomAnchorProps> = ({ reference }): JSX.Element => {
-  const ref = useRef<HTMLInputElement>(null);
   const { client } = useClient();
   const { selected } = useChat();
-  const chat: Chat | undefined = client.user.chats.get(selected);
+  const chat: Chat | undefined = client.user.chats.get(selected); //currently selected chat
 
   const handleMessage = (chatUuid: string, message: Message) => {
     if (chatUuid !== chat.uuid) return;
-    if (message.sender === client.user.uuid || reference.current.getClientHeight() - reference.current.getScrollTop() < 100) {
-      setTimeout(() => reference.current.scrollToBottom(), 10);
-      chat.readUntil(message.createdAt).catch(client.error);
+    const scrollOffset: number = reference.current.getScrollHeight() - reference.current.getClientHeight() - reference.current.getScrollTop();
+    if (message.sender === client.user.uuid || scrollOffset <= 100) {
+      reference.current.scrollToBottom(); //anchor is mounted scroll to the bottom when a message arrives
+      if (chat.lastRead < message.createdAt) chat.readUntil(message.createdAt).catch(client.error); //automatically mark the new message as read
     }
   };
 
@@ -453,10 +460,10 @@ const BottomAnchor: React.FC<BottomAnchorProps> = ({ reference }): JSX.Element =
   }, []);
 
   useEffect(() => {
-    ref?.current?.scrollIntoView();
+    reference.current.scrollToBottom();
   }, [selected]);
 
-  return <div ref={ref} />;
+  return <></>;
 };
 
 export default Messages;

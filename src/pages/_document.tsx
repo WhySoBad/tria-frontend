@@ -6,7 +6,10 @@ export default class CustomDocument extends Document {
   render() {
     return (
       <Html lang="en">
-        <Head></Head>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta charSet="utf-8" />
+        </Head>
         <body>
           <Main />
           <NextScript />
@@ -18,6 +21,7 @@ export default class CustomDocument extends Document {
 
 /**
  * Custom initial props to render mui styling
+ *
  * @see https://github.com/mui-org/material-ui/blob/master/examples/nextjs/pages/_document.js
  */
 

@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import Landing from "../components/Landing";
 import Meta from "../components/Meta";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 
 const HomePage: NextPage = (): JSX.Element => {
   const { translation } = useLang();

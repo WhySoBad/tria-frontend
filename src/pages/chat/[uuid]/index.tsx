@@ -4,9 +4,7 @@ import React, { useEffect } from "react";
 import ChatComponent from "../../../components/Chat/Chat";
 import Layout from "../../../components/Layout";
 import Meta from "../../../components/Meta";
-import { useChat } from "../../../hooks/ChatContext";
-import { useClient } from "../../../hooks/ClientContext";
-import { useLang } from "../../../hooks/LanguageContext";
+import { useChat, useClient, useLang } from "../../../hooks";
 
 interface Props {
   uuid?: string;
@@ -36,12 +34,9 @@ const ChatPage: NextPage<Props> = ({ uuid }): JSX.Element => {
 ChatPage.getInitialProps = async (context: NextPageContext) => {
   const uuid: string = (context.query?.uuid as string) || "";
   const uuidRegex: RegExp = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
-  if (typeof uuid == "string" && uuidRegex.test(uuid)) {
-    return { uuid: uuid };
-  } else {
-    context.res.writeHead(301, {
-      Location: "/app",
-    });
+  if (typeof uuid == "string" && uuidRegex.test(uuid)) return { uuid: uuid };
+  else {
+    context.res.writeHead(301, { Location: "/app" });
     context.res.end();
   }
 };

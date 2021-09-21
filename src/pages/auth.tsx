@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import React from "react";
 import Auth from "../components/Auth";
 import Meta from "../components/Meta";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 
 const AuthPage: NextPage = (): JSX.Element => {
   const { translation } = useLang();

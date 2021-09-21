@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
 import React from "react";
 
 interface MetaProps {
@@ -10,12 +9,9 @@ interface MetaProps {
   keywords?: Array<string> | string;
 }
 
-const Meta: React.FC<MetaProps> = ({ description, title, noindex, image, keywords }) => {
-  const router = useRouter();
-
-  //const hostname: string = typeof window !== "undefined" ? window.location.origin : router.asPath;
+const Meta: React.FC<MetaProps> = ({ description, title, noindex, keywords }) => {
   const hostname: string = "https://tria.chat";
-  const allKeywords: Array<string> = ["messenger", "chat", "tria"];
+  const allKeywords: Array<string> = ["messenger", "chat", "tria"]; //default keywords
   if (typeof keywords === "string") allKeywords.push(keywords);
   else if (Array.isArray(keywords)) allKeywords.push(...keywords);
 

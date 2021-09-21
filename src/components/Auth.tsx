@@ -1,7 +1,7 @@
 import { CircularProgress } from "@material-ui/core";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useClient } from "../hooks/ClientContext";
+import { useClient } from "../hooks";
 import style from "../styles/modules/Auth.module.scss";
 
 const Auth: React.FC = (): JSX.Element => {

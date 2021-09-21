@@ -4,9 +4,7 @@ import { ChatPreview, SearchOptions, UserPreview } from "client";
 import { getPalette } from "color-thief-react";
 import React, { useEffect, useRef, useState } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
-import { useClient } from "../hooks/ClientContext";
-import { useLang } from "../hooks/LanguageContext";
-import { useModal } from "../hooks/ModalContext";
+import { useClient, useLang, useModal } from "../hooks";
 import style from "../styles/modules/Explore.module.scss";
 import { debounce, hexToHsl } from "../util";
 import Avatar from "./Avatar";
@@ -18,10 +16,10 @@ const Explore: React.FC = (): JSX.Element => {
   const { client } = useClient();
   const { translation } = useLang();
   const scrollRef = useRef<Scrollbars>(null);
-  const [view, setView] = useState<"grid" | "list">();
-  const [results, setResults] = useState<Array<ChatPreview | UserPreview>>([]);
+  const [view, setView] = useState<"grid" | "list">(); //view mode [list or grid]
+  const [results, setResults] = useState<Array<ChatPreview | UserPreview>>([]); //fetched search results
   const [tuneElement, setTuneElement] = useState<null | HTMLElement>(null);
-  const [options, setOptions] = useState<SearchOptions>({ text: "", checkChat: true, checkUser: true, checkName: true });
+  const [options, setOptions] = useState<SearchOptions>({ text: "", checkChat: true, checkUser: true, checkName: true }); //options for the search
 
   const handleChange = debounce((text: string) => {
     client
@@ -97,7 +95,7 @@ interface UserItemProps {
 }
 
 const UserItem: React.FC<UserItemProps> = ({ user, view }): JSX.Element => {
-  const [color, setColor] = useState<string>();
+  const [color, setColor] = useState<string>(); //color of the user
 
   useEffect(() => {
     let mounted: boolean = true;
@@ -150,7 +148,7 @@ interface ChatItemProps {
 }
 
 const ChatItem: React.FC<ChatItemProps> = ({ chat, view }): JSX.Element => {
-  const [color, setColor] = useState<string>();
+  const [color, setColor] = useState<string>(); //color of the chat
 
   useEffect(() => {
     let mounted: boolean = true;

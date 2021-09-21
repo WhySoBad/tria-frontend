@@ -3,9 +3,7 @@ import { MoreVert as MoreIcon, Settings as SettingsIcon } from "@material-ui/ico
 import { Admin, Chat, ChatSocketEvent, Group, Member, Owner, PrivateChat, UserSocketEvent } from "client";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
-import { useClient } from "../../hooks/ClientContext";
-import { useLang } from "../../hooks/LanguageContext";
-import { useModal } from "../../hooks/ModalContext";
+import { useClient, useLang, useModal } from "../../hooks";
 import style from "../../styles/modules/Chat.module.scss";
 import Menu, { MenuItem } from "../Menu";
 
@@ -22,8 +20,8 @@ const ChatTitle: React.FC<ChatTitleProps> = ({ settings = false }): JSX.Element 
   const { openChat } = useModal();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const moreRef = useRef<SVGSVGElement>(null);
-  const chat: Chat | undefined = client?.user.chats.get(selected);
-  const member: Member | undefined = chat?.members.get(client.user.uuid);
+  const chat: Chat | undefined = client?.user.chats.get(selected); //currently selected chat
+  const member: Member | undefined = chat?.members.get(client.user.uuid); //member instance of the logged in user
 
   const handleUpdate = (chatUuid: string) => chatUuid === selected && setUpdate(Date.now());
   const handleDelete = (chatUuid: string) => chatUuid === selected && router.push("/app");
@@ -43,9 +41,8 @@ const ChatTitle: React.FC<ChatTitleProps> = ({ settings = false }): JSX.Element 
 
   if (!chat) return <></>;
 
-  const name: string = chat instanceof Group ? chat.name : chat instanceof PrivateChat ? chat.participant.user.name : "";
-
-  const canEdit: boolean = member instanceof Admin || member instanceof Owner;
+  const name: string = chat instanceof Group ? chat.name : chat instanceof PrivateChat ? chat.participant.user.name : ""; //name of the chat
+  const canEdit: boolean = member instanceof Admin || member instanceof Owner; //boolean whether the logged in user can edit the chat or not
 
   const deleteChat = () => {
     chat

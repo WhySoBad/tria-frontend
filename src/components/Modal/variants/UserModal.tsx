@@ -5,10 +5,7 @@ import { Chat, ChatSocketEvent, Group, PrivateChat, User, UserPreview, UserSocke
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useChat } from "../../../hooks/ChatContext";
-import { useClient } from "../../../hooks/ClientContext";
-import { useLang } from "../../../hooks/LanguageContext";
-import { useModal } from "../../../hooks/ModalContext";
+import { useChat, useClient, useLang, useModal } from "../../../hooks";
 import baseStyle from "../../../styles/modules/Modal.module.scss";
 import style from "../../../styles/modules/UserModal.module.scss";
 import Avatar from "../../Avatar";

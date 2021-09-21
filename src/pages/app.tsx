@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import Layout from "../components/Layout";
 import Meta from "../components/Meta";
-import { useLang } from "../hooks/LanguageContext";
+import { useLang } from "../hooks";
 
 const AppPage: NextPage = (): JSX.Element => {
   const { translation } = useLang();
