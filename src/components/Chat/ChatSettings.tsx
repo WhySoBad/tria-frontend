@@ -320,7 +320,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
     control,
     handleSubmit,
     reset,
-    formState: { errors, isDirty, dirtyFields, isSubmitting },
+    formState: { errors, isValid, isDirty, dirtyFields, isSubmitting },
   } = useForm<Inputs>({
     defaultValues: {
       description: chat.description,
@@ -464,7 +464,7 @@ const Settings: React.FC<SettingsProps> = ({ chat, disabled = false }): JSX.Elem
                 <Button
                   children={translation.app.chat_settings.settings.save}
                   type={"submit"}
-                  disabled={disabled || isSubmitting || (!isDirty && !((chat.avatarURL && !url) || (chat.avatarURL !== url && !!avatar)))}
+                  disabled={disabled || !isValid || isSubmitting || (!isDirty && !((chat.avatarURL && !url) || (chat.avatarURL !== url && !!avatar)))}
                 />
               }
             />

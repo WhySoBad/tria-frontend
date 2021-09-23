@@ -129,7 +129,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
     control,
     handleSubmit,
     reset,
-    formState: { errors, isDirty, dirtyFields, isSubmitting },
+    formState: { errors, isValid, isDirty, dirtyFields, isSubmitting },
   } = useForm<Inputs>({
     defaultValues: {
       description: client.user.description,
@@ -292,7 +292,7 @@ const Settings: React.FC<SettingsProps> = ({ disabled = false }): JSX.Element =>
                 <Button
                   children={translation.app.profile.settings.save}
                   type={"submit"}
-                  disabled={disabled || isSubmitting || (!isDirty && !((client.user.avatarURL && !url) || (client.user.avatarURL !== url && !!avatar)))}
+                  disabled={disabled || !isValid || isSubmitting || (!isDirty && !((client.user.avatarURL && !url) || (client.user.avatarURL !== url && !!avatar)))}
                 />
               }
             />
